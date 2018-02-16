@@ -1,0 +1,8 @@
+# nodejs npm modules
+/node_modules
+
+# Code coverage
+/coverage
+
+# Build files
+/build/*
