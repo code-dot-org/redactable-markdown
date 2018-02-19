@@ -23,10 +23,12 @@
     "eslint-plugin-babel": "^4.1.2",
     "eslint-plugin-react": "^7.6.1",
     "jest": "^22.2.2",
+    "pretty-format": "^22.1.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-markdown": "^3.1.5",
-    "remark-parse": "^5.0.0"
+    "remark-parse": "^5.0.0",
+    "remark-stringify": "^5.0.0"
   },
   "jest": {
     "setupTestFrameworkScriptFile": "./test/setupTests.js"
