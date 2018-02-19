@@ -1,61 +1,37 @@
-const React = require('react')
 const expect = require('expect');
-const mount = require('enzyme').mount;
+const parser = require('../../src/cdoFlavoredParser');
 
-const CdoFlavoredMarkdown = require('../../src/CdoFlavoredMarkdown');
-
-describe('Basic Markdown', () => {
-  it('renders a variety of inline elements', () => {
-    const input = '# This is a header\n\nAnd this is a paragraph'
-    const output = mount(<CdoFlavoredMarkdown source={input} />);
-    expect(output.find('h1')).toHaveLength(1);
-    expect(output.find('h1').text()).toEqual("This is a header");
-    expect(output.find('p')).toHaveLength(1)
-    expect(output.find('p').text()).toEqual("And this is a paragraph");
+describe('Standard Markdown', () => {
+  it('redacts link urls', () => {
+    const input = "This is some text with [a link](http://example.com)";
+    const output = parser.sourceToRedacted(input);
+    expect(output).toEqual("This is some text with [a link]\n");
   });
 
-  it('renders links and images by default', () => {
-    const input = "This [is](/foo/bar) some markdown [with links](http://example.net) and ![images](http://example.net/foo.jpg)";
-    const output = mount(<CdoFlavoredMarkdown source={input} />);
-    expect(output.find('img')).toHaveLength(1);
-    expect(output.find('a')).toHaveLength(2);
-    expect(output.text()).toEqual("This is some markdown with links and ");
+  it('redacts image urls', () => {
+    const input = "This is some text with ![an image](http://example.com/img.jpg)";
+    const output = parser.sourceToRedacted(input);
+    expect(output).toEqual("This is some text with ![an image]\n");
   });
 
-  it('will not render the content of links and images when in redact mode', () => {
-    const input = "This [is](/foo/bar) some markdown [with links](http://example.net) and ![images](http://example.net/foo.jpg)";
-    const output = mount(<CdoFlavoredMarkdown source={input} redacted />);
-    expect(output.find('img')).toHaveLength(0);
-    expect(output.find('a')).toHaveLength(0);
-    expect(output.text()).toEqual("This [is] some markdown [with links] and ![images]");
+  it('can merge a source MDAST with a redacted MDAST', () => {
+    const source = "This is some text with [a link](http://example.com/)";
+    const redacted = "Ceci est un texte avec [un lien]";
+    const output = parser.sourceAndRedactedToHtml(source, redacted);
+    expect(output).toEqual("<p>Ceci est un texte avec <a href=\"http://example.com/\">un lien</a></p>\n");
   });
 
-  it('does not render html', () => {
-    const input = "This is some markdown <strong>with embedded html</strong>\n\n<stript src='foo'/>\n\n<div id='bar'>Both inline and block</div>";
-    const output = mount(<CdoFlavoredMarkdown source={input} />);
-    expect(output.find('strong')).toHaveLength(0);
-    expect(output.find('script')).toHaveLength(0);
-    expect(output.find('#bar')).toHaveLength(0);
-    expect(output.text()).toEqual(input.replace(/\n/g, ''));
-  });
-});
-
-describe('Custom Markdown', () => {
-  it('renders mentions', () => {
-    const input = "This is some markdown with @a_name";
-    const output = mount(<CdoFlavoredMarkdown source={input} />);
-    expect(output.find('a')).toHaveLength(1);
-    expect(output.find('a').props().href).toEqual("https://social-network/a_name");
-    expect(output.text()).toEqual(input.replace(/\n/g, ''));
+  it('can differentiate between multiple redacted links', () => {
+    const source = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
+    const redacted = "C'est du texte avec [un lien] et ![une image].\n\nEt aussi un deuxième paragraphe avec [un autre lien]";
+    const output = parser.sourceAndRedactedToHtml(source, redacted);
+    expect(output).toEqual("<p>C'est du texte avec <a href=\"http://first.com\">un lien</a> et <img src=\"http://second.com/img.jpg\" alt=\"une image\">.</p>\n<p>Et aussi un deuxième paragraphe avec <a href=\"http://third.com\">un autre lien</a></p>\n");
   });
 
-  it('renders react partials', () => {
-    const input = "This input has a\n\n<CustomPartial\n"
-    const output = mount(<CdoFlavoredMarkdown source={input} />);
-    expect(output.text()).toEqual("This input has aCustom Partial, yay!");
-    expect(output.find('CustomPartial')).toHaveLength(1);
-  });
-
-  it('does not render any custom markdown in redacted', () => {
+  it('if the redacted text removes a url, it will blindly merge however many urls there are', () => {
+    const source = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
+    const redacted = "C'est du texte avec [un lien] et pas d'une image.\n\nEt aussi un deuxième paragraphe avec [un autre lien]";
+    const output = parser.sourceAndRedactedToHtml(source, redacted);
+    expect(output).toEqual("<p>C'est du texte avec <a href=\"http://first.com\">un lien</a> et pas d'une image.</p>\n<p>Et aussi un deuxième paragraphe avec <a href=\"http://second.com/img.jpg\">un autre lien</a></p>\n");
   });
 });
