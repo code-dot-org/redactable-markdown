@@ -1,0 +1,23 @@
+language: node_js
+
+node_js:
+- 6
+
+cache:
+  directories:
+    - node_modules
+
+script:
+  - npm test
+
+notifications:
+  email: false
+
+before_deploy:
+  - npm run build
+
+deploy:
+  local_dir: build
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
