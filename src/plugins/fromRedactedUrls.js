@@ -3,7 +3,7 @@ module.exports = function fromRedactedUrls() {
     const Parser = this.Parser;
     const tokenizers = Parser.prototype.inlineTokenizers;
     const methods = Parser.prototype.inlineMethods;
-    const REDACTED_LINK_RE = /^!?\[([^^][^\]]*)\]/;
+    const REDACTED_LINK_RE = /^!?\[([^^\]]+)\]/;
     let linkCount = 0;
 
     const tokenizeRedactedLink = function (eat, value, silent) {

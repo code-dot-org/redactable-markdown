@@ -27,6 +27,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-markdown": "^3.1.5",
+    "remark-html": "^7.0.0",
     "remark-parse": "^5.0.0",
     "remark-stringify": "^5.0.0"
   },

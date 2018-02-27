@@ -9,8 +9,12 @@ const redactedUrls = require('./plugins/redactedUrls');
 const mergeMdast = require('./mergeMdast');
 
 module.exports = class CdoFlavoredParser {
+  static getPlugins = function () {
+    return [];
+  }
+
   static getParser = function() {
-    return unified().use(parse);
+    return unified().use(parse).use(this.getPlugins());
   };
 
   static sourceToHtml = function(source) {
@@ -26,9 +30,13 @@ module.exports = class CdoFlavoredParser {
   };
 
   static sourceAndRedactedToHtml = function(source, redacted) {
+    return this.sourceToHtml(this.sourceAndRedactedToMarkdown(source, redacted));
+  };
+
+  static sourceAndRedactedToMarkdown = function(source, redacted) {
     const sourceTree = this.getParser().parse(source);
     const redactedTree = this.getParser().use(fromRedactedUrls).parse(redacted);
     mergeMdast(sourceTree, redactedTree);
-    return this.getParser().use(html).stringify(redactedTree);
+    return this.getParser().use(stringify).stringify(redactedTree);
   };
 };
