@@ -4,6 +4,7 @@ module.exports = function fromRedactedUrls() {
     const tokenizers = Parser.prototype.inlineTokenizers;
     const methods = Parser.prototype.inlineMethods;
     const REDACTED_LINK_RE = /^!?\[([^^\]]+)\]/;
+    const REDACTED_TIPLINK_RE = /^\[([^^\]]+!!!)\]/;
     let linkCount = 0;
 
     const tokenizeRedactedLink = function (eat, value, silent) {
@@ -21,6 +22,15 @@ module.exports = function fromRedactedUrls() {
       }
 
       const now = eat.now();
+
+      if (REDACTED_TIPLINK_RE.exec(value)) {
+        const node = this.tokenizeInline(match[1], now);
+        node[0].children[0].type = "linkReference";
+        node[0].children[0].identifier = `redactedUrlReference-${linkCount++}`;
+        node[0].children[0].referenceType = "full";
+        return eat(match[0])(node[0]);
+      }
+
       const content = match[0] + `[redactedUrlReference-${linkCount++}]`;
       const node = this.tokenizeInline(content, now);
       return eat(match[0])(node[0]);

@@ -5,12 +5,13 @@ const unified = require('unified');
 
 const fromRedactedUrls = require('./plugins/fromRedactedUrls');
 const redactedUrls = require('./plugins/redactedUrls');
+const tiplink = require('./plugins/tiplink');
 
 const mergeMdast = require('./mergeMdast');
 
 module.exports = class CdoFlavoredParser {
   static getPlugins = function () {
-    return [];
+    return [tiplink];
   }
 
   static getParser = function() {
