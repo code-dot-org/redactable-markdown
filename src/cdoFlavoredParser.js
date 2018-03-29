@@ -29,14 +29,21 @@ module.exports = class CdoFlavoredParser {
       .processSync(source).contents;
   };
 
-  static sourceAndRedactedToHtml = function(source, redacted) {
-    return this.sourceToHtml(this.sourceAndRedactedToMarkdown(source, redacted));
-  };
-
-  static sourceAndRedactedToMarkdown = function(source, redacted) {
+  static sourceAndRedactedToMergedMdast = function(source, redacted) {
     const sourceTree = this.getParser().parse(source);
     const redactedTree = this.getParser().use(fromRedactedUrls).parse(redacted);
     mergeMdast(sourceTree, redactedTree);
-    return this.getParser().use(stringify).stringify(redactedTree);
+
+    return redactedTree;
+  }
+
+  static sourceAndRedactedToHtml = function(source, redacted) {
+    const mergedMdast = this.sourceAndRedactedToMergedMdast(source, redacted);
+    return this.getParser().use(html).stringify(mergedMdast);
+  };
+
+  static sourceAndRedactedToMarkdown = function(source, redacted) {
+    const mergedMdast = this.sourceAndRedactedToMergedMdast(source, redacted);
+    return this.getParser().use(stringify).stringify(mergedMdast);
   };
 };
