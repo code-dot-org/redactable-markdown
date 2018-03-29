@@ -5,8 +5,8 @@ module.exports = function redactedUrls() {
     const originalLink = visitors.link;
     const originalImage = visitors.image;
 
-    const LINK_RE = /^\[([^\]]+)\]\(([^)]+)\)$/;
-    const IMAGE_RE = /^!\[([^\]]+)\]\(([^)]+)\)$/;
+    const LINK_RE = /^\[([^\]]*)\]\(([^)]+)\)$/;
+    const IMAGE_RE = /^!\[([^\]]*)\]\(([^)]+)\)$/;
 
     visitors.link = function link() {
       const originalResult = originalLink.apply(this, arguments);
