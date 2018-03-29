@@ -1,34 +1,47 @@
+let redact;
+
+const getIndentation = require('remark-parse/lib/util/get-indentation');
+const removeIndentation = require('remark-parse/lib/util/remove-indentation');
+const trimTrailingLines = require('trim-trailing-lines');
+
+const RE = /^!!! ?([\w-]+)(?: "(.*?)")?(?: <(.*?)>)?/
+
 module.exports = function mention() {
   const Parser = this.Parser;
-  const tokenizers = Parser.prototype.inlineTokenizers;
-  const methods = Parser.prototype.inlineMethods;
+  const tokenizers = Parser.prototype.blockTokenizers;
+  const methods = Parser.prototype.blockMethods;
 
-  /* Add an inline tokenizer (defined in the following example). */
-  tokenizers.mention = tokenizeMention;
+  redact = Parser.prototype.options.redact;
+
+  tokenizers.tip = tokenizeTip;
 
   /* Run it just before `text`. */
-  methods.splice(methods.indexOf('text'), 0, 'mention');
+  methods.splice(methods.indexOf('paragraph'), 0, 'tip');
 }
 
-tokenizeMention.notInLink = true;
-tokenizeMention.locator = locateMention;
-
-function tokenizeMention(eat, value, silent) {
-  const match = /^@(\w+)/.exec(value);
-
-  if (match) {
-    if (silent) {
-      return true;
-    }
-
-    return eat(match[0])({
-      type: 'link',
-      url: 'https://social-network/' + match[1],
-      children: [{type: 'text', value: match[0]}]
-    });
+function tokenizeTip(eat, value, silent) {
+  const match = RE.exec(value);
+  if (!match) {
+    return;
   }
-}
 
-function locateMention(value, fromIndex) {
-  return value.indexOf('@', fromIndex);
+  if (silent) {
+    return true;
+  }
+
+  // find the indented block that represents the content of the tip
+  let index = match[0].length;
+  while (index < value.length) {
+    index++;
+    if (value.charAt(index) === "\n") {
+      //if (value.slice(index + 1, index + 5) !== "    ") {
+      if (value.charAt(index + 1) !== " ") {
+        break;
+      }
+    }
+  }
+
+  const subvalue = value.slice(match[0].length, index);
+  let contents = this.tokenizeBlock(removeIndentation(subvalue.slice(2), 4), eat.now());
+  return eat(match[0] + subvalue)(contents[0]);
 }
