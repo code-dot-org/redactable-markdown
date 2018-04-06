@@ -3,15 +3,15 @@ const parse = require('remark-parse');
 const stringify = require('remark-stringify');
 const unified = require('unified');
 
-const fromRedactedUrls = require('./plugins/fromRedactedUrls');
-const redactedUrls = require('./plugins/redactedUrls');
-const tiplink = require('./plugins/tiplink');
+const renderRedactions = require('./plugins/renderRedactions');
 
-const mergeMdast = require('./mergeMdast');
+const redactedLink = require('./plugins/redactedLink');
+const restoreRedacted = require('./plugins/restoreRedacted');
+const tiplink = require('./plugins/tiplink');
 
 module.exports = class CdoFlavoredParser {
   static getPlugins = function () {
-    return [tiplink];
+    return [redactedLink, tiplink];
   }
 
   static getParser = function() {
@@ -26,14 +26,13 @@ module.exports = class CdoFlavoredParser {
     return this.getParser()
       .use({ settings: { redact: true } })
       .use(stringify)
-      .use(redactedUrls)
+      .use(renderRedactions)
       .processSync(source).contents;
   };
 
   static sourceAndRedactedToMergedMdast = function(source, redacted) {
-    const sourceTree = this.getParser().parse(source);
-    const redactedTree = this.getParser().use(fromRedactedUrls).parse(redacted);
-    mergeMdast(sourceTree, redactedTree);
+    const sourceTree = this.getParser().use({ settings: { redact: true } }).parse(source);
+    const redactedTree = this.getParser().use(restoreRedacted(sourceTree)).parse(redacted);
 
     return redactedTree;
   }

@@ -5,34 +5,48 @@ describe('Standard Markdown', () => {
   it('redacts link urls', () => {
     const input = "This is some text with [a link](http://example.com)";
     const output = parser.sourceToRedacted(input);
-    expect(output).toEqual("This is some text with [a link]\n");
+    expect(output).toEqual("This is some text with [a link][0]\n");
   });
 
   it('redacts image urls', () => {
     const input = "This is some text with ![an image](http://example.com/img.jpg)";
     const output = parser.sourceToRedacted(input);
-    expect(output).toEqual("This is some text with ![an image]\n");
+    expect(output).toEqual("This is some text with [an image][0]\n");
   });
 
   it('can merge a source MDAST with a redacted MDAST', () => {
     const source = "This is some text with [a link](http://example.com/)";
-    const redacted = "Ceci est un texte avec [un lien]";
+    const redacted = "Ceci est un texte avec [un lien][0]";
     const output = parser.sourceAndRedactedToHtml(source, redacted);
     expect(output).toEqual("<p>Ceci est un texte avec <a href=\"http://example.com/\">un lien</a></p>\n");
   });
 
+  it('can merge a source MDAST with a redacted MDAST', () => {
+    const source = "This is some text with ![an image](http://example.com/img.jpg)";
+    const redacted = "Ceci est un texte avec [une image][0]";
+    const output = parser.sourceAndRedactedToHtml(source, redacted);
+    expect(output).toEqual("<p>Ceci est un texte avec <img src=\"http://example.com/img.jpg\" alt=\"une image\"></p>\n");
+  });
+
   it('can differentiate between multiple redacted links', () => {
     const source = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
-    const redacted = "C'est du texte avec [un lien] et ![une image].\n\nEt aussi un deuxième paragraphe avec [un autre lien]";
+    const redacted = "C'est du texte avec [un lien][0] et [une image][1].\n\nEt aussi un deuxième paragraphe avec [un autre lien][2]";
     const output = parser.sourceAndRedactedToHtml(source, redacted);
     expect(output).toEqual("<p>C'est du texte avec <a href=\"http://first.com\">un lien</a> et <img src=\"http://second.com/img.jpg\" alt=\"une image\">.</p>\n<p>Et aussi un deuxième paragraphe avec <a href=\"http://third.com\">un autre lien</a></p>\n");
   });
 
-  it('if the redacted text removes a url, it will blindly merge however many urls there are', () => {
+  it('can handle reordering of redacted links', () => {
     const source = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
-    const redacted = "C'est du texte avec [un lien] et pas d'une image.\n\nEt aussi un deuxième paragraphe avec [un autre lien]";
+    const redacted = "C'est du texte avec [un lien][0] et [une image][2].\n\nEt aussi un deuxième paragraphe avec [un autre lien][1]";
     const output = parser.sourceAndRedactedToHtml(source, redacted);
-    expect(output).toEqual("<p>C'est du texte avec <a href=\"http://first.com\">un lien</a> et pas d'une image.</p>\n<p>Et aussi un deuxième paragraphe avec <a href=\"http://second.com/img.jpg\">un autre lien</a></p>\n");
+    expect(output).toEqual("<p>C'est du texte avec <a href=\"http://first.com\">un lien</a> et <a href=\"http://third.com\">une image</a>.</p>\n<p>Et aussi un deuxième paragraphe avec <img src=\"http://second.com/img.jpg\" alt=\"un autre lien\"></p>\n");
+  });
+
+  it('can handle removal of redacted links', () => {
+    const source = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
+    const redacted = "C'est du texte avec [un lien][0] et pas d'une image.\n\nEt aussi un deuxième paragraphe avec [un autre lien][2]";
+    const output = parser.sourceAndRedactedToHtml(source, redacted);
+    expect(output).toEqual("<p>C'est du texte avec <a href=\"http://first.com\">un lien</a> et pas d'une image.</p>\n<p>Et aussi un deuxième paragraphe avec <a href=\"http://third.com\">un autre lien</a></p>\n");
   });
 });
 
@@ -81,12 +95,12 @@ describe('Custom Markdown', () => {
     it('redacts tiplinks', () => {
       const input = "This is some text with an inline labeled tip: " + labeledTipMarkdown;
       const output = parser.sourceToRedacted(input);
-      expect(output).toEqual("This is some text with an inline labeled tip: [tip!!!]\n");
+      expect(output).toEqual("This is some text with an inline labeled tip: [][0]\n");
     });
 
     it('can translate tiplinks', () => {
       const source = "This is some text with an inline labeled tip: " + labeledTipMarkdown;
-      const redacted = "Ceci est un texte avec un [tip!!!] inline labeled tip";
+      const redacted = "Ceci est un texte avec un [][0] inline labeled tip";
       const output = parser.sourceAndRedactedToHtml(source, redacted);
       expect(output).toEqual("<p>Ceci est un texte avec un " + labeledTipHtml + " inline labeled tip</p>\n");
     });
@@ -94,12 +108,12 @@ describe('Custom Markdown', () => {
     it('redacts basic tiplinks', () => {
       const input = "This is some text with an inline labeled tip: " + basicTipMarkdown;
       const output = parser.sourceToRedacted(input);
-      expect(output).toEqual("This is some text with an inline labeled tip: [tip!!!]\n");
+      expect(output).toEqual("This is some text with an inline labeled tip: [][0]\n");
     });
 
     it('can translate basic tiplinks', () => {
       const source = "This is some text with an inline labeled tip: " + basicTipMarkdown;
-      const redacted = "Ceci est un texte avec un [tip!!!] inline labeled tip";
+      const redacted = "Ceci est un texte avec un [][0] inline labeled tip";
       const output = parser.sourceAndRedactedToHtml(source, redacted);
       expect(output).toEqual("<p>Ceci est un texte avec un " + basicTipHtml + " inline labeled tip</p>\n");
     });
@@ -107,12 +121,12 @@ describe('Custom Markdown', () => {
     it('redacts basic discussion links', () => {
       const input = "This is some text with an inline labeled tip: " + basicDiscussionMarkdown;
       const output = parser.sourceToRedacted(input);
-      expect(output).toEqual("This is some text with an inline labeled tip: [discussion!!!]\n");
+      expect(output).toEqual("This is some text with an inline labeled tip: [][0]\n");
     });
 
     it('can translate basic discussion links', () => {
       const source = "This is some text with an inline labeled tip: " + basicDiscussionMarkdown;
-      const redacted = "Ceci est un texte avec un [discussion!!!] inline labeled tip";
+      const redacted = "Ceci est un texte avec un [][0] inline labeled tip";
       const output = parser.sourceAndRedactedToHtml(source, redacted);
       expect(output).toEqual("<p>Ceci est un texte avec un " + basicDiscussionHtml + " inline labeled tip</p>\n");
     });
