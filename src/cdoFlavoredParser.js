@@ -4,9 +4,9 @@ const stringify = require('remark-stringify');
 const unified = require('unified');
 
 const renderRedactions = require('./plugins/renderRedactions');
+const restoreRedactions = require('./plugins/restoreRedactions');
 
 const redactedLink = require('./plugins/redactedLink');
-const restoreRedacted = require('./plugins/restoreRedacted');
 const tiplink = require('./plugins/tiplink');
 
 module.exports = class CdoFlavoredParser {
@@ -32,7 +32,7 @@ module.exports = class CdoFlavoredParser {
 
   static sourceAndRedactedToMergedMdast = function(source, redacted) {
     const sourceTree = this.getParser().use({ settings: { redact: true } }).parse(source);
-    const redactedTree = this.getParser().use(restoreRedacted(sourceTree)).parse(redacted);
+    const redactedTree = this.getParser().use(restoreRedactions(sourceTree)).parse(redacted);
 
     return redactedTree;
   }
