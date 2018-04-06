@@ -8,29 +8,24 @@
  */
 module.exports = function restoreRedactions(sourceTree) {
 
-  let refCount = 0;
-  const refs = {};
-  function getSourceLinks(node) {
-    if (node.type === "link" || node.type === "image") {
-      refs[`redactedUrlReference-${refCount++}`] = {
-        type: node.type,
-        url: node.url
-      }
-    }
-
+  // first, walk the source tree and find all redacted nodes.
+  const redactions = [];
+  function getRedactedValues(node) {
     if (node.type === "redaction") {
-      refs[`redactedUrlReference-${refCount++}`] = {
+      redactions.push({
         type: node.redactionType,
         value: node
-      }
+      })
     }
 
     if (node.children && node.children.length) {
-      node.children.forEach(getSourceLinks);
+      node.children.forEach(getRedactedValues);
     }
   }
-  getSourceLinks(sourceTree);
+  getRedactedValues(sourceTree);
 
+  // then return an extension to the parser that can consume the data from these
+  // redacted nodes when it encounters a redaction
   return function () {
     if (!this.Parser) {
       return;
@@ -46,7 +41,7 @@ module.exports = function restoreRedactions(sourceTree) {
     // value.
     const REDACTION_RE = /^\[([^\]]*)\]\[(\d+)\]/;
 
-    const tokenizeRedactedLink = function (eat, value, silent) {
+    const tokenizeRedaction = function (eat, value, silent) {
       const match = REDACTION_RE.exec(value);
       if (!match) {
         return;
@@ -56,39 +51,42 @@ module.exports = function restoreRedactions(sourceTree) {
         return true;
       }
 
-      const ref = `redactedUrlReference-${match[2]}`;
-      const content = match[1];
-      const deref = refs[ref];
+      const content = match[1]; // the translated data inside the first set of brackets
+      const index = parseInt(match[2]); // the sequential index inside the second set of brackets
+      const redactedData = redactions[index];
 
       const now = eat.now();
+      const add = eat(match[0]);
 
-      const extra = {};
-      if (deref.type === "link") {
-        extra.url = deref.value.url
-        extra.children = [{
-          type: "text",
-          value: content
-        }]
-      } else if (deref.type === "image") {
-        extra.alt = content
-        extra.url = deref.value.url
-      } else if (deref.type === "tiplink") {
-        const node = this.tokenizeInline(deref.value.content, now);
-        return eat(match[0])(node[0]);
+      // TODO it would be best if the logic for restoring the redaction could be
+      // defined alongside the redaction itself, in that plugin.
+      if (redactedData.type === "link") {
+        return add(Object.assign({}, redactedData, {
+          url: redactedData.value.url,
+          children: [{
+            type: "text",
+            value: content
+          }]
+        }));
+      } else if (redactedData.type === "image") {
+        return add(Object.assign({}, redactedData, {
+          url: redactedData.value.url,
+          alt: content
+        }));
+      } else if (redactedData.type === "tiplink") {
+        const node = this.tokenizeInline(redactedData.value.content, now);
+        return add(node[0]);
       }
-
-      return eat(match[0])(Object.assign({}, deref, extra));
     }
 
-    tokenizeRedactedLink.locator = function (value) {
+    tokenizeRedaction.locator = function (value) {
       return value.search(REDACTION_RE);
     }
 
     /* Add an inline tokenizer (defined in the following example). */
-    tokenizers.redactedLink = tokenizeRedactedLink;
+    tokenizers.redaction = tokenizeRedaction;
 
     /* Run before default reference. */
-    methods.splice(methods.indexOf('reference'), 0, 'redactedLink');
+    methods.splice(methods.indexOf('reference'), 0, 'redaction');
   }
 }
-
