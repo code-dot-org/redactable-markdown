@@ -1,3 +1,11 @@
+/**
+ * Given some valid MDAST representing source content parsed in redact mode,
+ * this method extends a parser to enable it to parse redacted versions of that
+ * content.
+ *
+ * @see https://github.com/remarkjs/remark/tree/remark-parse%405.0.0/packages/remark-parse#extending-the-parser
+ * @see renderRedactions
+ */
 module.exports = function restoreRedactions(sourceTree) {
 
   let refCount = 0;
