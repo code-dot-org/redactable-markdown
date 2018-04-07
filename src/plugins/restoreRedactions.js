@@ -3,6 +3,28 @@
  * this method extends a parser to enable it to parse redacted versions of that
  * content.
  *
+ * @example
+ *
+ *   const parse = require('remark-parse');
+ *   const stringify = require('remark-stringify');
+ *   const unified = require('unified');
+ *   const redactedLink = require('./redactedLink');
+ *
+ *   const source = "Markdown containing [a link](http://example.com) to be redacted"
+ *   const sourceTree = unified().use([
+ *     parse,                          // use the standard parser
+ *     redactedLink,                   // add the ability to redact links
+ *     { settings: { redact: true } }, // put the parser in redaction mode
+ *   ]).parse(source);
+ *
+ *   const redacted = "Markdown containing [a modified link][0] that has been redacted"
+ *   // returns "Markdown containing [a modified link](http://example.com) that has been redacted"
+ *   unified().use([
+ *     parse,                         // use the standard parser
+ *     restoreRedactions(sourceTree), // use this extension with the source content above
+ *     stringify                      // output back to markdown
+ *   ]).stringify(redacted);
+ *
  * @see https://github.com/remarkjs/remark/tree/remark-parse%405.0.0/packages/remark-parse#extending-the-parser
  * @see renderRedactions
  */
