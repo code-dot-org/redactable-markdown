@@ -74,7 +74,7 @@ module.exports = function restoreRedactions(sourceTree) {
       }
 
       const content = match[1]; // the translated data inside the first set of brackets
-      const index = parseInt(match[2]); // the sequential index inside the second set of brackets
+      const index = parseInt(match[2], 10); // the sequential index inside the second set of brackets
       const redactedData = redactions[index];
 
       const now = eat.now();
