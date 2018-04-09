@@ -48,6 +48,13 @@ describe('Standard Markdown', () => {
     const output = parser.sourceAndRedactedToHtml(source, redacted);
     expect(output).toEqual("<p>C'est du texte avec <a href=\"http://first.com\">un lien</a> et pas d'une image.</p>\n<p>Et aussi un deuxième paragraphe avec <a href=\"http://third.com\">un autre lien</a></p>\n");
   });
+
+  it('will handle extra/unwanted redactions by just ignoring them', () => {
+    const source = "This is some text with [a link](http://example.com/)";
+    const redacted = "C'est du texte avec [un lien][0] et [une image][1]";
+    const output = parser.sourceAndRedactedToHtml(source, redacted);
+    expect(output).toEqual("<p>C'est du texte avec <a href=\"http://example.com/\">un lien</a> et <a href=\"\">une image</a></p>\n");
+  });
 });
 
 describe('Custom Markdown', () => {

@@ -77,6 +77,12 @@ module.exports = function restoreRedactions(sourceTree) {
       const index = parseInt(match[2], 10); // the sequential index inside the second set of brackets
       const redactedData = redactions[index];
 
+      // TODO once we decide on how we want to handle errors, this is where the
+      // error handler should probably go
+      if (!redactedData) {
+        return;
+      }
+
       const now = eat.now();
       const add = eat(match[0]);
 
