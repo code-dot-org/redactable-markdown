@@ -28,21 +28,21 @@ describe('Standard Markdown', () => {
     expect(output).toEqual("<p>Ceci est un texte avec <img src=\"http://example.com/img.jpg\" alt=\"une image\"></p>\n");
   });
 
-  it('can differentiate between multiple redacted links', () => {
+  it('can differentiate between multiple redactons', () => {
     const source = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
     const redacted = "C'est du texte avec [un lien][0] et [une image][1].\n\nEt aussi un deuxième paragraphe avec [un autre lien][2]";
     const output = parser.sourceAndRedactedToHtml(source, redacted);
     expect(output).toEqual("<p>C'est du texte avec <a href=\"http://first.com\">un lien</a> et <img src=\"http://second.com/img.jpg\" alt=\"une image\">.</p>\n<p>Et aussi un deuxième paragraphe avec <a href=\"http://third.com\">un autre lien</a></p>\n");
   });
 
-  it('can handle reordering of redacted links', () => {
+  it('can handle reordering of redactions', () => {
     const source = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
     const redacted = "C'est du texte avec [un lien][0] et [une image][2].\n\nEt aussi un deuxième paragraphe avec [un autre lien][1]";
     const output = parser.sourceAndRedactedToHtml(source, redacted);
     expect(output).toEqual("<p>C'est du texte avec <a href=\"http://first.com\">un lien</a> et <a href=\"http://third.com\">une image</a>.</p>\n<p>Et aussi un deuxième paragraphe avec <img src=\"http://second.com/img.jpg\" alt=\"un autre lien\"></p>\n");
   });
 
-  it('can handle removal of redacted links', () => {
+  it('can handle removal of redactions', () => {
     const source = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
     const redacted = "C'est du texte avec [un lien][0] et pas d'une image.\n\nEt aussi un deuxième paragraphe avec [un autre lien][2]";
     const output = parser.sourceAndRedactedToHtml(source, redacted);
