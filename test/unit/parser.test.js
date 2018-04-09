@@ -36,10 +36,10 @@ describe('Standard Markdown', () => {
   });
 
   it('can handle reordering of redactions', () => {
-    const source = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
-    const redacted = "C'est du texte avec [un lien][0] et [une image][2].\n\nEt aussi un deuxième paragraphe avec [un autre lien][1]";
+    const source = "The [black](http://first.com) [cat](http://second.com)."
+    const redacted = "Le [chat][1] [noir][0]."
     const output = parser.sourceAndRedactedToHtml(source, redacted);
-    expect(output).toEqual("<p>C'est du texte avec <a href=\"http://first.com\">un lien</a> et <a href=\"http://third.com\">une image</a>.</p>\n<p>Et aussi un deuxième paragraphe avec <img src=\"http://second.com/img.jpg\" alt=\"un autre lien\"></p>\n");
+    expect(output).toEqual("<p>Le <a href=\"http://second.com\">chat</a> <a href=\"http://first.com\">noir</a>.</p>\n");
   });
 
   it('can handle removal of redactions', () => {
