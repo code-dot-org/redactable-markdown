@@ -48,7 +48,15 @@ module.exports = function renderRedactions() {
       }
       exit();
 
-      return `[${value}][${count++}]`;
+      let prefix = "";
+      let index = "";
+      if (node.closing) {
+        prefix = "/";
+      } else {
+        index = count++;
+      }
+
+      return `[${prefix}${value}][${index}]`;
     }
   }
 }

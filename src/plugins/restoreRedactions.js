@@ -52,14 +52,12 @@ module.exports = function restoreRedactions(sourceTree) {
     }
 
     const Parser = this.Parser;
-    const tokenizers = Parser.prototype.inlineTokenizers;
-    const methods = Parser.prototype.inlineMethods;
-
 
     // A redacted value looks like [some text][0], where "some text" is
     // something that can be translated and "0" is the index of the redacted
     // value.
     const REDACTION_RE = /^\[([^\]]*)\]\[(\d+)\]/;
+    const REDACTION_CLOSE_RE = /^\[\/([^\]]*)\]\[\]/;
 
     const tokenizeRedaction = function (eat, value, silent) {
       const match = REDACTION_RE.exec(value);
@@ -95,9 +93,10 @@ module.exports = function restoreRedactions(sourceTree) {
     }
 
     /* Add an inline tokenizer (defined in the following example). */
-    tokenizers.redaction = tokenizeRedaction;
+    Parser.prototype.inlineTokenizers.redaction = tokenizeRedaction;
 
     /* Run before default reference. */
-    methods.splice(methods.indexOf('reference'), 0, 'redaction');
+    const inlineMethods = Parser.prototype.inlineMethods;
+    inlineMethods.splice(inlineMethods.indexOf('reference'), 0, 'redaction');
   }
 }
