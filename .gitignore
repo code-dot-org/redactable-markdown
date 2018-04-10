@@ -6,3 +6,9 @@
 
 # Build files
 /build/*
+
+# OS X
+.DS_Store
+
+# IntelliJ project files
+/.idea
