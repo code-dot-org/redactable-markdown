@@ -31,16 +31,14 @@ let tokenizeLink;
  *
  * @see https://github.com/remarkjs/remark/tree/remark-parse%405.0.0/packages/remark-parse#extending-the-parser
  * @see renderRedactions
+ * @requires restorationRegistration
  */
 module.exports = function redactedLink() {
   const Parser = this.Parser;
   const tokenizers = Parser.prototype.inlineTokenizers;
   const methods = Parser.prototype.inlineMethods;
-
-  if (!Parser.prototype.restorationMethods) {
-    Parser.prototype.restorationMethods = {};
-  }
   const restorationMethods = Parser.prototype.restorationMethods;
+
   restorationMethods.redactedlink = function (add, node, content) {
     return add(Object.assign({}, node, {
       type: 'link',

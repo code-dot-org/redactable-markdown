@@ -27,6 +27,7 @@
  *
  * @see https://github.com/remarkjs/remark/tree/remark-parse%405.0.0/packages/remark-parse#extending-the-parser
  * @see renderRedactions
+ * @requires restorationRegistration
  */
 module.exports = function restoreRedactions(sourceTree) {
 

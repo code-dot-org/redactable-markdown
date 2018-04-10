@@ -2,16 +2,16 @@ let redact;
 
 const TIPLINK_RE = /^([\w-]+)!!! ?([\w-]+)?/
 
+/**
+ * @requires restorationRegistration
+ */
 module.exports = function mention() {
   if (this.Parser) {
     const Parser = this.Parser;
     const tokenizers = Parser.prototype.inlineTokenizers;
     const methods = Parser.prototype.inlineMethods;
-
-    if (!Parser.prototype.restorationMethods) {
-      Parser.prototype.restorationMethods = {};
-    }
     const restorationMethods = Parser.prototype.restorationMethods;
+
     restorationMethods.tiplink = function (add, node) {
       return createTiplink(add, node.tipType, node.tipLink);
     }
