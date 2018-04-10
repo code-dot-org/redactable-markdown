@@ -42,7 +42,7 @@
  * generated node. The method should accept three parameters:
  *
  * - [`add`](https://github.com/remarkjs/remark/tree/master/packages/remark-parse#addnode-parent)
- * - `node` - the MDAST Node returned by by redaction
+ * - `node` - the MDAST Node returned by redaction
  * - `content` - the modified content, if it exists
  *
  * For example:
