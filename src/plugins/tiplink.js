@@ -3,17 +3,19 @@ let redact;
 const TIPLINK_RE = /^([\w-]+)!!! ?([\w-]+)?/
 
 module.exports = function mention() {
-  const Parser = this.Parser;
-  const tokenizers = Parser.prototype.inlineTokenizers;
-  const methods = Parser.prototype.inlineMethods;
+  if (this.Parser) {
+    const Parser = this.Parser;
+    const tokenizers = Parser.prototype.inlineTokenizers;
+    const methods = Parser.prototype.inlineMethods;
 
-  redact = Parser.prototype.options.redact;
+    redact = Parser.prototype.options.redact;
 
-  /* Add an inline tokenizer (defined in the following example). */
-  tokenizers.tiplink = tokenizeTiplink;
+    /* Add an inline tokenizer (defined in the following example). */
+    tokenizers.tiplink = tokenizeTiplink;
 
-  /* Run it just before `text`. */
-  methods.splice(methods.indexOf('text'), 0, 'tiplink');
+    /* Run it just before `text`. */
+    methods.splice(methods.indexOf('text'), 0, 'tiplink');
+  }
 }
 
 tokenizeTiplink.notInLink = true;
@@ -33,12 +35,9 @@ function tokenizeTiplink(eat, value, silent) {
 
     if (redact) {
       return add({
-        type: 'link',
-        url: match[0],
-        "children": [{
-          "type": "text",
-          "value": tip_type + "!!!"
-        }]
+        type: 'redaction',
+        redactionType: 'tiplink',
+        content: match[0],
       });
     }
 
