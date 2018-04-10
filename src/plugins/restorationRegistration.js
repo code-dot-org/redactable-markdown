@@ -16,28 +16,26 @@
  *
  * And which may additionally contain any other properties required to restore
  * the redacted data. Any children of the node will be rendered into the
- * redaction and may be modified by the restoration process
+ * redaction and may be modified by the restoration process. For example:
  *
- * @example
+ *     // A redacted version of tokenMention as defined at
+ *     // https://github.com/remarkjs/remark/tree/master/packages/remark-parse#function-tokenizereat-value-silent
+ *     function tokenizeRedactedMention(eat, value, silent) {
+ *       var match = /^@(\w+)/.exec(value);
  *
- *   // A redacted version of tokenMention as defined at
- *   // https://github.com/remarkjs/remark/tree/master/packages/remark-parse#function-tokenizereat-value-silent
- *   function tokenizeRedactedMention(eat, value, silent) {
- *     var match = /^@(\w+)/.exec(value);
+ *       if (match) {
+ *         if (silent) {
+ *           return true;
+ *         }
  *
- *     if (match) {
- *       if (silent) {
- *         return true;
+ *        return eat(match[0])({
+ *          type: 'redaction',
+ *          redactionType: 'mention',
+ *          url: 'https://social-network/' + match[1],  // this content will be redacted
+ *          children: [{type: 'text', value: match[0]}] // this content will be rendered
+ *        });
  *       }
- *
- *      return eat(match[0])({
- *        type: 'redaction',
- *        redactionType: 'mention',
- *        url: 'https://social-network/' + match[1],  // this content will be redacted
- *        children: [{type: 'text', value: match[0]}] // this content will be rendered
- *      });
  *     }
- *   }
  *
  * Plugins should then register a restoration method by assigning it to the
  * `restorationMethods` object with the same unique `redactionType` value as the
@@ -47,15 +45,15 @@
  * - `node` - the MDAST Node returned by by redaction
  * - `content` - the modified content, if it exists
  *
- * @example
+ * For example:
  *
- *    Parser.prototype.restorationMethods.mention = function (add, node, content) {
- *      return add({
- *        type: 'link',
- *        url: node.url,
- *        children: [{type: 'text', value: content}]
- *      });
- *    }
+ *     Parser.prototype.restorationMethods.mention = function (add, node, content) {
+ *       return add({
+ *         type: 'link',
+ *         url: node.url,
+ *         children: [{type: 'text', value: content}]
+ *       });
+ *     }
  *
  * @see restoreRedactions
  */
