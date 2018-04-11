@@ -1,10 +1,8 @@
 let redact;
 
-const getIndentation = require('remark-parse/lib/util/get-indentation');
 const removeIndentation = require('remark-parse/lib/util/remove-indentation');
-const trimTrailingLines = require('trim-trailing-lines');
 
-const RE = /^!!! ?([\w-]+)(?: "(.*?)")?(?: <(.*?)>)?/
+const RE = /^!!! ?([\w-]+)(?: "(.*?)")?(?: <(.*?)>)?\n/
 
 module.exports = function mention() {
   const Parser = this.Parser;
@@ -41,7 +39,64 @@ function tokenizeTip(eat, value, silent) {
     }
   }
 
+  const title = match[2];
   const subvalue = value.slice(match[0].length, index);
-  let contents = this.tokenizeBlock(removeIndentation(subvalue.slice(2), 4), eat.now());
-  return eat(match[0] + subvalue)(contents[0]);
+  const contents = this.tokenizeBlock(removeIndentation(subvalue, 4), eat.now());
+
+  if (redact) {
+    const open = eat(match[0])({
+      type: 'redaction',
+      redactionType: 'tip',
+      children: [{
+        type: "text",
+        value: title
+      }],
+      block: true
+    })
+
+    const add = eat(subvalue);
+    const content = contents.map((content) => add(content));
+
+    const close = add({
+      type: 'redaction',
+      block: true,
+      closing: true
+    });
+
+    return [open, ...content, close]
+  }
+
+  return eat(match[0] + subvalue)({
+    type: "div",
+    children: [{
+      type: "paragraph",
+      children: [{
+        type: 'emphasis',
+        children: [],
+        data: {
+          hName: 'i',
+          hProperties: {
+            className: "fa fa-lightbulb-o"
+          }
+        }
+      }, {
+        type: "text",
+        value: title
+      }],
+      data: {
+        hProperties: {
+          className: "admonition-title",
+          id: "tip_tip-0"
+        }
+      }
+    }, {
+      type: "div",
+      children: contents
+    }],
+    data: {
+      hProperties: {
+        className: "admonition tip"
+      }
+    }
+  });
 }
