@@ -8,6 +8,11 @@ module.exports = function tip() {
   const Parser = this.Parser;
   const tokenizers = Parser.prototype.blockTokenizers;
   const methods = Parser.prototype.blockMethods;
+  const restorationMethods = Parser.prototype.restorationMethods;
+
+  restorationMethods.tip = function (add, nodes, content, children) {
+    return createTip(add, content, children);
+  }
 
   redact = Parser.prototype.options.redact;
 
@@ -66,7 +71,12 @@ function tokenizeTip(eat, value, silent) {
     return [open, ...content, close]
   }
 
-  return eat(match[0] + subvalue)({
+  const add = eat(match[0] + subvalue);
+  return createTip(add, title, contents);
+}
+
+function createTip(add, title, children) {
+  return add({
     type: "div",
     children: [{
       type: "paragraph",
@@ -91,7 +101,7 @@ function tokenizeTip(eat, value, silent) {
       }
     }, {
       type: "div",
-      children: contents
+      children: children
     }],
     data: {
       hProperties: {

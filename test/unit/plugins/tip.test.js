@@ -44,5 +44,12 @@ describe('tip', () => {
   });
 
   describe('restore', () => {
+    it('can restore a basic tip', () => {
+      const source = "!!!tip \"this is an optional title, and it should be translatable\" <tip-0>\n    This is the content of the tip, and it should be translatable\n    This is more stuff that is still part of the content of the tip\n\nThis is the next paragraph";
+      const redacted = "[c'est une optional title, and it should be translatable][0]\n\nC'est du content of the tip, and it should be translatable\nThis is more stuff that is still part of the content of the tip\n\n[/][0]\n\nThis is the next paragraph\n";
+      const output = parser.sourceAndRedactedToHtml(source, redacted);
+      const expected = "<div class=\"admonition tip\"><p class=\"admonition-title\" id=\"tip_tip-0\"><i class=\"fa fa-lightbulb-o\"></i>c'est une optional title, and it should be translatable</p><div><p>C'est du content of the tip, and it should be translatable\nThis is more stuff that is still part of the content of the tip</p></div></div>\n<p>This is the next paragraph</p>\n"
+      expect(output).toEqual(expected);
+    });
   });
 });
