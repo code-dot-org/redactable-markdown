@@ -4,7 +4,7 @@ const removeIndentation = require('remark-parse/lib/util/remove-indentation');
 
 const RE = /^!!! ?([\w-]+)(?: "(.*?)")?(?: <(.*?)>)?\n/
 
-module.exports = function mention() {
+module.exports = function tip() {
   const Parser = this.Parser;
   const tokenizers = Parser.prototype.blockTokenizers;
   const methods = Parser.prototype.blockMethods;
@@ -13,7 +13,7 @@ module.exports = function mention() {
 
   tokenizers.tip = tokenizeTip;
 
-  /* Run it just before `text`. */
+  /* Run it just before `paragraph`. */
   methods.splice(methods.indexOf('paragraph'), 0, 'tip');
 }
 
