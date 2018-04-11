@@ -75,8 +75,16 @@ module.exports = function divclass() {
   const methods = Parser.prototype.blockMethods;
   const restorationMethods = Parser.prototype.restorationMethods;
 
-  restorationMethods.divclass = function (add, node) {
-    console.log(node);
+  restorationMethods.divclass = function (add, nodes, content, children) {
+    return add({
+      type: 'div',
+      children,
+      data: {
+        hProperties: {
+          className: nodes.open.className
+        },
+      }
+    });
   }
 
   redact = Parser.prototype.options.redact;
@@ -87,36 +95,6 @@ module.exports = function divclass() {
   methods.splice(methods.indexOf('paragraph'), 0, 'divclass');
 }
 
-//module.exports.out = function out() {
-//  var Compiler = this.Compiler;
-//  var visitors = Compiler.prototype.visitors;
-//  //console.log(Compiler);
-//  //console.log(Compiler.prototype);
-//  //console.log(visitors);
-
-//  var original = visitors.linkReference;
-//  visitors.linkReference = function heading(node) {
-//    const definitions = this.tree.children.filter(child => child.type === "definition");
-
-//    const mydef = definitions.find(def => def.identifier.toLowerCase() === node.identifier.toLowerCase());
-
-//    if (mydef && mydef.meta) {
-//      switch (mydef.meta) {
-//        case 'link':
-//        case 'image':
-//          break
-//        case 'divclass':
-//          console.log(mydef, node);
-//          const val = node.children.length ? node.children[0].value : "";
-//          return "[" + val + mydef.url + "]";
-//          break
-//      }
-//    }
-
-//    return original.apply(this, arguments);
-//  }
-//}
-
 tokenizeDivclass.notInLink = true;
 
 function tokenizeDivclass(eat, value, silent) {
@@ -126,13 +104,14 @@ function tokenizeDivclass(eat, value, silent) {
     return;
   }
 
+  const divclassOpen = startMatch[0];
   const startIndex = startMatch[0].length;
   const className = startMatch[1];
-  const DIVCLASS_CLOSE_RE = RegExp(`\n\n\\[/${className}\\]`);
 
-  const endMatch = DIVCLASS_CLOSE_RE.exec(value.slice(startIndex))
+  const divclassClose = `\n\n[/${className}]`;
+  const endIndex = value.slice(startIndex).indexOf(divclassClose);
 
-  if (!endMatch) {
+  if (endIndex === -1) {
     return;
   }
 
@@ -140,31 +119,32 @@ function tokenizeDivclass(eat, value, silent) {
     return true;
   }
 
-  const endIndex = startIndex + endMatch.index;
-  const subvalue = value.slice(startIndex, endIndex);
+  const subvalue = value.slice(startIndex, startIndex + endIndex);
   const contents = this.tokenizeBlock(subvalue, eat.now());
 
   if (redact) {
-    const open = eat(startMatch[0])({
+    const open = eat(divclassOpen)({
       type: 'redaction',
       redactionType: 'divclass',
       className: className,
+      block: true
     });
 
     const add = eat(subvalue);
     const content = contents.map((content) => add(content));
 
-    const close = eat(endMatch[0])({
+    const close = eat(divclassClose)({
       type: 'redaction',
-      redactionType: 'divclass',
-      className: className,
+      //redactionType: 'divclass',
+      //className: className,
+      block: true,
       closing: true
     });
 
     return [open, ...content, close]
   }
 
-  return eat(startMatch[0] + subvalue + endMatch[0])({
+  return eat(divclassOpen + subvalue + divclassClose)({
     type: 'div',
     children: contents,
     data: {

@@ -34,7 +34,8 @@ module.exports = function renderRedactions() {
     const Compiler = this.Compiler;
     const visitors = Compiler.prototype.visitors;
 
-    let count = 0;
+    let index = 0;
+    let openBlockIndexes = [];
 
     visitors.redaction = function redaction(node) {
       let value = "";
@@ -48,15 +49,19 @@ module.exports = function renderRedactions() {
       }
       exit();
 
-      let prefix = "";
-      let index = "";
-      if (node.closing) {
-        prefix = "/";
+      if (node.block) {
+        // redacted blocks should come in open, close pairs that share an index;
+        // when we encounter an open, push the current index onto a stack and
+        // pop it back off when we encounter a close to keep them balanced.
+        if (node.closing) {
+          return `[/${value}][${openBlockIndexes.shift()}]`;
+        } else {
+          openBlockIndexes.unshift(index++);
+          return `[${value}][${openBlockIndexes[0]}]`;
+        }
       } else {
-        index = count++;
+        return `[${value}][${index++}]`;
       }
-
-      return `[${prefix}${value}][${index}]`;
     }
   }
 }
