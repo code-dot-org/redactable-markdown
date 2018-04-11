@@ -50,6 +50,12 @@ describe('divclass', () => {
       const output = parser.sourceToHtml(input);
       expect(output).toEqual("<div class=\"example\"><pre><code>simple content\n</code></pre></div>\n");
     });
+
+    it('can render complex content inside a divclass', () => {
+      const input = "[complex-example]\n\n-   an ordered list\n-   with **inline** _formatting_, too\n\n[/complex-example]";
+      const output = parser.sourceToHtml(input);
+      expect(output).toEqual("<div class=\"complex-example\"><ul>\n<li>an ordered list</li>\n<li>with <strong>inline</strong> <em>formatting</em>, too</li>\n</ul></div>\n");
+    });
   });
 
   describe('redact', () => {
@@ -77,26 +83,39 @@ describe('divclass', () => {
       expect(output).toEqual("[][0]\n\nfirst\n\n[/][0]\n\n[][1]\n\nsecond\n\n[/][1]\n");
     });
 
-    it('can nest divclasses', () => {
+    it('can redact nested divclasses', () => {
       const input = "[outer]\n\n[inner]\n\nnested\n\n[/inner]\n\n[/outer]";
       const output = parser.sourceToRedacted(input);
       expect(output).toEqual("[][0]\n\n[][1]\n\nnested\n\n[/][1]\n\n[/][0]\n");
     });
+
+    it('can redact inline content inside a divclass', () => {
+      const input = "[complex-example]\n\n-   an ordered list\n-   with [other redacted content](http://example.com)\n\n[/complex-example]";
+      const output = parser.sourceToRedacted(input);
+      expect(output).toEqual("[][0]\n\n-   an ordered list\n-   with [other redacted content][1]\n\n[/][0]\n");
+    });
   });
 
   describe('restore', () => {
-    it('can translate basic divclasses', () => {
+    it('can restore basic divclasses', () => {
       const source = "[col-33]\n\nsimple content\n\n[/col-33]";
       const redacted = "[][0]\n\ncontenu simple\n\n[/][0]\n";
       const output = parser.sourceAndRedactedToHtml(source, redacted);
       expect(output).toEqual("<div class=\"col-33\"><p>contenu simple</p></div>\n");
     });
 
-    it('can translate nested divclasses', () => {
+    it('can restore nested divclasses', () => {
       const source = "[outer]\n\n[inner]\n\nnested\n\n[/inner]\n\n[/outer]";
       const redacted = "[][0]\n\n[][1]\n\nimbriqué\n\n[/][1]\n\n[/][0]\n";
       const output = parser.sourceAndRedactedToHtml(source, redacted);
       expect(output).toEqual("<div class=\"outer\"><div class=\"inner\"><p>imbriqué</p></div></div>\n");
+    });
+
+    it('can restore inline content inside a divclass', () => {
+      const source = "[complex-example]\n\n-   an ordered list\n-   with [other redacted content](http://example.com)\n\n[/complex-example]";
+      const redacted = "[][0]\n\n-   une liste ordonnée\n-   avec [d'autres contenus rédigés][1]\n\n[/][0]\n";
+      const output = parser.sourceAndRedactedToHtml(source, redacted);
+      expect(output).toEqual("<div class=\"complex-example\"><ul>\n<li>une liste ordonnée</li>\n<li>avec <a href=\"http://example.com\">d'autres contenus rédigés</a></li>\n</ul></div>\n");
     });
   });
 });
