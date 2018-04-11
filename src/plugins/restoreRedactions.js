@@ -124,7 +124,7 @@ module.exports = function restoreRedactions(sourceTree) {
     //
     //     [some text][0]
     //
-    //     some other markdown content entirely independent of the redaction
+    //     some other markdown content contained within the redaction
     //
     //     [/][0]
     //
