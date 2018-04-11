@@ -1,7 +1,4 @@
 /**
- * @file divclass
- * @example
- *
  * ### Divclass
  * 
  * We support the ability to wrap content in divs with a declared class
