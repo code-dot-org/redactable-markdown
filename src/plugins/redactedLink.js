@@ -31,11 +31,30 @@ let tokenizeLink;
  *
  * @see https://github.com/remarkjs/remark/tree/remark-parse%405.0.0/packages/remark-parse#extending-the-parser
  * @see renderRedactions
+ * @requires restorationRegistration
  */
 module.exports = function redactedLink() {
   const Parser = this.Parser;
   const tokenizers = Parser.prototype.inlineTokenizers;
   const methods = Parser.prototype.inlineMethods;
+  const restorationMethods = Parser.prototype.restorationMethods;
+
+  restorationMethods.redactedlink = function (add, node, content) {
+    return add(Object.assign({}, node, {
+      type: 'link',
+      children: [{
+        type: "text",
+        value: content
+      }]
+    }));
+  }
+
+  restorationMethods.redactedimage = function (add, node, content) {
+    return add(Object.assign({}, node, {
+      type: 'image',
+      alt: content
+    }));
+  }
 
   redact = Parser.prototype.options.redact;
   tokenizeLink = tokenizers.link;
@@ -53,7 +72,7 @@ module.exports = function redactedLink() {
 function tokenizeRedactedLink(eat, value, silent) {
   const link = tokenizeLink.call(this, eat, value, silent);
   if (link) {
-    link.redactionType = link.type;
+    link.redactionType = 'redacted' + link.type;
     link.type = 'redaction';
   }
 

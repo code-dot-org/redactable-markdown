@@ -2,11 +2,19 @@ let redact;
 
 const TIPLINK_RE = /^([\w-]+)!!! ?([\w-]+)?/
 
+/**
+ * @requires restorationRegistration
+ */
 module.exports = function mention() {
   if (this.Parser) {
     const Parser = this.Parser;
     const tokenizers = Parser.prototype.inlineTokenizers;
     const methods = Parser.prototype.inlineMethods;
+    const restorationMethods = Parser.prototype.restorationMethods;
+
+    restorationMethods.tiplink = function (add, node) {
+      return createTiplink(add, node.tipType, node.tipLink);
+    }
 
     redact = Parser.prototype.options.redact;
 
@@ -21,6 +29,49 @@ module.exports = function mention() {
 tokenizeTiplink.notInLink = true;
 tokenizeTiplink.locator = locateTiplink;
 
+function createTiplink(add, tipType, tipLink) {
+  const element = {
+    type: 'paragraph',
+    children: [],
+    data: {
+      hProperties: {
+        className: `tiplink tiplink-${tipType}`,
+      },
+    },
+  }
+
+
+  let icon;
+  if (tipType == 'tip') {
+    icon = "lightbulb-o";
+  } else if (tipType == 'discussion') {
+    icon = "comments";
+  } else if (tipType == 'content') {
+    icon = "mortar-board";
+  } else {
+    icon = "warning";
+  }
+
+  const child = add({
+    type: 'link',
+    url: `#${tipType}_${tipLink}`,
+    children: []
+  }, element);
+
+  add({
+    type: 'emphasis',
+    children: [],
+    data: {
+      hName: 'i',
+      hProperties: {
+        className: `fa fa-${icon}`
+      },
+    },
+  }, child)
+
+  return add(element);
+}
+
 function tokenizeTiplink(eat, value, silent) {
   const match = TIPLINK_RE.exec(value);
 
@@ -30,57 +81,19 @@ function tokenizeTiplink(eat, value, silent) {
     }
 
     const add = eat(match[0]);
-    const tip_type = match[1];
-    const tip_link = match[2];
+    const tipType = match[1];
+    const tipLink = match[2];
 
     if (redact) {
       return add({
         type: 'redaction',
         redactionType: 'tiplink',
-        content: match[0],
+        tipType,
+        tipLink
       });
     }
 
-    const element = {
-      type: 'paragraph',
-      children: [],
-      data: {
-        hProperties: {
-          className: `tiplink tiplink-${tip_type}`,
-        },
-      },
-    }
-
-
-    let icon;
-    if (tip_type == 'tip') {
-      icon = "lightbulb-o";
-    } else if (tip_type == 'discussion') {
-      icon = "comments";
-    } else if (tip_type == 'content') {
-      icon = "mortar-board";
-    } else {
-      icon = "warning";
-    }
-
-    const child = add({
-      type: 'link',
-      url: `#${tip_type}_${tip_link}`,
-      children: []
-    }, element);
-
-    add({
-      type: 'emphasis',
-      children: [],
-      data: {
-        hName: 'i',
-        hProperties: {
-          className: `fa fa-${icon}`
-        },
-      },
-    }, child)
-
-    return add(element);
+    return createTiplink(add, tipType, tipLink);
   }
 }
 

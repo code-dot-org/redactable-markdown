@@ -27,6 +27,7 @@
  *
  * @see https://github.com/remarkjs/remark/tree/remark-parse%405.0.0/packages/remark-parse#extending-the-parser
  * @see renderRedactions
+ * @requires restorationRegistration
  */
 module.exports = function restoreRedactions(sourceTree) {
 
@@ -34,10 +35,7 @@ module.exports = function restoreRedactions(sourceTree) {
   const redactions = [];
   function getRedactedValues(node) {
     if (node.type === "redaction") {
-      redactions.push({
-        type: node.redactionType,
-        value: node
-      })
+      redactions.push(node);
     }
 
     if (node.children && node.children.length) {
@@ -83,28 +81,13 @@ module.exports = function restoreRedactions(sourceTree) {
         return;
       }
 
-      const now = eat.now();
-      const add = eat(match[0]);
-
-      // TODO it would be best if the logic for restoring the redaction could be
-      // defined alongside the redaction itself, in that plugin.
-      if (redactedData.type === "link") {
-        return add(Object.assign({}, redactedData, {
-          url: redactedData.value.url,
-          children: [{
-            type: "text",
-            value: content
-          }]
-        }));
-      } else if (redactedData.type === "image") {
-        return add(Object.assign({}, redactedData, {
-          url: redactedData.value.url,
-          alt: content
-        }));
-      } else if (redactedData.type === "tiplink") {
-        const node = this.tokenizeInline(redactedData.value.content, now);
-        return add(node[0]);
+      const restorationMethod = Parser.prototype.restorationMethods[redactedData.redactionType];
+      if (!restorationMethod) {
+        return
       }
+
+      const add = eat(match[0]);
+      return restorationMethod(add, redactedData, content);
     }
 
     tokenizeRedaction.locator = function (value) {
