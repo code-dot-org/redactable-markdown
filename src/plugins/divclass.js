@@ -107,9 +107,23 @@ function tokenizeDivclass(eat, value, silent) {
   const className = startMatch[1];
 
   const divclassClose = `\n\n[/${className}]`;
-  const endIndex = value.indexOf(divclassClose, startIndex);
 
-  if (endIndex === -1) {
+  // the first instance of a matching close block in the rest of the value
+  // string. Note that because of nesting, this may not necessarily be the
+  // actual matching close block we want.
+  let nextMatchingClose = value.indexOf(divclassClose, startIndex);
+
+  // to find out, we look at everything in between the opening block and the
+  // selected closing block. If there are an equal number of opens and closes
+  // within that subvalue, we're good; otherwise, select the next matching close
+  // and try again
+  let subvalue = value.slice(startIndex, nextMatchingClose);
+  while (subvalue.split(divclassOpen).length !== subvalue.split(divclassClose).length) {
+    nextMatchingClose = value.indexOf(divclassClose, nextMatchingClose + 1);
+    subvalue = value.slice(startIndex, nextMatchingClose);
+  }
+
+  if (nextMatchingClose === -1) {
     return;
   }
 
@@ -117,7 +131,6 @@ function tokenizeDivclass(eat, value, silent) {
     return true;
   }
 
-  const subvalue = value.slice(startIndex, endIndex);
   const contents = this.tokenizeBlock(subvalue, eat.now());
 
   if (redact) {
@@ -133,8 +146,6 @@ function tokenizeDivclass(eat, value, silent) {
 
     const close = eat(divclassClose)({
       type: 'redaction',
-      //redactionType: 'divclass',
-      //className: className,
       block: true,
       closing: true
     });

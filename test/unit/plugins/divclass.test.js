@@ -33,6 +33,29 @@ describe('divclass', () => {
       expect(output).toEqual("<div class=\"outer\"><div class=\"inner\"><p>nested</p></div></div>\n");
     });
 
+    it('can nest duplicate divclasses', () => {
+      const input = "[classname]\n\ncontent\n\n[classname]\n\ninner content\n\n[/classname]\n\ncontent\n\n[/classname]";
+      const output = parser.sourceToHtml(input);
+      expect(output).toEqual("<div class=\"classname\"><p>content</p><div class=\"classname\"><p>inner content</p></div><p>content</p></div>\n");
+    });
+
+    it('can nest as deeply as you want', () => {
+      const markdownOpen = "[classname]\n\n";
+      const markdownClose = "\n\n[/classname]";
+      const markdownContent = "content";
+      const htmlOpen = "<div class=\"classname\">"
+      const htmlClose = "</div>";
+      const htmlContent = "<p>content</p>";
+
+      let input = markdownContent;
+      let output = htmlContent;
+      for (let _ = 0; _ < 20; _++) {
+        input = `${markdownOpen}${input}${markdownClose}`;
+        output = `${htmlOpen}${output}${htmlClose}`;
+        expect(parser.sourceToHtml(input)).toEqual(output + "\n");
+      }
+    });
+
     it('requires class-specific termination', () => {
       const input = "[example]\n\nsimple content\n\n[/]";
       const output = parser.sourceToHtml(input);
