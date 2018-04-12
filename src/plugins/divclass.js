@@ -1,0 +1,165 @@
+/**
+ * ### Divclass
+ * 
+ * We support the ability to wrap content in divs with a declared class
+ * attribute. Any kind of block content is supported; to wrap the content, simply
+ * precede it with a block entirely consisting of the class name wrapped in square
+ * bracked and succeed it with a block entirely consisting of the class name
+ * preceeded by a forward slash and wrapped in square brackets.
+ * 
+ * [col-33]
+ * 
+ * This is some simple content that will be wrapped in a div with the class "col-33"
+ * 
+ * [/col-33]
+ * 
+ * [col-33]
+ * 
+ * - This is a ul, which will also be wrapped in a div with the class "col-33".
+ * - Note that because this is dealing with classes and not ids, duplicate class
+ * - names are just fine.
+ * 
+ * [/col-33]
+ * 
+ * [outer]
+ * 
+ * [inner]
+ * 
+ * Nesting of classes is also supported.
+ * 
+ * [/inner]
+ * 
+ * [/outer]
+ * 
+ * [unsupported]
+ * 
+ * Some things that are NOT supported:
+ * 
+ * - inline divclasses like [example]this[/example]
+ * - generic endings like [example]\n\ncontent\n\n[/]
+ * - indentation like [example]\n\n    content\n\n[/example]
+ *   - in this case, 'content' would be treated as a code block
+ * 
+ * [/unsupported]
+ *
+ * Note that you can also add an empty div without content like so:
+ *
+ * [empty]
+ *
+ *
+ *
+ * [/empty]
+ *
+ * ### Redacting
+ *
+ * Divclasses will be redacted to just [][0] and [/][0], where "0" is the
+ * zero-based index of the divclass in the set of all redactions in the content:
+ *
+ * [][0]
+ * 
+ * This is some simple content that will be wrapped in a div with the class "col-33"
+ * 
+ * [/][0]
+ */
+
+const DIVCLASS_OPEN_RE = /^\[([\w-]+)\]\n\n/;
+
+let redact;
+
+module.exports = function divclass() {
+
+  const Parser = this.Parser;
+  const tokenizers = Parser.prototype.blockTokenizers;
+  const methods = Parser.prototype.blockMethods;
+  const restorationMethods = Parser.prototype.restorationMethods;
+
+  restorationMethods.divclass = function (add, nodes, content, children) {
+    return add({
+      type: 'div',
+      children,
+      data: {
+        hProperties: {
+          className: nodes.open.className
+        },
+      }
+    });
+  }
+
+  redact = Parser.prototype.options.redact;
+
+  tokenizers.divclass = tokenizeDivclass;
+
+  /* Run it just before `paragraph`. */
+  methods.splice(methods.indexOf('paragraph'), 0, 'divclass');
+}
+
+tokenizeDivclass.notInLink = true;
+
+function tokenizeDivclass(eat, value, silent) {
+  const startMatch = DIVCLASS_OPEN_RE.exec(value)
+
+  if (!startMatch) {
+    return;
+  }
+
+  const divclassOpen = startMatch[0];
+  const startIndex = startMatch[0].length;
+  const className = startMatch[1];
+
+  const divclassClose = `\n\n[/${className}]`;
+
+  // the first instance of a matching close block in the rest of the value
+  // string. Note that because of nesting, this may not necessarily be the
+  // actual matching close block we want.
+  let nextMatchingClose = value.indexOf(divclassClose, startIndex);
+
+  // to find out, we look at everything in between the opening block and the
+  // selected closing block. If there are an equal number of opens and closes
+  // within that subvalue, we're good; otherwise, select the next matching close
+  // and try again
+  let subvalue = value.slice(startIndex, nextMatchingClose);
+  while (subvalue.split(divclassOpen).length !== subvalue.split(divclassClose).length) {
+    nextMatchingClose = value.indexOf(divclassClose, nextMatchingClose + 1);
+    subvalue = value.slice(startIndex, nextMatchingClose);
+  }
+
+  if (nextMatchingClose === -1) {
+    return;
+  }
+
+  if (silent) {
+    return true;
+  }
+
+  const contents = this.tokenizeBlock(subvalue, eat.now());
+
+  if (redact) {
+    const open = eat(divclassOpen)({
+      type: 'redaction',
+      redactionType: 'divclass',
+      className: className,
+      block: true
+    });
+
+    const add = eat(subvalue);
+    const content = contents.map((content) => add(content));
+
+    const close = eat(divclassClose)({
+      type: 'redaction',
+      block: true,
+      closing: true
+    });
+
+    return [open, ...content, close]
+  }
+
+  return eat(divclassOpen + subvalue + divclassClose)({
+    type: 'div',
+    children: contents,
+    data: {
+      hProperties: {
+        className: className
+      },
+    }
+  });
+}

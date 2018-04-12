@@ -7,12 +7,18 @@ const renderRedactions = require('./plugins/renderRedactions');
 const restoreRedactions = require('./plugins/restoreRedactions');
 const restorationRegistration = require('./plugins/restorationRegistration');
 
+const divclass = require('./plugins/divclass');
 const redactedLink = require('./plugins/redactedLink');
 const tiplink = require('./plugins/tiplink');
 
 module.exports = class CdoFlavoredParser {
   static getPlugins = function() {
-    return [restorationRegistration, redactedLink, tiplink];
+    return [
+      restorationRegistration,
+      divclass,
+      redactedLink,
+      tiplink
+    ];
   };
 
   static getParser = function() {
