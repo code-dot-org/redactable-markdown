@@ -52,13 +52,14 @@
  *
  * ### Redacting
  *
- * Divclasses will be redacted to just [] and [/]:
+ * Divclasses will be redacted to just [][0] and [/][0], where "0" is the
+ * zero-based index of the divclass in the set of all redactions in the content:
  *
- * []
+ * [][0]
  * 
  * This is some simple content that will be wrapped in a div with the class "col-33"
  * 
- * [/]
+ * [/][0]
  */
 
 const DIVCLASS_OPEN_RE = /^\[([\w-]+)\]\n\n/;
