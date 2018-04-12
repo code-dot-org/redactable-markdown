@@ -74,15 +74,32 @@ module.exports = function divclass() {
   const restorationMethods = Parser.prototype.restorationMethods;
 
   restorationMethods.divclass = function (add, nodes, content, children) {
-    return add({
-      type: 'div',
-      children,
-      data: {
-        hProperties: {
-          className: nodes.open.className
-        },
-      }
+    const open = add({
+      type: 'paragraph',
+      children: [{
+        type: 'rawtext',
+        value: `[${nodes.open.className}]`
+      }]
     });
+
+    if (!children.length) {
+      children = [{
+        type: 'text',
+        value: ''
+      }];
+    }
+    const childNodes = children.map(child => add(child))
+
+    const close = add({
+      type: 'paragraph',
+      children: [{
+        type: 'rawtext',
+        value: `[/${nodes.open.className}]`
+      }]
+    });
+
+
+    return [open, ...childNodes, close];
   }
 
   redact = Parser.prototype.options.redact;
