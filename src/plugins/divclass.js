@@ -106,7 +106,7 @@ function tokenizeDivclass(eat, value, silent) {
   const className = startMatch[1];
 
   const divclassClose = `\n\n[/${className}]`;
-  const endIndex = value.slice(startIndex).indexOf(divclassClose);
+  const endIndex = value.indexOf(divclassClose, startIndex);
 
   if (endIndex === -1) {
     return;
@@ -116,7 +116,7 @@ function tokenizeDivclass(eat, value, silent) {
     return true;
   }
 
-  const subvalue = value.slice(startIndex, startIndex + endIndex);
+  const subvalue = value.slice(startIndex, endIndex);
   const contents = this.tokenizeBlock(subvalue, eat.now());
 
   if (redact) {

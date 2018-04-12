@@ -165,7 +165,7 @@ module.exports = function restoreRedactions(sourceTree) {
 
       // the index within `value` at which the inner content of the redacted block ends
       // (ie the index at which the "close" block begins)
-      const endIndex = value.slice(startIndex).indexOf(blockClose);
+      const endIndex = value.indexOf(blockClose, startIndex);
 
       // if we didn't find a close block, return immediately
       if (endIndex === -1) {
@@ -185,7 +185,7 @@ module.exports = function restoreRedactions(sourceTree) {
 
       // if in normal (ie non-silent) mode, consume the token and produce a
       // render
-      const subvalue = value.slice(startIndex, startIndex + endIndex);
+      const subvalue = value.slice(startIndex, endIndex);
       const children = this.tokenizeBlock(subvalue, eat.now());
       const add = eat(blockOpen + subvalue + blockClose);
       return restorationMethod(add, redactedData, content, children);
