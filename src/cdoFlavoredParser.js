@@ -3,6 +3,7 @@ const parse = require('remark-parse');
 const stringify = require('remark-stringify');
 const unified = require('unified');
 
+// process plugins
 const renderRedactions = require('./plugins/renderRedactions');
 const restoreRedactions = require('./plugins/restoreRedactions');
 const restorationRegistration = require('./plugins/restorationRegistration');
