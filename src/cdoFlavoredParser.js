@@ -3,16 +3,25 @@ const parse = require('remark-parse');
 const stringify = require('remark-stringify');
 const unified = require('unified');
 
+// process plugins
 const renderRedactions = require('./plugins/renderRedactions');
 const restoreRedactions = require('./plugins/restoreRedactions');
 const restorationRegistration = require('./plugins/restorationRegistration');
 
+// compiler plugins
+const rawtext = require('./plugins/rawtext');
+
+// parser plugins
 const divclass = require('./plugins/divclass');
 const redactedLink = require('./plugins/redactedLink');
 const tiplink = require('./plugins/tiplink');
 
 module.exports = class CdoFlavoredParser {
   static getPlugins = function() {
+    return this.getParserPlugins().concat(this.getCompilerPlugins());
+  }
+
+  static getParserPlugins = function() {
     return [
       restorationRegistration,
       divclass,
@@ -21,16 +30,29 @@ module.exports = class CdoFlavoredParser {
     ];
   };
 
+  static getCompilerPlugins = function() {
+    return [
+      rawtext,
+    ]
+  }
+
   static getParser = function() {
-    return unified().use(parse).use(this.getPlugins());
+    return unified()
+      .use(parse)
+      .use(this.getParserPlugins());
   };
 
   static sourceToHtml = function(source) {
-    return this.getParser().use(html).processSync(source).contents;
+    return this.getParser()
+      .use(html)
+      .processSync(source)
+      .contents;
   };
 
   static sourceToRedactedMdast = function(source) {
-    return this.getParser().use({ settings: { redact: true } }).parse(source);
+    return this.getParser()
+      .use({ settings: { redact: true } })
+      .parse(source);
   };
 
   static sourceToRedacted = function(source) {
@@ -50,13 +72,16 @@ module.exports = class CdoFlavoredParser {
     return redactedTree;
   };
 
-  static sourceAndRedactedToHtml = function(source, redacted) {
-    const mergedMdast = this.sourceAndRedactedToMergedMdast(source, redacted);
-    return this.getParser().use(html).stringify(mergedMdast);
-  };
-
   static sourceAndRedactedToMarkdown = function(source, redacted) {
     const mergedMdast = this.sourceAndRedactedToMergedMdast(source, redacted);
-    return this.getParser().use(stringify).stringify(mergedMdast);
+    return this.getParser()
+      .use(stringify)
+      .use(this.getCompilerPlugins())
+      .stringify(mergedMdast);
+  };
+
+  static sourceAndRedactedToHtml = function(source, redacted) {
+    const restoredMarkdown = this.sourceAndRedactedToMarkdown(source, redacted);
+    return this.sourceToHtml(restoredMarkdown);
   };
 };

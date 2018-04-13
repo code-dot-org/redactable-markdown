@@ -3,7 +3,7 @@
  *
  * This extension simply adds the `Parser.prototype.restorationMethods`
  * property, which plugins that implement redaction can use to register the
- * methods required to restore the redacted content.
+ * methods required to restore the redacted content back to markdown.
  *
  * Plugins that implement redaction should implement it by generating a
  * [MDAST Node](https://github.com/syntax-tree/mdast#ast) that implements the
@@ -45,13 +45,16 @@
  * - `node` - the MDAST Node returned by redaction
  * - `content` - the modified content, if it exists
  *
+ * And should act as a tokenizer that can render a version of the original
+ * markdown with the redacted content in-place and the rendered content replaced
+ * by the new content
+ *
  * For example:
  *
  *     Parser.prototype.restorationMethods.mention = function (add, node, content) {
  *       return add({
- *         type: 'link',
- *         url: node.url,
- *         children: [{type: 'text', value: content}]
+ *         type: 'text',
+ *         value: `@${content}`
  *       });
  *     }
  *
