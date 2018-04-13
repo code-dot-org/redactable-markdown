@@ -10,9 +10,10 @@ describe('divclass', () => {
     });
 
     it('works without content - but only if separated by FOUR newlines', () => {
-      const input = "[empty]\n\n\n\n[/empty]";
-      const output = parser.sourceToHtml(input);
-      expect(output).toEqual("<div class=\"empty\"></div>\n");
+      const validInput = "[empty]\n\n\n\n[/empty]";
+      expect(parser.sourceToHtml(validInput)).toEqual("<div class=\"empty\"></div>\n");
+      const invalidInput = "[empty]\n\n[/empty]";
+      expect(parser.sourceToHtml(invalidInput)).toEqual("<p>[empty]</p>\n<p>[/empty]</p>\n");
     });
 
     it('renders a divclass within other content', () => {
