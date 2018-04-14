@@ -2,6 +2,10 @@ const expect = require('expect');
 const parser = require('../../src/cdoFlavoredParser');
 const mapMdast = require('../utils').mapMdast;
 
+// Of the top twenty words in the initial curriculumbuilder data set, take out
+// all those like "r" that represent control characters and all the things like
+// "csf" that don't actually have translations, and put together a super-basic
+// english-to-french translation scheme for them.
 const EN_FR = {
   'to': 'à',
   'the': 'la',
@@ -57,6 +61,8 @@ describe("Curriculum Builder content", () => {
         describe(contentName, () => {
           const content = data[contentName];
           Object.keys(content).forEach(contentProperty => {
+            // titles, although included in the data set I'm looking at, are not
+            // markdown and should not be treated as such
             if (contentProperty === "title") {
               return
             }
@@ -73,8 +79,8 @@ describe("Curriculum Builder content", () => {
               const restored = parser.sourceAndRedactedToMarkdown(prop, redacted);
 
               // no matter the changes made to redaction, the restoration should
-              // still produce the same HTML structure (if not same text content) as
-              // the original markdown content
+              // still produce the same HTML structure (but not necessarily the
+              // same text content) as the original markdown content
               const original = parser.getParser().parse(prop);
               const result = parser.getParser().parse(restored);
               expect(mapMdast(result)).toEqual(mapMdast(original));
