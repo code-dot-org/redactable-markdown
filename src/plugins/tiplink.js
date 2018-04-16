@@ -1,6 +1,7 @@
 let redact;
 
 const TIPLINK_RE = /^([\w-]+)!!! ?([\w-]+)?/
+const TIPLINK_LOCATOR_RE = /[\w-]+!!!/;
 
 /**
  * @requires restorationRegistration
@@ -101,5 +102,8 @@ function tokenizeTiplink(eat, value, silent) {
 }
 
 function locateTiplink(value, fromIndex) {
-  return fromIndex;
+  const match = TIPLINK_LOCATOR_RE.exec(value);
+  if (match && match.index >= fromIndex) {
+    return match.index;
+  }
 }
