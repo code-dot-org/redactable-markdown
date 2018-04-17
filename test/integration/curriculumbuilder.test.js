@@ -2,6 +2,10 @@ const expect = require('expect');
 const parser = require('../../src/cdoFlavoredParser');
 const mapMdast = require('../utils').mapMdast;
 
+const lessonData = require('./lesson.json');
+const curriculumData = require('./curriculum.json');
+const unitData = require('./unit.json');
+
 // Of the top twenty words in the initial curriculumbuilder data set, take out
 // all those like "r" that represent control characters and all the things like
 // "csf" that don't actually have translations, and put together a super-basic
@@ -54,9 +58,15 @@ function translate(string) {
 }
 
 describe("Curriculum Builder content", () => {
-  ["Lesson", "Curriculum", "Unit"].forEach(contentType => {
-    describe(contentType, () => {
-      const data = require(`./${contentType.toLowerCase()}.json`);
+  const testData = {
+    lesson: lessonData,
+    curriculum: curriculumData,
+    unit: unitData,
+  };
+
+  Object.keys(testData).forEach(testName => {
+    describe(testName, () => {
+      const data = testData[testName];
       Object.keys(data).forEach(contentName => {
         describe(contentName, () => {
           const content = data[contentName];
