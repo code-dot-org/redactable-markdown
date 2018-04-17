@@ -26,7 +26,9 @@ describe('resourcelink', () => {
       expect(output).toEqual("[r some-slug]\n");
     });
 
-    it('cannot restore resourcelinks to html', () => {
+    it('can only restore resourcelinks to HTML by rendering the raw syntax', () => {
+      // see the comment on the plugin definition for more context as to why
+      // this is true
       const source = "[r some-slug]";
       const redacted = "[][0]"
       const output = parser.sourceAndRedactedToHtml(source, redacted);
