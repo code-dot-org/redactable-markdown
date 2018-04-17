@@ -71,12 +71,6 @@ describe("Curriculum Builder content", () => {
         describe(contentName, () => {
           const content = data[contentName];
           Object.keys(content).forEach(contentProperty => {
-            // titles, although included in the data set I'm looking at, are not
-            // markdown and should not be treated as such
-            if (contentProperty === "title") {
-              return
-            }
-
             it(contentProperty, () => {
               // prop is markdown content
               const prop = content[contentProperty];
