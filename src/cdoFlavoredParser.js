@@ -14,6 +14,7 @@ const rawtext = require('./plugins/rawtext');
 // parser plugins
 const divclass = require('./plugins/divclass');
 const redactedLink = require('./plugins/redactedLink');
+const resourcelink = require('./plugins/resourcelink');
 const tiplink = require('./plugins/tiplink');
 
 module.exports = class CdoFlavoredParser {
@@ -26,7 +27,8 @@ module.exports = class CdoFlavoredParser {
       restorationRegistration,
       divclass,
       redactedLink,
-      tiplink
+      resourcelink,
+      tiplink,
     ];
   };
 
