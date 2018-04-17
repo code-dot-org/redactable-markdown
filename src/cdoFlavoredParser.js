@@ -16,6 +16,7 @@ const divclass = require('./plugins/divclass');
 const redactedLink = require('./plugins/redactedLink');
 const resourcelink = require('./plugins/resourcelink');
 const tiplink = require('./plugins/tiplink');
+const vocablink = require('./plugins/vocablink');
 
 module.exports = class CdoFlavoredParser {
   static getPlugins = function() {
@@ -29,6 +30,7 @@ module.exports = class CdoFlavoredParser {
       redactedLink,
       resourcelink,
       tiplink,
+      vocablink,
     ];
   };
 
