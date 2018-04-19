@@ -1,6 +1,6 @@
 let redact;
 
-const VOCABLINK_RE = /^\[v ([^\]]+)\]/;
+const VOCABLINK_RE = /^\[v ([^\]]+)\](?:\[([^\]]+)\])?/;
 const VOCABLINK = 'vocablink';
 
 /**
@@ -19,10 +19,14 @@ module.exports = function vocablink() {
     redact = Parser.prototype.options.redact;
     Parser.prototype.inlineTokenizers[VOCABLINK] = tokenizeVocablink;
 
-    Parser.prototype.restorationMethods[VOCABLINK] = function (add, node) {
+    Parser.prototype.restorationMethods[VOCABLINK] = function (add, node, content) {
+      let value = `[v ${node.vocabword}]`;
+      if (content) {
+        value += `[${content}]`
+      }
       return add({
         type: 'rawtext',
-        value: `[v ${node.slug}]`
+        value 
       });
     }
 
@@ -44,11 +48,16 @@ function tokenizeVocablink(eat, value, silent) {
       return true;
     }
 
-    const slug = match[1];
+    const vocabword = match[1];
+    const override = match[2];
     return eat(match[0])({
       type: 'redaction',
       redactionType: VOCABLINK,
-      slug
+      vocabword,
+      children: [{
+        type: 'text',
+        value: override || vocabword
+      }]
     });
   }
 }
