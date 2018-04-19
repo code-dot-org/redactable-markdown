@@ -48,7 +48,11 @@ function tokenizeResourcelink(eat, value, silent) {
     return eat(match[0])({
       type: 'redaction',
       redactionType: RESOURCELINK,
-      slug
+      slug,
+      children: [{
+        type: 'text',
+        value: slug
+      }]
     });
   }
 }
