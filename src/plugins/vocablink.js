@@ -42,22 +42,32 @@ tokenizeVocablink.locator = locateVocablink;
 function tokenizeVocablink(eat, value, silent) {
   const match = VOCABLINK_RE.exec(value);
 
-  // Vocab links are ONLY supported in redaction mode
-  if (match && redact) {
+  if (match) {
     if (silent) {
       return true;
     }
 
+    const add = eat(match[0]);
     const vocabword = match[1];
     const override = match[2];
-    return eat(match[0])({
-      type: 'redaction',
-      redactionType: VOCABLINK,
-      vocabword,
-      children: [{
-        type: 'text',
-        value: override || vocabword
-      }]
+    if (redact) {
+      return add({
+        type: 'redaction',
+        redactionType: VOCABLINK,
+        vocabword,
+        children: [{
+          type: 'text',
+          value: override || vocabword
+        }]
+      });
+    }
+
+    // In non-redaction mode, eat the vocab link so it is not treated as a
+    // different bit of syntax (such as linkReference) but simply output it back
+    // to the raw string
+    return add({
+      type: 'rawtext',
+      value: match[0]
     });
   }
 }

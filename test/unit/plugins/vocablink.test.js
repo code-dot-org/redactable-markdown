@@ -1,12 +1,40 @@
 const expect = require('expect');
 const parser = require('../../../src/cdoFlavoredParser');
+const mapMdast = require('../../utils').mapMdast;
 
 describe('vocablink', () => {
+  describe('parse', () => {
+    it('can distinguish between vocablinks with word overrides and linkReferences', () => {
+      // the only difference between these two bits of the syntax is the "v "
+      const vocablink = parser.getParser().parse("[v some-word][override]");
+      const linkReference = parser.getParser().parse("[some-word][override]");
+      expect(mapMdast(vocablink)).toEqual({
+        children: [{ children: [{ type: 'rawtext' }], type: 'paragraph' }],
+        type: 'root',
+      });
+      expect(mapMdast(linkReference)).toEqual({
+        children: [
+          {
+            children: [{ children: [{ type: 'text' }], type: 'linkReference' }],
+            type: 'paragraph',
+          },
+        ],
+        type: 'root',
+      });
+    });
+  });
+
   describe('render', () => {
-    it('cannot render vocablinks to html', () => {
+    it('can only render vocablinks back out to plain text', () => {
       const input = "[v some-word]";
       const output = parser.sourceToHtml(input);
       expect(output).toEqual("<p>[v some-word]</p>\n");
+    });
+
+    it('can only render vocablinks with word overrides back out to plain text', () => {
+      const input = "[v some-word][override]";
+      const output = parser.sourceToHtml(input);
+      expect(output).toEqual("<p>[v some-word][override]</p>\n");
     });
   });
 
