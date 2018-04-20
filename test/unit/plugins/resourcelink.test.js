@@ -14,14 +14,14 @@ describe('resourcelink', () => {
     it('redacts resourcelinks', () => {
       const input = "[r some-slug]";
       const output = parser.sourceToRedacted(input);
-      expect(output).toEqual("[][0]\n");
+      expect(output).toEqual("[some-slug][0]\n");
     });
   });
 
   describe('restore', () => {
     it('can restore resourcelinks back to markdown', () => {
       const source = "[r some-slug]";
-      const redacted = "[][0]"
+      const redacted = "[any-text][0]"
       const output = parser.sourceAndRedactedToMarkdown(source, redacted);
       expect(output).toEqual("[r some-slug]\n");
     });
@@ -30,7 +30,7 @@ describe('resourcelink', () => {
       // see the comment on the plugin definition for more context as to why
       // this is true
       const source = "[r some-slug]";
-      const redacted = "[][0]"
+      const redacted = "[any-text][0]"
       const output = parser.sourceAndRedactedToHtml(source, redacted);
       expect(output).toEqual("<p>[r some-slug]</p>\n");
     });
