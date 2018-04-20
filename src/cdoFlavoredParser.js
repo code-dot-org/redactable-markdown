@@ -3,20 +3,17 @@ const parse = require('remark-parse');
 const stringify = require('remark-stringify');
 const unified = require('unified');
 
-// process plugins
-const renderRedactions = require('./plugins/renderRedactions');
-const restoreRedactions = require('./plugins/restoreRedactions');
-const restorationRegistration = require('./plugins/restorationRegistration');
+const renderRedactions = require('./plugins/process/renderRedactions');
+const restoreRedactions = require('./plugins/process/restoreRedactions');
+const restorationRegistration = require('./plugins/process/restorationRegistration');
 
-// compiler plugins
-const rawtext = require('./plugins/rawtext');
+const rawtext = require('./plugins/compiler/rawtext');
 
-// parser plugins
-const divclass = require('./plugins/divclass');
-const redactedLink = require('./plugins/redactedLink');
-const resourcelink = require('./plugins/resourcelink');
-const tiplink = require('./plugins/tiplink');
-const vocablink = require('./plugins/vocablink');
+const divclass = require('./plugins/parser/divclass');
+const redactedLink = require('./plugins/parser/redactedLink');
+const resourcelink = require('./plugins/parser/resourcelink');
+const tiplink = require('./plugins/parser/tiplink');
+const vocablink = require('./plugins/parser/vocablink');
 
 module.exports = class CdoFlavoredParser {
   static getPlugins = function() {
