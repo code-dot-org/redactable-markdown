@@ -9,6 +9,12 @@ describe('divclass', () => {
       expect(output).toEqual("<div class=\"col-33\"><p>simple content</p></div>\n");
     });
 
+    it('renders a basic divclass even with a bunch of extra whitespace', () => {
+      const input = "[col-33]   \n \nsimple content\n  \n     [/col-33]";
+      const output = parser.sourceToHtml(input);
+      expect(output).toEqual("<div class=\"col-33\"><p>simple content</p></div>\n");
+    });
+
     it('works without content - but only if separated by FOUR newlines', () => {
       const validInput = "[empty]\n\n\n\n[/empty]";
       expect(parser.sourceToHtml(validInput)).toEqual("<div class=\"empty\"></div>\n");

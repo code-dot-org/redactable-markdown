@@ -62,7 +62,7 @@
  * [/][0]
  */
 
-const DIVCLASS_OPEN_RE = /^\[([\w-]+)\]\n\n/;
+const DIVCLASS_OPEN_RE = /^\[([\w-]+)\] *\n *\n/;
 
 let redact;
 
@@ -129,8 +129,8 @@ function tokenizeDivclass(eat, value, silent) {
   const startIndex = startMatch[0].length;
   const className = startMatch[1];
 
-  const MATCHING_DIVCLASS_OPEN_RE = new RegExp(`\\[${className}\\]\\n\\n`, 'g');
-  const MATCHING_DIVCLASS_CLOSE_RE = new RegExp(`\\n\\n\\[\\/${className}\\]`, 'g');
+  const MATCHING_DIVCLASS_OPEN_RE = new RegExp(`\\[${className}\\] *\\n *\\n`, 'g');
+  const MATCHING_DIVCLASS_CLOSE_RE = new RegExp(`\\n *\\n *\\[\\/${className}\\]`, 'g');
 
   MATCHING_DIVCLASS_CLOSE_RE.lastIndex = startIndex;
 
