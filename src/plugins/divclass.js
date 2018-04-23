@@ -62,7 +62,7 @@
  * [/][0]
  */
 
-const DIVCLASS_OPEN_RE = /^\[([\w-]+)\]\n\n/;
+const DIVCLASS_OPEN_RE = /^\[([\w-]+)\] *\n *\n/;
 
 let redact;
 
@@ -129,31 +129,40 @@ function tokenizeDivclass(eat, value, silent) {
   const startIndex = startMatch[0].length;
   const className = startMatch[1];
 
-  const divclassClose = `\n\n[/${className}]`;
+  const MATCHING_DIVCLASS_OPEN_RE = new RegExp(`\\[${className}\\] *\\n *\\n`, 'g');
+  const MATCHING_DIVCLASS_CLOSE_RE = new RegExp(`\\n *\\n *\\[\\/${className}\\]`, 'g');
 
-  // the first instance of a matching close block in the rest of the value
-  // string. Note that because of nesting, this may not necessarily be the
-  // actual matching close block we want.
-  let nextMatchingClose = value.indexOf(divclassClose, startIndex);
+  MATCHING_DIVCLASS_CLOSE_RE.lastIndex = startIndex;
 
-  // to find out, we look at everything in between the opening block and the
-  // selected closing block. If there are an equal number of opens and closes
-  // within that subvalue, we're good; otherwise, select the next matching close
-  // and try again
-  let subvalue = value.slice(startIndex, nextMatchingClose);
-  while (subvalue.split(divclassOpen).length !== subvalue.split(divclassClose).length) {
-    nextMatchingClose = value.indexOf(divclassClose, nextMatchingClose + 1);
-    subvalue = value.slice(startIndex, nextMatchingClose);
-  }
+  let nextMatchingClose;
+  let subvalue;
+  let endIndex;
 
-  if (nextMatchingClose === -1) {
-    return;
-  }
+  do {
+    // find the first instance of a matching close block in the rest of the
+    // value string. Note that because of nesting, this may not necessarily be
+    // the actual matching close block we want.
+    nextMatchingClose = MATCHING_DIVCLASS_CLOSE_RE.exec(value);
+
+    // if at any point we "run out" of matches before finding a valid one, then
+    // fail fast
+    if (MATCHING_DIVCLASS_CLOSE_RE.lastIndex === 0) {
+      return
+    }
+    endIndex = MATCHING_DIVCLASS_CLOSE_RE.lastIndex - nextMatchingClose[0].length;
+    subvalue = value.slice(startIndex, endIndex);
+
+    // to find out, we look at everything in between the opening block and the
+    // selected closing block. If there are an equal number of opens and closes
+    // within that subvalue, we're good; otherwise, select the next matching close
+    // and try again
+  } while (subvalue.split(MATCHING_DIVCLASS_OPEN_RE).length !== subvalue.split(MATCHING_DIVCLASS_CLOSE_RE).length)
 
   if (silent) {
     return true;
   }
 
+  const divclassClose = nextMatchingClose[0];
   const contents = this.tokenizeBlock(subvalue, eat.now());
 
   if (redact) {
