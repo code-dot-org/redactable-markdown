@@ -10,10 +10,10 @@ const inputdata = JSON.parse(fs.readFileSync(inputfile));
 
 function print(data) {
   if (typeof data === "string") {
-    console.log(data);
+    process.stdout.write(data + "\n");
   } else if (typeof data === "object") {
     Object.keys(data).forEach((key) => {
-      console.log(key + "\n")
+      process.stdout.write(key + "\n\n")
       print(data[key]);
     })
   } else {
