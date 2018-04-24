@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env babel-node
 
 const parser = require('../cdoFlavoredParser');
 const parseArgs = require('minimist')
@@ -7,9 +7,15 @@ const fs = require('fs');
 const argv = parseArgs(process.argv.slice(2));
 
 const inputfile = argv._[0];
-const inputdata = JSON.parse(fs.readFileSync(inputfile));
+let inputdata = fs.readFileSync(inputfile);
+try {
+  inputdata = JSON.parse(inputdata);
+} catch (e) {
+  inputdata = inputdata.toString();
+}
 const outputfile = argv.o;
 
+let finished = 0;
 function redact(data) {
   if (typeof data === "string") {
     return parser.sourceToRedacted(data);
@@ -17,6 +23,10 @@ function redact(data) {
     return Object.keys(data).reduce((prev, key) => {
       const value = data[key];
       prev[key] = redact(value);
+      finished++;
+      if (finished % 100 === 0) {
+        console.log(finished);
+      }
       return prev;
     }, {});
   } else {
@@ -25,5 +35,10 @@ function redact(data) {
 }
 
 const outputdata = redact(inputdata);
+const formattedoutput = typeof outputdata === "object" ? JSON.stringify(outputdata, null, 2) : outputdata;
 
-fs.writeFileSync(outputfile, JSON.stringify(outputdata, null, 2));
+if (outputfile) {
+  fs.writeFileSync(outputfile, formattedoutput);
+} else {
+  process.stdout.write(formattedoutput)
+}
