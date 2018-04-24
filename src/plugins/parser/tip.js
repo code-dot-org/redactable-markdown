@@ -11,7 +11,16 @@ module.exports = function tip() {
   const restorationMethods = Parser.prototype.restorationMethods;
 
   restorationMethods.tip = function (add, nodes, content, children) {
-    return createTip(add, content, children);
+    return add({
+      type: 'paragraph',
+      children: [{
+        type: 'rawtext',
+        value: `!!!${nodes.open.tipType} "${content}" <${nodes.open.id}>\n`
+      }, {
+        type: 'indent',
+        children
+      }]
+    });
   }
 
   redact = Parser.prototype.options.redact;
@@ -32,26 +41,35 @@ function tokenizeTip(eat, value, silent) {
     return true;
   }
 
-  // find the indented block that represents the content of the tip
+  // find the indented block that represents the content of the tip. Blocks can
+  // be indented by either four spaces or a tab character
   let index = match[0].length;
   while (index < value.length) {
     index++;
     if (value.charAt(index) === "\n") {
-      //if (value.slice(index + 1, index + 5) !== "    ") {
-      if (value.charAt(index + 1) !== " ") {
-        break;
+      if (value.charAt(index + 1) !== "\n") {
+        if (!(
+          value.charAt(index + 1) === "\t" ||
+          value.slice(index + 1, index + 5) === "    "
+        )) {
+          break;
+        }
       }
     }
   }
 
+  const tipType = match[1];
   const title = match[2];
+  const id = match[3];
   const subvalue = value.slice(match[0].length, index);
-  const contents = this.tokenizeBlock(removeIndentation(subvalue, 4), eat.now());
+  const children = this.tokenizeBlock(removeIndentation(subvalue, 4), eat.now());
 
   if (redact) {
     const open = eat(match[0])({
       type: 'redaction',
       redactionType: 'tip',
+      id,
+      tipType,
       children: [{
         type: "text",
         value: title
@@ -60,7 +78,7 @@ function tokenizeTip(eat, value, silent) {
     })
 
     const add = eat(subvalue);
-    const content = contents.map((content) => add(content));
+    const content = children.map((child) => add(child));
 
     const close = add({
       type: 'redaction',
@@ -72,10 +90,6 @@ function tokenizeTip(eat, value, silent) {
   }
 
   const add = eat(match[0] + subvalue);
-  return createTip(add, title, contents);
-}
-
-function createTip(add, title, children) {
   return add({
     type: "div",
     children: [{
@@ -96,12 +110,12 @@ function createTip(add, title, children) {
       data: {
         hProperties: {
           className: "admonition-title",
-          id: "tip_tip-0"
+          id: `tip_${id}`
         }
       }
     }, {
       type: "div",
-      children: children
+      children
     }],
     data: {
       hProperties: {
