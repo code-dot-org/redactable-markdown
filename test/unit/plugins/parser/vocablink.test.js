@@ -1,6 +1,6 @@
 const expect = require('expect');
-const parser = require('../../../src/cdoFlavoredParser');
-const mapMdast = require('../../utils').mapMdast;
+const parser = require('../../../../src/cdoFlavoredParser');
+const mapMdast = require('../../../utils').mapMdast;
 
 describe('vocablink', () => {
   describe('parse', () => {
