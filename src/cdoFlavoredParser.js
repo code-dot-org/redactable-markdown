@@ -7,6 +7,7 @@ const renderRedactions = require('./plugins/process/renderRedactions');
 const restoreRedactions = require('./plugins/process/restoreRedactions');
 const restorationRegistration = require('./plugins/process/restorationRegistration');
 
+const indent = require('./plugins/compiler/indent');
 const rawtext = require('./plugins/compiler/rawtext');
 
 const divclass = require('./plugins/parser/divclass');
@@ -35,6 +36,7 @@ module.exports = class CdoFlavoredParser {
 
   static getCompilerPlugins = function() {
     return [
+      indent,
       rawtext,
     ]
   }
