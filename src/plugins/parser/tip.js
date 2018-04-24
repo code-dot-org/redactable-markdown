@@ -11,11 +11,18 @@ module.exports = function tip() {
   const restorationMethods = Parser.prototype.restorationMethods;
 
   restorationMethods.tip = function (add, nodes, content, children) {
+    let value = `!!!${nodes.open.tipType}`;
+    if (content) {
+      value += ` "${content}"`;
+    }
+    if (nodes.open.id) {
+      value += ` <${nodes.open.id}>`;
+    }
     return add({
       type: 'paragraph',
       children: [{
         type: 'rawtext',
-        value: `!!!${nodes.open.tipType} "${content}" <${nodes.open.id}>\n`
+        value: value + "\n"
       }, {
         type: 'indent',
         children
@@ -59,7 +66,7 @@ function tokenizeTip(eat, value, silent) {
   }
 
   const tipType = match[1];
-  const title = match[2];
+  const title = match[2] || "";
   const id = match[3];
   const subvalue = value.slice(match[0].length, index);
   const children = this.tokenizeBlock(removeIndentation(subvalue, 4), eat.now());
@@ -110,7 +117,7 @@ function tokenizeTip(eat, value, silent) {
       data: {
         hProperties: {
           className: "admonition-title",
-          id: `tip_${id}`
+          id: id && `tip_${id}`
         }
       }
     }, {
