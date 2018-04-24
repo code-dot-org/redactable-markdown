@@ -13,7 +13,9 @@ module.exports = function rawtext() {
     visitors.indent = function (node) {
       const indentation = "    ";
       const newline = "\n";
-      return this.all(node).map(child => indentation + child.split(newline).join(newline + indentation));
+      return this.all(node).map(
+        child => indentation + child.split(newline).join(newline + indentation)
+      ).join(newline + newline);
     }
   }
 }
