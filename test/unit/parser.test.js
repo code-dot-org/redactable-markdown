@@ -8,6 +8,18 @@ describe('Standard Markdown', () => {
       const output = parser.sourceToHtml(input);
       expect(output).toEqual("<p>This is some text with <a href=\"http://example.com\">a link</a></p>\n");
     });
+
+    it('can render sublists with tab characters', () => {
+      const input = "- List item one.\n\n\t- Sublist item one\n\n\t- Sublist item two\n\n- List item two"
+      const output = parser.sourceToHtml(input);
+      expect(output).toEqual("<ul>\n<li>\n<p>List item one.</p>\n<ul>\n<li>\n<p>Sublist item one</p>\n</li>\n<li>\n<p>Sublist item two</p>\n</li>\n</ul>\n</li>\n<li>\n<p>List item two</p>\n</li>\n</ul>\n");
+    });
+
+    it('can render complex nested lists', () => {
+      const input = "1.  List item one.\n\n    List item one continued with a second paragraph followed by an\n    Indented block.\n\n        $ ls *.sh\n        $ mv *.sh ~/tmp\n\n    List item continued with a third paragraph.\n\n2.  List item two continued with an open block.\n\n    This paragraph is part of the preceding list item.\n\n    1. This list is nested and does not require explicit item continuation.\n\n       This paragraph is part of the preceding list item.\n\n    2. List item b.\n\n    This paragraph belongs to item two of the outer list.";
+      const output = parser.sourceToHtml(input);
+      expect(output).toEqual("<ol>\n<li>\n<p>List item one.</p>\n<p>List item one continued with a second paragraph followed by an\nIndented block.</p>\n<pre><code>$ ls *.sh\n$ mv *.sh ~/tmp\n</code></pre>\n<p>List item continued with a third paragraph.</p>\n</li>\n<li>\n<p>List item two continued with an open block.</p>\n<p>This paragraph is part of the preceding list item.</p>\n<ol>\n<li>\n<p>This list is nested and does not require explicit item continuation.</p>\n<p>This paragraph is part of the preceding list item.</p>\n</li>\n<li>\n<p>List item b.</p>\n</li>\n</ol>\n<p>This paragraph belongs to item two of the outer list.</p>\n</li>\n</ol>\n");
+    });
   });
 
   describe('redact', () => {
