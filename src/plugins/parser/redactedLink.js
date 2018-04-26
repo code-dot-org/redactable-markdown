@@ -72,6 +72,12 @@ module.exports = function redactedLink() {
 function tokenizeRedactedLink(eat, value, silent) {
   const link = tokenizeLink.call(this, eat, value, silent);
   if (link) {
+    if (link.type === 'image') {
+      link.children = [{
+        type: 'text',
+        value: link.alt
+      }]
+    }
     link.redactionType = 'redacted' + link.type;
     link.type = 'redaction';
   }

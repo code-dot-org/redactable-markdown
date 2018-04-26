@@ -44,8 +44,6 @@ module.exports = function renderRedactions() {
       var exit = self.enterLink();
       if (node.children) {
         value = self.all(node).join('');
-      } else if (node.alt) {
-        value = self.encode(self.escape(node.alt || '', node))
       }
       exit();
 
