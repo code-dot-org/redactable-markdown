@@ -9,6 +9,12 @@ describe('Standard Markdown', () => {
       expect(output).toEqual("<p>This is some text with <a href=\"http://example.com\">a link</a></p>\n");
     });
 
+    it('can render autolinks', () => {
+      const input = "This is some text that automatically links to <http://example.com>";
+      const output = parser.sourceToHtml(input);
+      expect(output).toEqual("<p>This is some text that automatically links to <a href=\"http://example.com\">http://example.com</a></p>\n");
+    });
+
     it('can render sublists with tab characters', () => {
       const input = "- List item one.\n\n\t- Sublist item one\n\n\t- Sublist item two\n\n- List item two"
       const output = parser.sourceToHtml(input);
@@ -34,6 +40,12 @@ describe('Standard Markdown', () => {
       const output = parser.sourceToRedacted(input);
       expect(output).toEqual("This is some text with [an image][0]\n");
     });
+
+    it('redacts autolinks', () => {
+      const input = "This is some text that automatically links to <http://example.com>";
+      const output = parser.sourceToRedacted(input);
+      expect(output).toEqual("This is some text that automatically links to [http://example.com][0]\n");
+    });
   });
 
   describe('restore', () => {
@@ -42,6 +54,20 @@ describe('Standard Markdown', () => {
       const redacted = "Ceci est un texte avec [un lien][0]";
       const output = parser.sourceAndRedactedToMarkdown(source, redacted);
       expect(output).toEqual("Ceci est un texte avec [un lien](http://example.com/)\n");
+    });
+
+    it('can restore redacted autolinks', () => {
+      const source = "This is some text that automatically links to <http://example.com>";
+      const redacted = "C'est du texte that automatically links to [http://example.com][0]\n";
+      const output = parser.sourceAndRedactedToMarkdown(source, redacted);
+      expect(output).toEqual("C'est du texte that automatically links to <http://example.com>\n");
+    });
+
+    it('can restore redacted and altered autolinks', () => {
+      const source = "This is some text that automatically links to <http://example.com>";
+      const redacted = "C'est du texte that links to [this example][0]\n";
+      const output = parser.sourceAndRedactedToMarkdown(source, redacted);
+      expect(output).toEqual("C'est du texte that links to [this example](http://example.com)\n");
     });
 
     it('can restore redacted links to html', () => {

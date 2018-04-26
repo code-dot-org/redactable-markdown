@@ -1,16 +1,17 @@
 let redact;
 let tokenizeLink;
+let tokenizeAutoLink;
 
 /**
- * Parser extension to support rendering of links (and images) when in redact
- * mode.
+ * Parser extension to support rendering of links (including images and
+ * autolinks) when in redact mode.
  *
  * Note that most plugins that support redact mode are adding the ability to
  * parse an entirely new syntax in both normal and redact mode, whereas this one
- * is _extending_ the build-in ability to parse links (and image) to add redact
- * mode.
+ * is _extending_ the build-in ability to parse the various types of links to
+ * add redact mode.
  *
- * As such, this basically acts as an interstitial between the build-in image
+ * As such, this basically acts as an interstitial between the built-in link
  * method to turn its output into a redaction when appropriate.
  *
  * @example
@@ -58,14 +59,19 @@ module.exports = function redactedLink() {
 
   redact = Parser.prototype.options.redact;
   tokenizeLink = tokenizers.link;
+  tokenizeAutoLink = tokenizers.autoLink;
 
   tokenizeRedactedLink.locator = tokenizers.link.locator;
   tokenizers.redactedLink = tokenizeRedactedLink
+
+  tokenizeRedactedAutoLink.locator = tokenizers.autoLink.locator;
+  tokenizers.redactedAutoLink = tokenizeRedactedAutoLink
 
   // If in redacted mode, run this instead of original link tokenizer. If
   // running regularly, do nothing special.
   if (redact) {
     methods.splice(methods.indexOf('link'), 1, 'redactedLink');
+    methods.splice(methods.indexOf('autoLink'), 1, 'redactedAutoLink');
   }
 }
 
@@ -73,6 +79,16 @@ function tokenizeRedactedLink(eat, value, silent) {
   const link = tokenizeLink.call(this, eat, value, silent);
   if (link) {
     link.redactionType = 'redacted' + link.type;
+    link.type = 'redaction';
+  }
+
+  return link;
+}
+
+function tokenizeRedactedAutoLink(eat, value, silent) {
+  const link = tokenizeAutoLink.call(this, eat, value, silent);
+  if (link) {
+    link.redactionType = 'redactedlink';
     link.type = 'redaction';
   }
 
