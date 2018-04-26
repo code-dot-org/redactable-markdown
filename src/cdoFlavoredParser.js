@@ -7,11 +7,13 @@ const renderRedactions = require('./plugins/process/renderRedactions');
 const restoreRedactions = require('./plugins/process/restoreRedactions');
 const restorationRegistration = require('./plugins/process/restorationRegistration');
 
+const indent = require('./plugins/compiler/indent');
 const rawtext = require('./plugins/compiler/rawtext');
 
 const divclass = require('./plugins/parser/divclass');
 const redactedLink = require('./plugins/parser/redactedLink');
 const resourcelink = require('./plugins/parser/resourcelink');
+const tip = require('./plugins/parser/tip');
 const tiplink = require('./plugins/parser/tiplink');
 const vocablink = require('./plugins/parser/vocablink');
 
@@ -26,6 +28,7 @@ module.exports = class CdoFlavoredParser {
       divclass,
       redactedLink,
       resourcelink,
+      tip,
       tiplink,
       vocablink,
     ];
@@ -33,6 +36,7 @@ module.exports = class CdoFlavoredParser {
 
   static getCompilerPlugins = function() {
     return [
+      indent,
       rawtext,
     ]
   }
