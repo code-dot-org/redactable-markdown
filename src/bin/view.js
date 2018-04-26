@@ -5,8 +5,8 @@ const fs = require('fs');
 
 const argv = parseArgs(process.argv.slice(2));
 
-const inputfile = argv._[0];
-const inputdata = JSON.parse(fs.readFileSync(inputfile));
+const inputFile = argv._[0];
+const inputData = JSON.parse(fs.readFileSync(inputFile));
 
 function print(data) {
   if (typeof data === "string") {
@@ -22,4 +22,4 @@ function print(data) {
 
 }
 
-print(inputdata);
+print(inputData);

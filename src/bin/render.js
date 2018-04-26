@@ -6,14 +6,14 @@ const fs = require('fs');
 
 const argv = parseArgs(process.argv.slice(2));
 
-const inputfile = argv._[0];
-let inputdata = fs.readFileSync(inputfile);
+const inputFile = argv._[0];
+let inputData = fs.readFileSync(inputFile);
 try {
-  inputdata = JSON.parse(inputdata);
+  inputData = JSON.parse(inputData);
 } catch (e) {
-  inputdata = inputdata.toString();
+  inputData = inputData.toString();
 }
-const outputfile = argv.o;
+const outputFile = argv.o;
 
 function render(data) {
   if (typeof data === "string") {
@@ -29,11 +29,11 @@ function render(data) {
   }
 }
 
-const outputdata = render(inputdata);
-const formattedoutput = typeof outputdata === "object" ? JSON.stringify(outputdata, null, 2) : outputdata;
+const outputData = render(inputData);
+const formattedOutput = typeof outputData === "object" ? JSON.stringify(outputData, null, 2) : outputData;
 
-if (outputfile) {
-  fs.writeFileSync(outputfile, formattedoutput);
+if (outputFile) {
+  fs.writeFileSync(outputFile, formattedOutput);
 } else {
-  process.stdout.write(formattedoutput)
+  process.stdout.write(formattedOutput)
 }

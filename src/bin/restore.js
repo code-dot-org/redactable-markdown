@@ -6,21 +6,21 @@ const fs = require('fs');
 
 const argv = parseArgs(process.argv.slice(2));
 
-const sourcefile = argv.s
-let sourcedata = fs.readFileSync(sourcefile);
+const sourceFile = argv.s
+let sourceData = fs.readFileSync(sourceFile);
 try {
-  sourcedata = JSON.parse(sourcedata);
+  sourceData = JSON.parse(sourceData);
 } catch (e) {
-  sourcedata = sourcedata.toString();
+  sourceData = sourceData.toString();
 }
-const redactedfile = argv.r
-let redacteddata = fs.readFileSync(redactedfile);
+const redactedFile = argv.r
+let redactedData = fs.readFileSync(redactedFile);
 try {
-  redacteddata = JSON.parse(redacteddata);
+  redactedData = JSON.parse(redactedData);
 } catch (e) {
-  redacteddata = redacteddata.toString();
+  redactedData = redactedData.toString();
 }
-const outputfile = argv.o;
+const outputFile = argv.o;
 
 function restore(source, redacted) {
   if (typeof source !== typeof redacted) {
@@ -41,11 +41,11 @@ function restore(source, redacted) {
   }
 }
 
-const outputdata = restore(sourcedata, redacteddata);
-const formattedoutput = typeof outputdata === "object" ? JSON.stringify(outputdata, null, 2) : outputdata;
+const outputData = restore(sourceData, redactedData);
+const formattedOutput = typeof outputData === "object" ? JSON.stringify(outputData, null, 2) : outputData;
 
-if (outputfile) {
-  fs.writeFileSync(outputfile, formattedoutput);
+if (outputFile) {
+  fs.writeFileSync(outputFile, formattedOutput);
 } else {
-  process.stdout.write(formattedoutput)
+  process.stdout.write(formattedOutput)
 }
