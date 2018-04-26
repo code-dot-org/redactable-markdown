@@ -39,7 +39,10 @@ module.exports = class CdoFlavoredParser {
 
   static getParser = function() {
     return unified()
-      .use(parse)
+      .use(parse, {
+        commonmark: true,
+        pedantic: true
+      })
       .use(this.getParserPlugins());
   };
 
