@@ -49,7 +49,8 @@ function tokenizeTip(eat, value, silent) {
   }
 
   // find the indented block that represents the content of the tip. Blocks can
-  // be indented by either four spaces or a tab character
+  // be indented by either four spaces or a tab character, and can also contain
+  // blank lines separating multiple indented blocks
   let index = match[0].length;
   while (index < value.length) {
     index++;
