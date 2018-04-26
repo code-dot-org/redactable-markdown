@@ -1,9 +1,13 @@
 /**
- * Stringify text without escaping special characters; useful for rendering
- * custom syntaxes which include control characters back to markdown.
+ * Indent the children of this node with four spaces. The product will be simiar
+ * to the syntax for indented code, but will never be fenced or annonated, and
+ * this node will actually stringify its children (unlike the code node which
+ * simply indents a given value string)
  *
- * @see https://github.com/remarkjs/remark/blob/remark-stringify%405.0.0/packages/remark-stringify/lib/visitors/text.js
- * @see divclass
+ * Note that this plugin could easily be updated to override the default
+ * indentation character and/or level of indentation.
+ *
+ * @see plugins/parser/tip
  */
 module.exports = function rawtext() {
   if (this.Compiler) {
