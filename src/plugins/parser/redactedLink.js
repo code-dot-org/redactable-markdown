@@ -75,7 +75,7 @@ function tokenizeRedactedLink(eat, value, silent) {
     if (link.type === 'image') {
       link.children = [{
         type: 'text',
-        value: link.alt
+        value: link.alt || ""
       }]
     }
     link.redactionType = 'redacted' + link.type;
