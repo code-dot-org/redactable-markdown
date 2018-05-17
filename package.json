@@ -22,12 +22,10 @@
     "babel-jest": "^22.2.2",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
-    "enzyme": "^3.3.0",
-    "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^4.17.0",
     "eslint-plugin-babel": "^4.1.2",
-    "eslint-plugin-react": "^7.6.1",
     "file-loader": "^1.1.6",
     "html-webpack-plugin": "^2.30.1",
     "jest": "^22.2.2",
@@ -36,14 +34,11 @@
     "raw-loader": "^0.5.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-markdown": "^3.1.5",
     "remark-html": "^7.0.0",
     "remark-parse": "^5.0.0",
     "remark-stringify": "^5.0.0",
+    "unified": "^7.0.0",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.5"
-  },
-  "jest": {
-    "setupTestFrameworkScriptFile": "./test/setupTests.js"
   }
 }
