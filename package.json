@@ -2,7 +2,11 @@
   "name": "cdo-flavored-markdown",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "bin": {
+    "redact": "dist/bin/redact.js",
+    "render": "dist/bin/render.js",
+    "restore": "dist/bin/restore.js"
+  },
   "scripts": {
     "build": "webpack -p",
     "build:dev": "webpack --progress --colors --mode=development",
