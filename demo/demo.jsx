@@ -2,7 +2,6 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 
 const CdoFlavoredParser = require('../src/cdoFlavoredParser');
-const CdoFlavoredMarkdown = require('../src/CdoFlavoredMarkdown');
 
 //const initialMarkdown = require('./cdo-markdown.md');
 const initialMarkdown = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
@@ -70,19 +69,23 @@ class Demo extends React.Component {
           onChange={this.handleRedactedChange}
         />
         <div style={this.styles.buttonContainer}>
-          <button onClick={this.redact}>-> Redact -></button>
+          <button onClick={this.redact}>&rarr; Redact &rarr;</button>
         </div>
-        <div style={this.styles.renderContainer}>
-          <CdoFlavoredMarkdown source={this.state.sourceMarkdown} />
-        </div>
-        <div style={this.styles.renderContainer}>
-          <CdoFlavoredMarkdown
-            source={CdoFlavoredParser.sourceAndRedactedToMarkdown(
-              this.state.sourceMarkdown,
-              this.state.redactedMarkdown,
-            )}
-          />
-        </div>
+        <div
+          style={this.styles.renderContainer}
+          dangerouslySetInnerHTML={{
+            __html: CdoFlavoredParser.sourceToHtml(this.state.sourceMarkdown)
+          }}
+        />
+        <div
+          style={this.styles.renderContainer}
+          dangerouslySetInnerHTML={{
+            __html: CdoFlavoredParser.sourceAndRedactedToHtml(
+                this.state.sourceMarkdown,
+                this.state.redactedMarkdown,
+              )
+          }}
+        />
       </div>
     );
   }
