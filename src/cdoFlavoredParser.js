@@ -10,6 +10,7 @@ const restorationRegistration = require('./plugins/process/restorationRegistrati
 const indent = require('./plugins/compiler/indent');
 const rawtext = require('./plugins/compiler/rawtext');
 
+const attrlist = require('./plugins/parser/attrlist');
 const divclass = require('./plugins/parser/divclass');
 const redactedLink = require('./plugins/parser/redactedLink');
 const resourcelink = require('./plugins/parser/resourcelink');
@@ -25,6 +26,7 @@ module.exports = class CdoFlavoredParser {
   static getParserPlugins = function() {
     return [
       restorationRegistration,
+      attrlist,
       divclass,
       redactedLink,
       resourcelink,
