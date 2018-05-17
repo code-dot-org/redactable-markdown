@@ -1,5 +1,3 @@
-#!/usr/bin/env babel-node
-
 const parseArgs = require('minimist')
 const fs = require('fs');
 
