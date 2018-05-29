@@ -4,6 +4,17 @@ const fs = require('fs');
 
 const argv = parseArgs(process.argv.slice(2));
 
+const helpFlag = (argv.h || argv.help);
+const missingRequiredFlags = !(argv.s && argv.r);
+
+if (helpFlag || missingRequiredFlags) {
+  process.stdout.write("usage: restore -s SOURCEFILE -r REDACTEDFILE\n");
+  process.stdout.write("options:\n");
+  process.stdout.write("\t-h, --help: print this help message\n");
+  process.stdout.write("\t-o OUTFILE: output to OUTFILE rather than stdout\n");
+  process.exit()
+}
+
 const sourceFile = argv.s
 let sourceData = fs.readFileSync(sourceFile);
 try {

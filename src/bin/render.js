@@ -4,6 +4,16 @@ const fs = require('fs');
 
 const argv = parseArgs(process.argv.slice(2));
 
+const helpFlag = (argv.h || argv.help);
+
+if (helpFlag) {
+  process.stdout.write("usage: render INPUTFILE\n");
+  process.stdout.write("options:\n");
+  process.stdout.write("\t-h, --help: print this help message\n");
+  process.stdout.write("\t-o OUTFILE: output to OUTFILE rather than stdout\n");
+  process.exit()
+}
+
 const inputFile = argv._[0];
 let inputData = fs.readFileSync(inputFile);
 try {
