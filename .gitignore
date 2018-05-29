@@ -5,7 +5,8 @@
 /coverage
 
 # Build files
-/build/*
+/demo/build
+/dist
 
 # OS X
 .DS_Store

@@ -14,10 +14,10 @@ notifications:
   email: false
 
 before_deploy:
-  - npm run build
+  - npm run build:demo
 
 deploy:
-  local_dir: build
+  local_dir: demo/build
   provider: pages
   skip_cleanup: true
   github_token: $GITHUB_TOKEN

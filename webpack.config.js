@@ -1,30 +1,23 @@
-const path = require("path");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
-  entry: "./demo/demo.jsx",
-  output: {
-    path: path.resolve(__dirname, "build"),
-    filename: "bundle.js",
+  entry: {
+    "bin/redact": "./src/bin/redact.js",
+    "bin/render": "./src/bin/render.js",
+    "bin/restore": "./src/bin/restore.js"
   },
+  target: 'node',
   module: {
     rules: [{
-      test: /\.jsx?$/,
+      test: /\.js$/,
       loader: "babel-loader",
-    }, {
-      test: /\.md$/,
-      loader: 'raw-loader',
     }]
   },
   plugins: [
-    new HtmlWebpackPlugin()
-  ],
-  resolve: {
-    extensions: [".js", ".jsx"],
-  },
-  stats: {
-    colors: true
-  },
-  devtool: 'source-map',
-  devServer: { inline: true }
+    new webpack.BannerPlugin({
+      banner: '#!/usr/bin/env node',
+      raw: true
+    })
+  ]
 };
+
