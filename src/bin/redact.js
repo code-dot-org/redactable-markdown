@@ -25,7 +25,9 @@ const outputFile = argv.o;
 
 function redact(data) {
   if (typeof data === "string") {
-    return parser.sourceToRedacted(data);
+    if (data) {
+      return parser.sourceToRedacted(data);
+    }
   } else if (typeof data === "object") {
     return Object.keys(data).reduce((prev, key) => {
       const value = data[key];

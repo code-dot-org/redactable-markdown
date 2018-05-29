@@ -37,7 +37,9 @@ function restore(source, redacted) {
   }
 
   if (typeof source === "string") {
-    return parser.sourceAndRedactedToMarkdown(source, redacted);
+    if (source && redacted) {
+      return parser.sourceAndRedactedToMarkdown(source, redacted);
+    }
   } else if (typeof source === "object") {
     return Object.keys(source).reduce((prev, key) => {
       const sourceValue = source[key];

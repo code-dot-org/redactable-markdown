@@ -25,7 +25,9 @@ const outputFile = argv.o;
 
 function render(data) {
   if (typeof data === "string") {
-    return parser.sourceToHtml(data);
+    if (data) {
+      return parser.sourceToHtml(data);
+    }
   } else if (typeof data === "object") {
     return Object.keys(data).reduce((prev, key) => {
       const value = data[key];
