@@ -5,7 +5,6 @@ module.exports = {
   "parserOptions": {
     "sourceType": "module",
     "ecmaFeatures": {
-      "jsx": true,
       "modules": true,
       "ecmaVersion": 6,
       "experimentalObjectRestSpread": true
@@ -13,12 +12,10 @@ module.exports = {
   },
 
   "plugins": [
-    "react",
     "babel",
   ],
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended"
   ],
 
   "env": {
