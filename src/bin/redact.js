@@ -4,6 +4,16 @@ const fs = require('fs');
 
 const argv = parseArgs(process.argv.slice(2));
 
+const helpFlag = (argv.h || argv.help);
+
+if (helpFlag) {
+  process.stdout.write("usage: redact INPUTFILE\n");
+  process.stdout.write("options:\n");
+  process.stdout.write("\t-h, --help: print this help message\n");
+  process.stdout.write("\t-o OUTFILE: output to OUTFILE rather than stdout\n");
+  process.exit()
+}
+
 const inputFile = argv._[0];
 let inputData = fs.readFileSync(inputFile);
 try {
@@ -15,7 +25,9 @@ const outputFile = argv.o;
 
 function redact(data) {
   if (typeof data === "string") {
-    return parser.sourceToRedacted(data);
+    if (data) {
+      return parser.sourceToRedacted(data);
+    }
   } else if (typeof data === "object") {
     return Object.keys(data).reduce((prev, key) => {
       const value = data[key];
