@@ -16,7 +16,10 @@
     "test:unit": "jest test/unit",
     "test:unit:watch": "npm run test:unit -- --watch",
     "test:integration": "jest test/integration",
-    "test:integration:watch": "npm run test:integration -- --watch"
+    "test:integration:watch": "npm run test:integration -- --watch",
+    "preversion": "npm run test",
+    "version": "npm run build",
+    "postversion": "git push && git push --tags && npm publish"
   },
   "repository": {
     "type": "git",
