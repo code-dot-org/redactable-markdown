@@ -1,5 +1,5 @@
 {
-  "name": "cdo-flavored-markdown",
+  "name": "@code-dot-org/redacted-markdown",
   "version": "0.1.0",
   "description": "",
   "bin": {
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:code-dot-org/cdo-flavored-markdown.git"
+    "url": "git@github.com:code-dot-org/redacted-markdown.git"
   },
   "author": "Code.org <dev@code.org> (http://code.org)",
   "license": "SEE LICENSE IN LICENSE",
