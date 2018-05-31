@@ -7,6 +7,9 @@
     "render": "dist/bin/render.js",
     "restore": "dist/bin/restore.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "webpack -p",
     "build:dev": "webpack --progress --colors --mode=development",
