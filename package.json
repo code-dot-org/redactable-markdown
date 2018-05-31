@@ -23,7 +23,7 @@
     "url": "git@github.com:code-dot-org/cdo-flavored-markdown.git"
   },
   "author": "Code.org <dev@code.org> (http://code.org)",
-  "license": "ISC",
+  "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.2",
