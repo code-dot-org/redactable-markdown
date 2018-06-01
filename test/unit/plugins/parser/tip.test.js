@@ -24,6 +24,28 @@ describe('tip', () => {
       expect(output).toEqual(expected);
     });
 
+    it('renders a basic tip even with weird indentation', () => {
+      const input = "!!!tip \"this is an optional title, and it should be translatable\" <tip-0>\n\tThis is the content of the tip, and it should be translatable, as should all the following blocks:\n \tone\n\t\t\t\ttwo\n \t three\n              four\n\nThis is the next paragraph";
+      const output = parser.sourceToHtml(input);
+      /**
+       * <div class="admonition tip">
+       *   <p class="admonition-title" id="tip_tip-0">
+       *     <i class="fa fa-lightbulb-o"></i>
+       *     this is an optional title, and it should be translatable
+       *   </p>
+       *   <div>
+       *     <p>
+       *       This is the content of the tip, and it should be translatable, as
+       *       should all the following blocks: one two three four
+       *     </p>
+       *   </div>
+       * </div>
+       * <p>This is the next paragraph</p>
+       */
+      const expected = "<div class=\"admonition tip\"><p class=\"admonition-title\" id=\"tip_tip-0\"><i class=\"fa fa-lightbulb-o\"></i>this is an optional title, and it should be translatable</p><div><p>This is the content of the tip, and it should be translatable, as should all the following blocks:\none\ntwo\nthree\nfour</p></div></div>\n<p>This is the next paragraph</p>\n"
+      expect(output).toEqual(expected);
+    });
+
     it('renders a basic tip without an id', () => {
       const input = "!!!tip \"this is an optional title, and it should be translatable\"\n    This is the content of the tip, and it should be translatable\n    This is more stuff that is still part of the content of the tip\n\nThis is the next paragraph";
       const output = parser.sourceToHtml(input);

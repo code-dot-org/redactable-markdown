@@ -48,18 +48,21 @@ function tokenizeTip(eat, value, silent) {
     return true;
   }
 
-  // find the indented block that represents the content of the tip. Blocks can
-  // be indented by either four spaces or a tab character, and can also contain
-  // blank lines separating multiple indented blocks
+  // find the indented block that represents the content of the tip. Blocks are
+  // considered to be indented if they start with at least four spaces, where a
+  // tab is considered to be equivalent to four spaces.
+  //
+  // This is distinct from considering a block to be indented if it just starts
+  // with either four spaces or a tab in that it accounts for blocks that are
+  // indented with a combination of tabs and spaces.
   let index = match[0].length;
   while (index < value.length) {
     index++;
     if (value.charAt(index) === "\n") {
       if (value.charAt(index + 1) !== "\n") {
-        if (!(
-          value.charAt(index + 1) === "\t" ||
-          value.slice(index + 1, index + 5) === "    "
-        )) {
+        let nextLine = value.slice(index + 1, index + 5);
+        nextLine = nextLine.replace("\t", "    ");
+        if (!nextLine.startsWith("    ")) {
           break;
         }
       }
