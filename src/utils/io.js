@@ -17,6 +17,14 @@ module.exports.readFromFileOrStdin = function (path, callback) {
     });
 }
 
+module.exports.writeToFileOrStdout = function (path, data) {
+  if (path) {
+    fs.writeFileSync(path, data);
+  } else {
+    process.stdout.write(data)
+  }
+}
+
 module.exports.parseAsSerialized = function (input) {
   try {
     return JSON.parse(input);

@@ -1,4 +1,3 @@
-const fs = require('fs');
 const parseArgs = require('minimist')
 
 const ioUtils = require('../utils/io');
@@ -25,13 +24,7 @@ ioUtils.readFromFileOrStdin(argv._[0], (inputData) => {
   inputData = ioUtils.parseAsSerialized(inputData);
   const outputData = redact(inputData);
   const formattedOutput = typeof outputData === "object" ? JSON.stringify(outputData, null, 2) : outputData;
-
-  const outputFile = argv.o;
-  if (outputFile) {
-    fs.writeFileSync(outputFile, formattedOutput);
-  } else {
-    process.stdout.write(formattedOutput)
-  }
+  ioUtils.writeToFileOrStdout(argv.o, formattedOutput);
 });
 
 function redact(data) {
