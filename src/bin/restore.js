@@ -1,6 +1,7 @@
+const parseArgs = require('minimist');
+
+const ioUtils = require('../utils/io');
 const parser = require('../cdoFlavoredParser');
-const parseArgs = require('minimist')
-const fs = require('fs');
 
 const argv = parseArgs(process.argv.slice(2));
 
@@ -15,21 +16,12 @@ if (helpFlag || missingRequiredFlags) {
   process.exit()
 }
 
-const sourceFile = argv.s
-let sourceData = fs.readFileSync(sourceFile);
-try {
-  sourceData = JSON.parse(sourceData);
-} catch (e) {
-  sourceData = sourceData.toString();
-}
-const redactedFile = argv.r
-let redactedData = fs.readFileSync(redactedFile);
-try {
-  redactedData = JSON.parse(redactedData);
-} catch (e) {
-  redactedData = redactedData.toString();
-}
-const outputFile = argv.o;
+Promise.all([
+  ioUtils.readFromFileOrStdin(argv.s).then(ioUtils.parseAsSerialized),
+  ioUtils.readFromFileOrStdin(argv.r).then(ioUtils.parseAsSerialized),
+]).then(([source, redacted]) => restore(source, redacted))
+  .then(ioUtils.formatAsSerialized)
+  .then(ioUtils.writeToFileOrStdout.bind(ioUtils, argv.o));
 
 function restore(source, redacted) {
   if (typeof source !== typeof redacted) {
@@ -50,13 +42,4 @@ function restore(source, redacted) {
   } else {
     throw Error('cannot process content of type ' + typeof data);
   }
-}
-
-const outputData = restore(sourceData, redactedData);
-const formattedOutput = typeof outputData === "object" ? JSON.stringify(outputData, null, 2) : outputData;
-
-if (outputFile) {
-  fs.writeFileSync(outputFile, formattedOutput);
-} else {
-  process.stdout.write(formattedOutput)
 }
