@@ -1,20 +1,25 @@
 const fs = require('fs');
 
-module.exports.readFromFileOrStdin = function (path, callback) {
+module.exports.readFromFileOrStdin = function (path) {
   const readStream = path ? fs.createReadStream(path) : process.stdin;
   let inputData = "";
 
-  readStream
-    .setEncoding('utf8')
-    .on('readable', () => {
-      const chunk = readStream.read();
-      if (chunk !== null) {
-        inputData += chunk;
-      }
-    })
-    .on('end', () => {
-      callback(inputData);
-    });
+  return new Promise((resolve, reject) => {
+    readStream
+      .setEncoding('utf8')
+      .on('readable', () => {
+        const chunk = readStream.read();
+        if (chunk !== null) {
+          inputData += chunk;
+        }
+      })
+      .on('error', (error) => {
+        reject(error);
+      })
+      .on('end', () => {
+        resolve(inputData);
+      });
+  });
 }
 
 module.exports.writeToFileOrStdout = function (path, data) {

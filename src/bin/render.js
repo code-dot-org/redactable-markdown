@@ -1,4 +1,4 @@
-const parseArgs = require('minimist')
+const parseArgs = require('minimist');
 
 const ioUtils = require('../utils/io');
 const parser = require('../cdoFlavoredParser');
@@ -20,12 +20,11 @@ if (helpFlag) {
   process.exit()
 }
 
-ioUtils.readFromFileOrStdin(argv._[0], (inputData) => {
-  inputData = ioUtils.parseAsSerialized(inputData);
-  const outputData = render(inputData);
-  const formattedOutput = typeof outputData === "object" ? JSON.stringify(outputData, null, 2) : outputData;
-  ioUtils.writeToFileOrStdout(argv.o, formattedOutput);
-});
+ioUtils.readFromFileOrStdin(argv._[0])
+  .then(ioUtils.parseAsSerialized)
+  .then(render)
+  .then(ioUtils.formatAsSerialized)
+  .then(ioUtils.writeToFileOrStdout.bind(ioUtils, argv.o));
 
 function render(data) {
   if (typeof data === "string") {
