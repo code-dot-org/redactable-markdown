@@ -25,6 +25,20 @@ module.exports.writeToFileOrStdout = function (path, data) {
   }
 }
 
+module.exports.formatAsSerialized = function (output, format) {
+  if (!format) {
+    format = (typeof output === "object") ? 'json' : 'txt';
+  }
+
+  if (format === 'json') {
+    return JSON.stringify(output, null, 2);
+  } else if (format === 'txt') {
+    return output.toString();
+  } else {
+    throw Error("do not know how to output to format " + format);
+  }
+}
+
 module.exports.parseAsSerialized = function (input) {
   try {
     return JSON.parse(input);
