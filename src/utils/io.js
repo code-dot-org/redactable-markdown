@@ -13,9 +13,7 @@ module.exports.readFromFileOrStdin = function (path) {
           inputData += chunk;
         }
       })
-      .on('error', (error) => {
-        reject(error);
-      })
+      .on('error', reject)
       .on('end', () => {
         resolve(inputData);
       });
