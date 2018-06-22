@@ -2,6 +2,7 @@ const parseArgs = require('minimist');
 
 const ioUtils = require('../utils/io');
 const parser = require('../cdoFlavoredParser');
+const recursivelyProcessAll = require('../utils/misc').recursivelyProcessAll;
 
 const argv = parseArgs(process.argv.slice(2));
 
@@ -20,26 +21,12 @@ if (helpFlag) {
   process.exit()
 }
 
+function redact(data) {
+  return recursivelyProcessAll(parser.sourceToRedacted.bind(parser), data);
+}
+
 ioUtils.readFromFileOrStdin(argv._[0])
   .then(ioUtils.parseAsSerialized)
   .then(redact)
   .then(ioUtils.formatAsSerialized)
   .then(ioUtils.writeToFileOrStdout.bind(ioUtils, argv.o));
-
-function redact(data) {
-  if (!data) {
-    return data;
-  }
-
-  if (typeof data === "string") {
-    return parser.sourceToRedacted(data);
-  } else if (typeof data === "object") {
-    return Object.keys(data).reduce((prev, key) => {
-      const value = data[key];
-      prev[key] = redact(value);
-      return prev;
-    }, {});
-  } else {
-    throw Error('cannot process content of type ' + typeof data);
-  }
-}

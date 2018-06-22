@@ -2,6 +2,7 @@ const parseArgs = require('minimist');
 
 const ioUtils = require('../utils/io');
 const parser = require('../cdoFlavoredParser');
+const recursivelyProcessAll = require('../utils/misc').recursivelyProcessAll;
 
 const argv = parseArgs(process.argv.slice(2));
 
@@ -16,32 +17,13 @@ if (helpFlag || missingRequiredFlags) {
   process.exit()
 }
 
+function restore(data) {
+  return recursivelyProcessAll(parser.sourceAndRedactedToMarkdown.bind(parser), data);
+}
+
 Promise.all([
   ioUtils.readFromFileOrStdin(argv.s).then(ioUtils.parseAsSerialized),
   ioUtils.readFromFileOrStdin(argv.r).then(ioUtils.parseAsSerialized),
-]).then(([source, redacted]) => restore(source, redacted))
+]).then(restore)
   .then(ioUtils.formatAsSerialized)
   .then(ioUtils.writeToFileOrStdout.bind(ioUtils, argv.o));
-
-function restore(source, redacted) {
-  if (typeof source !== typeof redacted) {
-    throw Error('source and redacted data must match');
-  }
-
-  if (!source || !redacted) {
-    throw Error('cannot restore without both source and redacted data');
-  }
-
-  if (typeof source === "string") {
-    return parser.sourceAndRedactedToMarkdown(source, redacted);
-  } else if (typeof source === "object") {
-    return Object.keys(source).reduce((prev, key) => {
-      const sourceValue = source[key];
-      const redactedValue = redacted[key];
-      prev[key] = restore(sourceValue, redactedValue);
-      return prev;
-    }, {});
-  } else {
-    throw Error('cannot process content of type ' + typeof source);
-  }
-}
