@@ -21,8 +21,12 @@ if (helpFlag) {
   process.exit()
 }
 
+function render(data) {
+  return recursivelyProcessAll(parser.sourceToHtml.bind(parser), data);
+}
+
 ioUtils.readFromFileOrStdin(argv._[0])
   .then(ioUtils.parseAsSerialized)
-  .then(recursivelyProcessAll.bind(null, parser.sourceToHtml.bind(parser)))
+  .then(render)
   .then(ioUtils.formatAsSerialized)
   .then(ioUtils.writeToFileOrStdout.bind(ioUtils, argv.o));

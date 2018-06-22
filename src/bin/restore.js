@@ -17,9 +17,13 @@ if (helpFlag || missingRequiredFlags) {
   process.exit()
 }
 
+function restore(data) {
+  return recursivelyProcessAll(parser.sourceAndRedactedToMarkdown.bind(parser), data);
+}
+
 Promise.all([
   ioUtils.readFromFileOrStdin(argv.s).then(ioUtils.parseAsSerialized),
   ioUtils.readFromFileOrStdin(argv.r).then(ioUtils.parseAsSerialized),
-]).then(recursivelyProcessAll.bind(null, parser.sourceAndRedactedToMarkdown.bind(parser)))
+]).then(restore)
   .then(ioUtils.formatAsSerialized)
   .then(ioUtils.writeToFileOrStdout.bind(ioUtils, argv.o));
