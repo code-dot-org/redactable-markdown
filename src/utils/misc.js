@@ -31,7 +31,7 @@ function recursivelyProcessAll (handler, inputs, isValue) {
       return result;
     }
   } else if (Array.isArray(inputs[0])) {
-    return inputs.map((input, i) => {
+    return inputs[0].map((_, i) => {
       const values = inputs.map(input => input[i]);
       return recursivelyProcessAll(handler, values, true);
     })
