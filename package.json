@@ -31,6 +31,7 @@
   "author": "Code.org <dev@code.org> (http://code.org)",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^22.2.2",
