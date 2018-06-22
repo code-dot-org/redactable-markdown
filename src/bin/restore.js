@@ -40,6 +40,6 @@ function restore(source, redacted) {
       return prev;
     }, {});
   } else {
-    throw Error('cannot process content of type ' + typeof data);
+    throw Error('cannot process content of type ' + typeof source);
   }
 }
