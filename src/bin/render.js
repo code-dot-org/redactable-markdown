@@ -27,10 +27,12 @@ ioUtils.readFromFileOrStdin(argv._[0])
   .then(ioUtils.writeToFileOrStdout.bind(ioUtils, argv.o));
 
 function render(data) {
+  if (!data) {
+    return data;
+  }
+
   if (typeof data === "string") {
-    if (data) {
-      return parser.sourceToHtml(data);
-    }
+    return parser.sourceToHtml(data);
   } else if (typeof data === "object") {
     return Object.keys(data).reduce((prev, key) => {
       const value = data[key];

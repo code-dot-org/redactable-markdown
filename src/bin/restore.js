@@ -28,10 +28,12 @@ function restore(source, redacted) {
     throw Error('source and redacted data must match');
   }
 
+  if (!source || !redacted) {
+    throw Error('cannot restore without both source and redacted data');
+  }
+
   if (typeof source === "string") {
-    if (source && redacted) {
-      return parser.sourceAndRedactedToMarkdown(source, redacted);
-    }
+    return parser.sourceAndRedactedToMarkdown(source, redacted);
   } else if (typeof source === "object") {
     return Object.keys(source).reduce((prev, key) => {
       const sourceValue = source[key];
