@@ -2,9 +2,9 @@ const expect = require('expect');
 const parser = require('../../src/cdoFlavoredParser');
 const mapMdast = require('../utils').mapMdast;
 
-const lessonData = require('./lesson.json');
-const curriculumData = require('./curriculum.json');
-const unitData = require('./unit.json');
+const lessonData = require('./data/curriculumbuilder/lesson.json');
+const curriculumData = require('./data/curriculumbuilder/curriculum.json');
+const unitData = require('./data/curriculumbuilder/unit.json');
 
 // Of the top twenty words in the initial curriculumbuilder data set, take out
 // all those like "r" that represent control characters and all the things like
