@@ -12,8 +12,9 @@
   ],
   "scripts": {
     "build": "webpack -p",
-    "build:dev": "webpack --progress --colors --mode=development",
     "build:demo": "webpack --config ./demo/webpack.config.js",
+    "build:dev": "webpack --progress --colors --mode=development",
+    "dev": "npm run build:dev -- --watch",
     "lint": "eslint --ext .js src/ test/",
     "test": "npm run lint && jest",
     "test:unit": "jest test/unit",
