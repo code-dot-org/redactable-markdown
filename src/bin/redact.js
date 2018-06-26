@@ -18,6 +18,7 @@ if (helpFlag) {
   process.stdout.write("options:\n");
   process.stdout.write("\t-h, --help: print this help message\n");
   process.stdout.write("\t-o OUTFILE: output to OUTFILE rather than stdout\n");
+  process.stdout.write("\t-f FORMAT ( json | yaml | txt ): format output as FORMAT. If not specified, will format object data as json and all other data as text\n");
   process.exit()
 }
 
@@ -26,7 +27,7 @@ function redact(data) {
 }
 
 ioUtils.readFromFileOrStdin(argv._[0])
-  .then(ioUtils.parseAsSerialized)
+  .then(ioUtils.deserialize)
   .then(redact)
-  .then(ioUtils.formatAsSerialized)
-  .then(ioUtils.writeToFileOrStdout.bind(ioUtils, argv.o));
+  .then(ioUtils.serialize.bind(null, argv.f))
+  .then(ioUtils.writeToFileOrStdout.bind(null, argv.o));
