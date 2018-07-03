@@ -26,14 +26,14 @@ describe("Command-Line Scripts", () => {
 
           it("redacts when given input as stdin", () => {
             const input = fs.readFileSync(sourcePath, 'utf8')
-            const redact = spawnSync('babel-node', [path.resolve(rootDir, 'src/bin/redact.js')], {
+            const redact = spawnSync('node', [path.resolve(rootDir, 'src/bin/redact.js')], {
               input
             });
             expect(redact.stdout.toString()).toEqual(expected);
           });
 
           it("redacts when given input as filepath", () => {
-            const redact = spawnSync('babel-node', [path.resolve(rootDir, 'src/bin/redact.js'), sourcePath]);
+            const redact = spawnSync('node', [path.resolve(rootDir, 'src/bin/redact.js'), sourcePath]);
             expect(redact.stdout.toString()).toEqual(expected);
           });
         });
@@ -46,7 +46,7 @@ describe("Command-Line Scripts", () => {
             // restoration gets us back to the original
             const expected = fs.existsSync(restoredPath) ? restoredPath : sourcePath;
             const target = fs.existsSync(translatedPath) ? translatedPath : redactedPath;
-            const restore = spawnSync('babel-node', [path.resolve(rootDir, 'src/bin/restore.js'), '-s', sourcePath, '-r', target]);
+            const restore = spawnSync('node', [path.resolve(rootDir, 'src/bin/restore.js'), '-s', sourcePath, '-r', target]);
             expect(restore.stdout.toString()).toEqual(fs.readFileSync(expected, 'utf8'));
           });
         });
