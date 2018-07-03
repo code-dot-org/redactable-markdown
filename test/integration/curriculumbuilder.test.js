@@ -1,5 +1,5 @@
 const expect = require('expect');
-const parser = require('../../src/cdoFlavoredParser');
+const parser = require('../../src/redactableMarkdownParser');
 const mapMdast = require('../utils').mapMdast;
 
 const lessonData = require('./data/curriculumbuilder/lesson.json');

@@ -1,7 +1,7 @@
 const parseArgs = require('minimist');
 
 const ioUtils = require('../utils/io');
-const parser = require('../cdoFlavoredParser');
+const parser = require('../redactableMarkdownParser');
 const recursivelyProcessAll = require('../utils/misc').recursivelyProcessAll;
 
 const argv = parseArgs(process.argv.slice(2));
