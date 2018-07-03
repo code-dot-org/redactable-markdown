@@ -17,7 +17,7 @@ const tip = require('./plugins/parser/tip');
 const tiplink = require('./plugins/parser/tiplink');
 const vocablink = require('./plugins/parser/vocablink');
 
-module.exports = class CdoFlavoredParser {
+module.exports = class RedactableMarkdownParser {
   static getPlugins = function() {
     return this.getParserPlugins().concat(this.getCompilerPlugins());
   }

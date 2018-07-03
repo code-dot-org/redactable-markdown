@@ -1,5 +1,5 @@
 const expect = require('expect');
-const parser = require('../../../../src/cdoFlavoredParser');
+const parser = require('../../../../src/redactableMarkdownParser');
 
 describe('tiplink', () => {
   const basicTipMarkdown = "tip!!!";
