@@ -3,18 +3,19 @@
   "version": "0.2.0",
   "description": "",
   "bin": {
-    "redact": "dist/bin/redact.js",
-    "render": "dist/bin/render.js",
-    "restore": "dist/bin/restore.js"
+    "redact": "src/bin/redact.js",
+    "render": "src/bin/render.js",
+    "restore": "src/bin/restore.js"
   },
   "files": [
-    "dist"
+    "src"
   ],
+  "engines": {
+    "node": ">=6.7",
+    "npm": "^3.10.8"
+  },
   "scripts": {
-    "build": "webpack -p",
     "build:demo": "webpack --config ./demo/webpack.config.js",
-    "build:dev": "webpack --progress --colors --mode=development",
-    "dev": "npm run build:dev -- --watch",
     "lint": "eslint --ext .js src/ test/",
     "test": "npm run lint && jest",
     "test:unit": "jest test/unit",
