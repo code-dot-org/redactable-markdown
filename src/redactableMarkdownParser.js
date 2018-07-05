@@ -13,9 +13,6 @@ const rawtext = require('./plugins/compiler/rawtext');
 
 const divclass = require('./plugins/parser/divclass');
 const redactedLink = require('./plugins/parser/redactedLink');
-const resourcelink = require('./plugins/parser/resourcelink');
-const tip = require('./plugins/parser/tip');
-const tiplink = require('./plugins/parser/tiplink');
 
 module.exports = class RedactableMarkdownParser {
 
@@ -86,9 +83,6 @@ module.exports = class RedactableMarkdownParser {
       restorationRegistration,
       divclass,
       redactedLink,
-      resourcelink,
-      tip,
-      tiplink,
     ];
   }
 

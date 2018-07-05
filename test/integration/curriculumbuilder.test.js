@@ -1,7 +1,17 @@
 const expect = require('expect');
 const parser = require('../../src/redactableMarkdownParser').create();
+
+const resourcelinkPlugin = require('../unit/plugins/parser/resourcelink');
+const tipPlugin = require('../unit/plugins/parser/tip');
+const tiplinkPlugin = require('../unit/plugins/parser/tiplink');
 const vocablinkPlugin = require('../unit/plugins/parser/vocablink');
-parser.parser.use(vocablinkPlugin);
+parser.parser.use([
+  resourcelinkPlugin,
+  tipPlugin,
+  tiplinkPlugin,
+  vocablinkPlugin,
+]);
+
 const mapMdast = require('../utils').mapMdast;
 
 const lessonData = require('./data/curriculumbuilder/lesson.json');

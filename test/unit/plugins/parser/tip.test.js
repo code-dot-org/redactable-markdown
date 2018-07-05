@@ -1,5 +1,7 @@
 const expect = require('expect');
 const parser = require('../../../../src/redactableMarkdownParser').create();
+const tipPlugin = require('./tip');
+parser.parser.use(tipPlugin);
 
 describe('tip', () => {
   describe('render', () => {

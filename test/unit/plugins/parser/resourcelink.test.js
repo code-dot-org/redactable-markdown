@@ -1,5 +1,7 @@
 const expect = require('expect');
 const parser = require('../../../../src/redactableMarkdownParser').create();
+const resourcelinkPlugin = require('./resourcelink');
+parser.parser.use(resourcelinkPlugin);
 
 describe('resourcelink', () => {
   describe('render', () => {
