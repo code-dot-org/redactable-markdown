@@ -16,6 +16,7 @@ describe("Command-Line Scripts", () => {
         const redactedPath = path.resolve(dataDir, example, 'redacted' + extension)
         const translatedPath = path.resolve(dataDir, example, 'translated' + extension)
         const restoredPath = path.resolve(dataDir, example, 'restored' + extension)
+        const pluginPath = path.resolve(dataDir, example, 'plugin.js')
 
         if (!fs.existsSync(redactedPath)) {
           return;
@@ -26,14 +27,22 @@ describe("Command-Line Scripts", () => {
 
           it("redacts when given input as stdin", () => {
             const input = fs.readFileSync(sourcePath, 'utf8')
-            const redact = spawnSync('node', [path.resolve(rootDir, 'src/bin/redact.js')], {
+            const args = [path.resolve(rootDir, 'src/bin/redact.js')];
+            if (fs.existsSync(pluginPath)) {
+              args.push('-p', pluginPath);
+            }
+            const redact = spawnSync('node', args, {
               input
             });
             expect(redact.stdout.toString()).toEqual(expected);
           });
 
           it("redacts when given input as filepath", () => {
-            const redact = spawnSync('node', [path.resolve(rootDir, 'src/bin/redact.js'), sourcePath]);
+            const args = [path.resolve(rootDir, 'src/bin/redact.js'), sourcePath];
+            if (fs.existsSync(pluginPath)) {
+              args.push('-p', pluginPath);
+            }
+            const redact = spawnSync('node', args);
             expect(redact.stdout.toString()).toEqual(expected);
           });
         });
@@ -46,7 +55,11 @@ describe("Command-Line Scripts", () => {
             // restoration gets us back to the original
             const expected = fs.existsSync(restoredPath) ? restoredPath : sourcePath;
             const target = fs.existsSync(translatedPath) ? translatedPath : redactedPath;
-            const restore = spawnSync('node', [path.resolve(rootDir, 'src/bin/restore.js'), '-s', sourcePath, '-r', target]);
+            const args = [path.resolve(rootDir, 'src/bin/restore.js'), '-s', sourcePath, '-r', target];
+            if (fs.existsSync(pluginPath)) {
+              args.push('-p', pluginPath);
+            }
+            const restore = spawnSync('node', args);
             expect(restore.stdout.toString()).toEqual(fs.readFileSync(expected, 'utf8'));
           });
         });
