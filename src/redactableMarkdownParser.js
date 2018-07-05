@@ -16,7 +16,6 @@ const redactedLink = require('./plugins/parser/redactedLink');
 const resourcelink = require('./plugins/parser/resourcelink');
 const tip = require('./plugins/parser/tip');
 const tiplink = require('./plugins/parser/tiplink');
-const vocablink = require('./plugins/parser/vocablink');
 
 module.exports = class RedactableMarkdownParser {
 
@@ -90,7 +89,6 @@ module.exports = class RedactableMarkdownParser {
       resourcelink,
       tip,
       tiplink,
-      vocablink,
     ];
   }
 
