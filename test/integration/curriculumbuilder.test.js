@@ -1,5 +1,7 @@
 const expect = require('expect');
 const parser = require('../../src/redactableMarkdownParser').create();
+const vocablinkPlugin = require('../unit/plugins/parser/vocablink');
+parser.parser.use(vocablinkPlugin);
 const mapMdast = require('../utils').mapMdast;
 
 const lessonData = require('./data/curriculumbuilder/lesson.json');

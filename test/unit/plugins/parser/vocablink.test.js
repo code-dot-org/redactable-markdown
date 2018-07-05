@@ -1,5 +1,7 @@
 const expect = require('expect');
 const parser = require('../../../../src/redactableMarkdownParser').create();
+const vocablinkPlugin = require('./vocablink');
+parser.parser.use(vocablinkPlugin);
 const mapMdast = require('../../../utils').mapMdast;
 
 describe('vocablink', () => {
