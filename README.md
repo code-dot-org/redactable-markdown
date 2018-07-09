@@ -136,6 +136,8 @@ form described in [remark-parse Extending the
 Parser](https://github.com/remarkjs/remark/tree/master/packages/remark-parse#extending-the-parser),
 and examples can be found [in the source tree](/src/plugins/parser/).
 
+### Basic Redaction Example
+
 For example, to add redaction to the `mention` plugin in the remark-parse
 example, we make the following changes.
 
@@ -255,4 +257,75 @@ $ redact source.md -p mention.js | tee redacted.md
 Hello [][0]
 $ restore -s source.md -r redacted.md -p mention.js
 Hello [@example](https://social-network/example)
+```
+
+### Adanced Redaction Example
+
+We also have the option of allowing the redaction and restoration process to
+change the way the parsed text is processed.
+
+Say we wanted the redacted version of the basic example to look like:
+
+    Hello [example][0]
+
+And for changes made to the text in the redaction to be reflected in the URL
+like:
+
+    Hello [translated][0] > Hello [@example](https://social-network/translated)
+
+To achieve that, we first give the `redaction` node a `text` child node
+containing the content we want to appear in the redaction version:
+
+```diff
+diff --git a/mention.js b/mention.js
+index beb01ca..af09cc5 100644
+--- a/mention.js
++++ b/mention.js
+@@ -42,7 +42,11 @@ function tokenizeMention(eat, value, silent) {
+         type: 'redaction',
+         redactionType: 'mention',
+         name: name,
+-        text: text
++        text: text,
++        children: [{
++          type: 'text',
++          value: name
++        }]
+       });
+     }
+```
+
+Then, we expand the restoration method to make use of the optional `content`
+argument, which will contain the modified version of the content.
+
+```diff
+diff --git a/mention.js b/mention.js
+index beb01ca..af09cc5 100644
+--- a/mention.js
++++ b/mention.js
+@@ -8,8 +8,8 @@ function mentions() {
+   var methods = Parser.prototype.inlineMethods;
+   var restorationMethods = Parser.prototype.restorationMethods;
+
+-  restorationMethods.mention = function (add, node) {
+-    return createMention(add, node.name, node.text);
++  restorationMethods.mention = function (add, node, content) {
++    return createMention(add, content || node.name, node.text);
+   }
+
+   /* Make the Parser's redact option visible to the tokenizer */
+```
+
+The result:
+
+```bash
+$ echo "Hello @example" > source.md
+$ redact source.md -p mention.js
+Hello [example][0]
+$ echo "Hello @example" > source.md
+$ redact source.md -p mention.js | tee redacted.md
+Hello [example][0]
+$ sed -i 's/example/translated/' redacted.md
+$ restore -s source.md -r redacted.md -p mention.js
+Hello [@example](https://social-network/translated)
 ```
