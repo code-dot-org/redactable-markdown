@@ -255,8 +255,10 @@ We can now redact and restore `@` mentions:
 $ echo "Hello @example" > source.md
 $ redact source.md -p mention.js | tee redacted.md
 Hello [][0]
-$ restore -s source.md -r redacted.md -p mention.js
-Hello [@example](https://social-network/example)
+$ sed 's/Hello/Bonjour/' redacted.md | tee translated.md
+Bonjour [][0]
+$ restore -s source.md -r translated.md -p mention.js
+Bonjour [@example](https://social-network/example)
 ```
 
 ### Adanced Redaction Example
@@ -271,7 +273,7 @@ Say we wanted the redacted version of the basic example to look like:
 And for changes made to the text in the redaction to be reflected in the URL
 like:
 
-    Hello [translated][0] > Hello [@example](https://social-network/translated)
+    Bonjour [exemple][0] > Bonjour [@example](https://social-network/exemple)
 
 To achieve that, we first give the `redaction` node a `text` child node
 containing the content we want to appear in the redaction version:
@@ -320,12 +322,10 @@ The result:
 
 ```bash
 $ echo "Hello @example" > source.md
-$ redact source.md -p mention.js
-Hello [example][0]
-$ echo "Hello @example" > source.md
 $ redact source.md -p mention.js | tee redacted.md
 Hello [example][0]
-$ sed -i 's/example/translated/' redacted.md
-$ restore -s source.md -r redacted.md -p mention.js
-Hello [@example](https://social-network/translated)
+$ sed -e 's/Hello/Bonjour/' -e 's/example/exemple/' redacted.md | tee translated.md
+Bonjour [exemple][0]
+$ restore -s source.md -r translated.md -p mention.js
+Bonjour [@example](https://social-network/exemple)
 ```
