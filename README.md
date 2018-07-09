@@ -127,3 +127,132 @@ Then translated to
 Then restored to
 
     Un [chat](http://example.com/cat) [noir](http://example.com/black)
+
+## Plugins
+
+To define redaction and restoration functionality for a new or existing piece of
+syntax, simply create a plugin. Plugins start as remark-parse plugins of the
+form described in [remark-parse Extending the
+Parser](https://github.com/remarkjs/remark/tree/master/packages/remark-parse#extending-the-parser),
+and examples can be found [in the source tree](/src/plugins/parser/).
+
+For example, to add redaction to the `mention` plugin in the remark-parse
+example, we make the following changes.
+
+First, isolate the logic that extracts meningful data from the parsed token from
+the logic that builds a node from that extracted data:
+
+```diff
+diff --git a/mention.js b/mention.js
+index c87085f..12b67ed 100644
+--- a/mention.js
++++ b/mention.js
+@@ -23,14 +29,19 @@ function tokenizeMention(eat, value, silent) {
+       return true;
+     }
+
+-    return eat(match[0])({
+-      type: 'link',
+-      url: 'https://social-network/' + match[1],
+-      children: [{type: 'text', value: match[0]}]
+-    });
++    var add = eat(match[0]);
++    return createMention(add, match[1], match[0]);
+   }
+ }
+
+ function locateMention(value, fromIndex) {
+   return value.indexOf('@', fromIndex);
+ }
++
++function createMention(add, name, text) {
++  return add({
++    type: 'link',
++    url: 'https://social-network/' + name,
++    children: [{type: 'text', value: text}]
++  });
++}
+```
+
+Then, conditionally create a `redaction` node instead of the desired regular
+node when in redaction mode (see more about the `redaction` node
+[here](https://github.com/code-dot-org/redactable-markdown/blob/29c64b3c9e736e28746e6a8627b57c8cc3f0dcc0/src/plugins/process/restorationRegistration.js#L8-L15)):
+
+Note here that all that is required of the redaction node is that it contains a
+unique `redactionType` identifier, and any information required to recreate the
+node.
+
+```diff
+diff --git a/mention.js b/mention.js
+index 7a6fc91..08f1bf0 100644
+--- a/mention.js
++++ b/mention.js
+@@ -1,10 +1,15 @@
+ module.exports = mentions;
+
++var redact;
++
+ function mentions() {
+   var Parser = this.Parser;
+   var tokenizers = Parser.prototype.inlineTokenizers;
+   var methods = Parser.prototype.inlineMethods;
+
++  /* Make the Parser's redact option visible to the tokenizer */
++  redact = Parser.prototype.options.redact;
++
+   /* Add an inline tokenizer (defined in the following example). */
+   tokenizers.mention = tokenizeMention;
+
+@@ -24,7 +29,19 @@ function tokenizeMention(eat, value, silent) {
+     }
+
+     var add = eat(match[0]);
+-    return createMention(add, match[1], match[0]);
++    var name = match[1];
++    var text = match[0];
++
++    if (redact) {
++      return add({
++        type: 'redaction',
++        redactionType: 'mention',
++        name: name,
++        text: text
++      });
++    }
++
++    return createMention(add, name, text);
+   }
+ }
+```
+
+Finally, add a restoration method for the specified redaction type, using the
+newly-isolated node creation logic.
+
+```diff
+diff --git a/mention.js b/mention.js
+index 08f1bf0..beb01ca 100644
+--- a/mention.js
++++ b/mention.js
+@@ -6,6 +6,11 @@ function mentions() {
+   var Parser = this.Parser;
+   var tokenizers = Parser.prototype.inlineTokenizers;
+   var methods = Parser.prototype.inlineMethods;
++  var restorationMethods = Parser.prototype.restorationMethods;
++
++  restorationMethods.mention = function (add, node) {
++    return createMention(add, node.name, node.text);
++  }
+
+   /* Make the Parser's redact option visible to the tokenizer */
+   redact = Parser.prototype.options.redact;
+```
+
+We can now redact and restore `@` mentions:
+
+```bash
+$ echo "Hello @example" > source.md
+$ redact source.md -p mention.js | tee redacted.md
+Hello [][0]
+$ restore -s source.md -r redacted.md -p mention.js
+Hello [@example](https://social-network/example)
+```
