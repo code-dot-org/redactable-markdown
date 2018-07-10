@@ -1,5 +1,5 @@
 const expect = require('expect');
-const parser = require('../../src/redactableMarkdownParser');
+const parser = require('../../src/redactableMarkdownParser').create();
 const mapMdast = require('../utils').mapMdast;
 
 const lessonData = require('./data/curriculumbuilder/lesson.json');

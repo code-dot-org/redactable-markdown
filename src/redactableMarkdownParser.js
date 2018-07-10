@@ -1,5 +1,6 @@
 const html = require('remark-html');
 const parse = require('remark-parse');
+const path = require('path');
 const stringify = require('remark-stringify');
 const unified = require('unified');
 
@@ -18,11 +19,70 @@ const tiplink = require('./plugins/parser/tiplink');
 const vocablink = require('./plugins/parser/vocablink');
 
 module.exports = class RedactableMarkdownParser {
-  static getPlugins = function() {
-    return this.getParserPlugins().concat(this.getCompilerPlugins());
+
+  constructor() {
+    this.parser = unified()
+      .use(parse, {
+        commonmark: true,
+        pedantic: true
+      }).use(this.constructor.getParserPlugins());
   }
 
-  static getParserPlugins = function() {
+  loadPlugins(pluginPaths) {
+    pluginPaths.split(/,/).forEach((pluginPath) => {
+      const plugin = require(path.resolve(process.cwd(), pluginPath));
+      this.parser.use(plugin);
+    });
+  }
+
+  getParser() {
+    return this.parser();
+  }
+
+  sourceToHtml(source) {
+    return this.getParser()
+      .use(html)
+      .processSync(source)
+      .contents;
+  }
+
+  sourceToRedactedMdast(source) {
+    return this.getParser()
+      .use({ settings: { redact: true } })
+      .parse(source);
+  }
+
+  sourceToRedacted(source) {
+    const sourceTree = this.sourceToRedactedMdast(source);
+    return this.getParser()
+      .use(stringify)
+      .use(renderRedactions)
+      .stringify(sourceTree);
+  }
+
+  sourceAndRedactedToMergedMdast(source, redacted) {
+    const sourceTree = this.sourceToRedactedMdast(source);
+    const redactedTree = this.getParser()
+      .use(restoreRedactions(sourceTree))
+      .parse(redacted);
+
+    return redactedTree;
+  }
+
+  sourceAndRedactedToMarkdown(source, redacted) {
+    const mergedMdast = this.sourceAndRedactedToMergedMdast(source, redacted);
+    return this.getParser()
+      .use(stringify)
+      .use(this.constructor.getCompilerPlugins())
+      .stringify(mergedMdast);
+  }
+
+  sourceAndRedactedToHtml(source, redacted) {
+    const restoredMarkdown = this.sourceAndRedactedToMarkdown(source, redacted);
+    return this.sourceToHtml(restoredMarkdown);
+  }
+
+  static getParserPlugins() {
     return [
       restorationRegistration,
       divclass,
@@ -32,64 +92,16 @@ module.exports = class RedactableMarkdownParser {
       tiplink,
       vocablink,
     ];
-  };
+  }
 
-  static getCompilerPlugins = function() {
+  static getCompilerPlugins() {
     return [
       indent,
       rawtext,
     ]
   }
 
-  static getParser = function() {
-    return unified()
-      .use(parse, {
-        commonmark: true,
-        pedantic: true
-      })
-      .use(this.getParserPlugins());
-  };
-
-  static sourceToHtml = function(source) {
-    return this.getParser()
-      .use(html)
-      .processSync(source)
-      .contents;
-  };
-
-  static sourceToRedactedMdast = function(source) {
-    return this.getParser()
-      .use({ settings: { redact: true } })
-      .parse(source);
-  };
-
-  static sourceToRedacted = function(source) {
-    const sourceTree = this.sourceToRedactedMdast(source);
-    return this.getParser()
-      .use(stringify)
-      .use(renderRedactions)
-      .stringify(sourceTree);
-  };
-
-  static sourceAndRedactedToMergedMdast = function(source, redacted) {
-    const sourceTree = this.sourceToRedactedMdast(source);
-    const redactedTree = this.getParser()
-      .use(restoreRedactions(sourceTree))
-      .parse(redacted);
-
-    return redactedTree;
-  };
-
-  static sourceAndRedactedToMarkdown = function(source, redacted) {
-    const mergedMdast = this.sourceAndRedactedToMergedMdast(source, redacted);
-    return this.getParser()
-      .use(stringify)
-      .use(this.getCompilerPlugins())
-      .stringify(mergedMdast);
-  };
-
-  static sourceAndRedactedToHtml = function(source, redacted) {
-    const restoredMarkdown = this.sourceAndRedactedToMarkdown(source, redacted);
-    return this.sourceToHtml(restoredMarkdown);
-  };
+  static create() {
+    return new RedactableMarkdownParser();
+  }
 };

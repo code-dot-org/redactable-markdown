@@ -1,7 +1,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const parser = require('../src/redactableMarkdownParser');
+const parser = require('../src/redactableMarkdownParser').create();
 
 //const initialMarkdown = require('./cdo-markdown.md');
 const initialMarkdown = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
