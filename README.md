@@ -141,8 +141,8 @@ and examples can be found [in the source tree](/src/plugins/parser/).
 For example, to add redaction to the `mention` plugin in the remark-parse
 example, we make the following changes.
 
-First, isolate the logic that extracts meningful data from the parsed token from
-the logic that builds a node from that extracted data:
+First, isolate the logic that extracts meaningful data from the parsed token
+from the logic that builds a node from that extracted data:
 
 ```diff
 diff --git a/mention.js b/mention.js
@@ -261,7 +261,7 @@ $ restore -s source.md -r translated.md -p mention.js
 Bonjour [@example](https://social-network/example)
 ```
 
-### Adanced Redaction Example
+### Advanced Redaction Example
 
 We also have the option of allowing the redaction and restoration process to
 change the way the parsed text is processed.
