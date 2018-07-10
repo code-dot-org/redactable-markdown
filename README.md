@@ -305,17 +305,18 @@ Bonjour [@example](https://social-network/example)
 We also have the option of allowing the redaction and restoration process to
 change the way the parsed text is processed.
 
-Say we wanted the redacted version of the basic example to look like:
-
-    Hello [example][0]
-
-And for changes made to the text in the redaction to be reflected in the URL
+Say we wanted the redacted version of the basic example to expose the `@` name
 like:
 
-    Bonjour [exemple][0] > Bonjour [@example](https://social-network/exemple)
+    Hello [@example][0]
 
-To achieve that, we first give the `redaction` node a `text` child node
-containing the content we want to appear in the redaction version:
+And for changes made to the text in the redaction to be reflected in the
+generated link like:
+
+    Bonjour [@exemple][0] > Bonjour [@exemple](https://social-network/example)
+
+To achieve that, we first move the `text` value from a property on the
+`redaction` node to a full `text` child node:
 
 ```diff
 diff --git a/mention.js b/mention.js
@@ -327,17 +328,16 @@ index beb01ca..af09cc5 100644
          redactionType: 'mention',
          name: name,
 -        text: text
-+        text: text,
 +        children: [{
 +          type: 'text',
-+          value: name
++          value: text
 +        }]
        });
      }
 ```
 
 Then, we expand the restoration method to make use of the optional `content`
-argument, which will contain the modified version of the content.
+argument, which will contain the modified version of the text content.
 
 ```diff
 diff --git a/mention.js b/mention.js
@@ -351,7 +351,7 @@ index beb01ca..af09cc5 100644
 -  restorationMethods.mention = function (add, node) {
 -    return createMention(add, node.name, node.text);
 +  restorationMethods.mention = function (add, node, content) {
-+    return createMention(add, content || node.name, node.text);
++    return createMention(add, node.name, content);
    }
 
    /* Make the Parser's redact option visible to the tokenizer */
@@ -362,9 +362,9 @@ The result:
 ```bash
 $ echo "Hello @example" > source.md
 $ redact source.md -p mention.js | tee redacted.md
-Hello [example][0]
+Hello [@example][0]
 $ sed -e 's/Hello/Bonjour/' -e 's/example/exemple/' redacted.md | tee translated.md
-Bonjour [exemple][0]
+Bonjour [@exemple][0]
 $ restore -s source.md -r translated.md -p mention.js
-Bonjour [@example](https://social-network/exemple)
+Bonjour [@exemple](https://social-network/example)
 ```
