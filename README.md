@@ -138,8 +138,47 @@ and examples can be found [in the source tree](/src/plugins/parser/).
 
 ### Basic Redaction Example
 
-For example, to add redaction to the `mention` plugin in the remark-parse
-example, we make the following changes.
+For example, let's add redaction to the `mention` plugin in the remark-parse
+example. We start with `mention.js` from that example:
+
+```javascript
+module.exports = mentions;
+
+function mentions() {
+  var Parser = this.Parser;
+  var tokenizers = Parser.prototype.inlineTokenizers;
+  var methods = Parser.prototype.inlineMethods;
+
+  /* Add an inline tokenizer (defined in the following example). */
+  tokenizers.mention = tokenizeMention;
+
+  /* Run it just before `text`. */
+  methods.splice(methods.indexOf('text'), 0, 'mention');
+}
+
+tokenizeMention.notInLink = true;
+tokenizeMention.locator = locateMention;
+
+function tokenizeMention(eat, value, silent) {
+  var match = /^@(\w+)/.exec(value);
+
+  if (match) {
+    if (silent) {
+      return true;
+    }
+
+    return eat(match[0])({
+      type: 'link',
+      url: 'https://social-network/' + match[1],
+      children: [{type: 'text', value: match[0]}]
+    });
+  }
+}
+
+function locateMention(value, fromIndex) {
+  return value.indexOf('@', fromIndex);
+}
+```
 
 First, isolate the logic that extracts meaningful data from the parsed token
 from the logic that builds a node from that extracted data:
