@@ -46,6 +46,11 @@ module.exports = class RedactableMarkdownParser {
       .contents;
   }
 
+  sourceToMdast(source) {
+    return this.getParser()
+      .parse(source);
+  }
+
   sourceToRedactedMdast(source) {
     return this.getParser()
       .use({ settings: { redact: true } })

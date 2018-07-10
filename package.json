@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "",
   "bin": {
+    "parse": "src/bin/parse.js",
     "redact": "src/bin/redact.js",
     "render": "src/bin/render.js",
     "restore": "src/bin/restore.js"
