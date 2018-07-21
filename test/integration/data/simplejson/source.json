@@ -1,7 +1,7 @@
 {
     "basic example": {
         "link": "This is some text with [a link](http://example.com)",
-        "list and resourcelinks": " - Watch the [r my-robotic-friends].\r\n - Read [r my-robotic-friends-packet].\r\n - Print out one [r symbol-key] per group. This is \"code\" to be used.\r\n - [r paper-trapezoid-template] are provided if your class is not going to use cups.\r\n - Print out one set of [r stacking-cups-ideas] per group.\r\n - Make sure each student has a [r think-spot-journal].",
+        "list and links": " - Watch the [my-robotic-friends](http://my-robotic-friends.com).\r\n - Read [my-robotic-friends-packet](http://my-robotic-friends-packet.com).\r\n - Print out one [symbol-key](http://symbol-key.com) per group. This is \"code\" to be used.\r\n - [paper-trapezoid-template](http://paper-trapezoid-template.com) are provided if your class is not going to use cups.\r\n - Print out one set of [stacking-cups-ideas](http://stacking-cups-ideas.com) per group.\r\n - Make sure each student has a [think-spot-journal](http://think-spot-journal.com).",
         "newline": "This is some text with a trailing newline\n",
         "array": [
           "And this",
