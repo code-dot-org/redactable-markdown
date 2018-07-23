@@ -3,6 +3,7 @@
   "version": "0.3.0",
   "description": "",
   "bin": {
+    "normalize": "src/bin/normalize.js",
     "parse": "src/bin/parse.js",
     "redact": "src/bin/redact.js",
     "render": "src/bin/render.js",
