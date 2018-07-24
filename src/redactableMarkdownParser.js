@@ -42,6 +42,13 @@ module.exports = class RedactableMarkdownParser {
       .contents;
   }
 
+  sourceToMarkdown(source) {
+    return this.getParser()
+      .use(stringify)
+      .processSync(source)
+      .contents;
+  }
+
   sourceToMdast(source) {
     return this.getParser()
       .parse(source);

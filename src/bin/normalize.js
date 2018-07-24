@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const parseArgs = require('minimist');
-const stringify = require('remark-stringify');
 
 const ioUtils = require('../utils/io');
 const parser = require('../redactableMarkdownParser').create();
@@ -30,13 +29,7 @@ if (plugins) {
 }
 
 function normalize(data) {
-  return recursivelyProcessAll((source) => {
-    const mdast = parser.getParser().parse(source);
-    return parser
-      .getParser()
-      .use(stringify)
-      .stringify(mdast);
-  }, data);
+  return recursivelyProcessAll(parser.sourceToMarkdown.bind(parser), data);
 }
 
 ioUtils.readFromFileOrStdin(argv._[0])
