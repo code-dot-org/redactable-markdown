@@ -8,6 +8,7 @@ const renderRedactions = require('./plugins/process/renderRedactions');
 const restoreRedactions = require('./plugins/process/restoreRedactions');
 const restorationRegistration = require('./plugins/process/restorationRegistration');
 
+const div = require('./plugins/compiler/div');
 const indent = require('./plugins/compiler/indent');
 const rawtext = require('./plugins/compiler/rawtext');
 
@@ -45,6 +46,7 @@ module.exports = class RedactableMarkdownParser {
   sourceToMarkdown(source) {
     return this.getParser()
       .use(stringify)
+      .use(this.constructor.getCompilerPlugins())
       .processSync(source)
       .contents;
   }
@@ -100,6 +102,7 @@ module.exports = class RedactableMarkdownParser {
 
   static getCompilerPlugins() {
     return [
+      div,
       indent,
       rawtext,
     ]
