@@ -66,21 +66,26 @@ describe("Command-Line Scripts", () => {
         });
 
         describe("normalize", () => {
+          const source = fs.readFileSync(sourcePath, 'utf8')
+          let testname, expected;
           if (fs.existsSync(normalizedPath)) {
-            // pass
+            testname = "normalization will format source";
+            expected = fs.readFileSync(normalizedPath, 'utf8');
           } else {
-            it("normalization doesn't change source", () => {
-              const source = fs.readFileSync(sourcePath, 'utf8')
-              const args = [path.resolve(rootDir, 'src/bin/normalize.js')];
-              if (fs.existsSync(pluginPath)) {
-                args.push('-p', pluginPath);
-              }
-              const normalize = spawnSync('node', args, {
-                input: source
-              });
-              expect(normalize.stdout.toString()).toEqual(source);
-            });
+            testname = "normalization doesn't change source";
+            expected = source;
           }
+
+          it(testname, () => {
+            const args = [path.resolve(rootDir, 'src/bin/normalize.js')];
+            if (fs.existsSync(pluginPath)) {
+              args.push('-p', pluginPath);
+            }
+            const normalize = spawnSync('node', args, {
+              input: source
+            });
+            expect(normalize.stdout.toString()).toEqual(expected);
+          });
         });
       });
     });
