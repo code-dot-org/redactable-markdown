@@ -16,6 +16,7 @@ describe("Command-Line Scripts", () => {
         const redactedPath = path.resolve(dataDir, example, 'redacted' + extension)
         const translatedPath = path.resolve(dataDir, example, 'translated' + extension)
         const restoredPath = path.resolve(dataDir, example, 'restored' + extension)
+        const normalizedPath = path.resolve(dataDir, example, 'normalized' + extension)
         const pluginPath = path.resolve(dataDir, example, 'plugin.js')
 
         if (!fs.existsSync(redactedPath)) {
@@ -62,6 +63,24 @@ describe("Command-Line Scripts", () => {
             const restore = spawnSync('node', args);
             expect(restore.stdout.toString()).toEqual(fs.readFileSync(expected, 'utf8'));
           });
+        });
+
+        describe("normalize", () => {
+          if (fs.existsSync(normalizedPath)) {
+            // pass
+          } else {
+            it("normalization doesn't change source", () => {
+              const source = fs.readFileSync(sourcePath, 'utf8')
+              const args = [path.resolve(rootDir, 'src/bin/normalize.js')];
+              if (fs.existsSync(pluginPath)) {
+                args.push('-p', pluginPath);
+              }
+              const normalize = spawnSync('node', args, {
+                input: source
+              });
+              expect(normalize.stdout.toString()).toEqual(source);
+            });
+          }
         });
       });
     });
