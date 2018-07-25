@@ -22,7 +22,7 @@ if (helpFlag || missingRequiredFlags) {
 
 const parserPlugins = (argv.p || argv.parserPlugins)
 if (parserPlugins) {
-  parser.loadPlugins(parserPlugins);
+  parser.loadParserPlugins(parserPlugins);
 }
 
 const compilerPlugins = (argv.c || argv.compilerPlugins)

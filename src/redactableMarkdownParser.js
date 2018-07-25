@@ -29,7 +29,7 @@ module.exports = class RedactableMarkdownParser {
       .use(this.constructor.getParserPlugins());
   }
 
-  loadPlugins(pluginPaths) {
+  loadParserPlugins(pluginPaths) {
     pluginPaths.split(/,/).forEach((pluginPath) => {
       const plugin = require(path.resolve(process.cwd(), pluginPath));
       this.parser.use(plugin);
