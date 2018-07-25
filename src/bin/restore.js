@@ -15,13 +15,19 @@ if (helpFlag || missingRequiredFlags) {
   process.stdout.write("options:\n");
   process.stdout.write("\t-h, --help: print this help message\n");
   process.stdout.write("\t-o OUTFILE: output to OUTFILE rather than stdout\n");
-  process.stdout.write("\t-p, --plugins PLUGINS: comma-separated list of parser plugins to include in addition to the defaults\n");
+  process.stdout.write("\t-p, --parserPlugins PLUGINS: comma-separated list of parser plugins to include in addition to the defaults\n");
+  process.stdout.write("\t-c, --compilerPlugins PLUGINS: comma-separated list of compiler plugins to include in addition to the defaults\n");
   process.exit()
 }
 
-const plugins = (argv.p || argv.plugins)
-if (plugins) {
-  parser.loadPlugins(plugins);
+const parserPlugins = (argv.p || argv.parserPlugins)
+if (parserPlugins) {
+  parser.loadParserPlugins(parserPlugins);
+}
+
+const compilerPlugins = (argv.c || argv.compilerPlugins)
+if (compilerPlugins) {
+  parser.loadCompilerPlugins(compilerPlugins);
 }
 
 function restore(data) {
