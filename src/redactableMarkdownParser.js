@@ -15,14 +15,16 @@ const rawtext = require('./plugins/compiler/rawtext');
 const divclass = require('./plugins/parser/divclass');
 const redactedLink = require('./plugins/parser/redactedLink');
 
+const remarkOptions = {
+  commonmark: true,
+  pedantic: true
+};
+
 module.exports = class RedactableMarkdownParser {
 
   constructor() {
     this.parser = unified()
-      .use(parse, {
-        commonmark: true,
-        pedantic: true
-      }).use(this.constructor.getParserPlugins());
+      .use(parse, remarkOptions).use(this.constructor.getParserPlugins());
   }
 
   loadPlugins(pluginPaths) {
@@ -38,14 +40,14 @@ module.exports = class RedactableMarkdownParser {
 
   sourceToHtml(source) {
     return this.getParser()
-      .use(html)
+      .use(html, remarkOptions)
       .processSync(source)
       .contents;
   }
 
   sourceToMarkdown(source) {
     return this.getParser()
-      .use(stringify)
+      .use(stringify, remarkOptions)
       .use(this.constructor.getCompilerPlugins())
       .processSync(source)
       .contents;
@@ -65,7 +67,7 @@ module.exports = class RedactableMarkdownParser {
   sourceToRedacted(source) {
     const sourceTree = this.sourceToRedactedMdast(source);
     return this.getParser()
-      .use(stringify)
+      .use(stringify, remarkOptions)
       .use(renderRedactions)
       .stringify(sourceTree);
   }
@@ -82,7 +84,7 @@ module.exports = class RedactableMarkdownParser {
   sourceAndRedactedToMarkdown(source, redacted) {
     const mergedMdast = this.sourceAndRedactedToMergedMdast(source, redacted);
     return this.getParser()
-      .use(stringify)
+      .use(stringify, remarkOptions)
       .use(this.constructor.getCompilerPlugins())
       .stringify(mergedMdast);
   }
