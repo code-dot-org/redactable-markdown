@@ -23,14 +23,23 @@ const remarkOptions = {
 module.exports = class RedactableMarkdownParser {
 
   constructor() {
+    this.compilerPlugins = this.constructor.getCompilerPlugins();
     this.parser = unified()
-      .use(parse, remarkOptions).use(this.constructor.getParserPlugins());
+      .use(parse, remarkOptions)
+      .use(this.constructor.getParserPlugins());
   }
 
   loadPlugins(pluginPaths) {
     pluginPaths.split(/,/).forEach((pluginPath) => {
       const plugin = require(path.resolve(process.cwd(), pluginPath));
       this.parser.use(plugin);
+    });
+  }
+
+  loadCompilerPlugins(pluginPaths) {
+    pluginPaths.split(/,/).forEach((pluginPath) => {
+      const plugin = require(path.resolve(process.cwd(), pluginPath));
+      this.compilerPlugins.push(plugin);
     });
   }
 
@@ -48,7 +57,7 @@ module.exports = class RedactableMarkdownParser {
   sourceToMarkdown(source) {
     return this.getParser()
       .use(stringify, remarkOptions)
-      .use(this.constructor.getCompilerPlugins())
+      .use(this.compilerPlugins)
       .processSync(source)
       .contents;
   }
@@ -85,7 +94,7 @@ module.exports = class RedactableMarkdownParser {
     const mergedMdast = this.sourceAndRedactedToMergedMdast(source, redacted);
     return this.getParser()
       .use(stringify, remarkOptions)
-      .use(this.constructor.getCompilerPlugins())
+      .use(this.compilerPlugins)
       .stringify(mergedMdast);
   }
 
