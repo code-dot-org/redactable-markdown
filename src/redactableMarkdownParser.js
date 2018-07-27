@@ -78,6 +78,7 @@ module.exports = class RedactableMarkdownParser {
     return this.getParser()
       .use(stringify, remarkOptions)
       .use(renderRedactions)
+      .use(this.compilerPlugins)
       .stringify(sourceTree);
   }
 
