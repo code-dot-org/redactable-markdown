@@ -1,0 +1,10 @@
+{
+  "intersection of object keys": {
+    "one": "one",
+    "two": "two"
+  },
+  "intersection of array elements": [
+    "first",
+    "third"
+  ]
+}

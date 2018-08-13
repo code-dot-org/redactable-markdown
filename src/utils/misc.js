@@ -10,13 +10,14 @@ function recursivelyProcessAll (handler, inputs, isValue) {
   if (!Array.isArray(inputs)) {
     inputs = [inputs]
   }
-  const inputType = typeof inputs[0];
-  if (inputs.length && inputs.some(input => typeof input !== inputType)) {
-    throw Error('all data to process must have the same structure');
-  }
 
   if (inputs.some(input => !input)) {
     return;
+  }
+
+  const inputType = typeof inputs[0];
+  if (inputs.length && inputs.some(input => typeof input !== inputType)) {
+    throw Error('all data to process must have the same structure');
   }
 
   if (inputType === "string") {
