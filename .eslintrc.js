@@ -1,6 +1,5 @@
 module.exports = {
   "root": true,
-  "parser": "babel-eslint",
 
   "parserOptions": {
     "sourceType": "module",
@@ -11,9 +10,6 @@ module.exports = {
     }
   },
 
-  "plugins": [
-    "babel",
-  ],
   "extends": [
     "eslint:recommended",
   ],
