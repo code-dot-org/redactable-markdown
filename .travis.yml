@@ -3,8 +3,6 @@ language: node_js
 node_js:
 - 6
 
-cache: yarn
-
 script:
   - npm test
 
