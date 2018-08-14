@@ -14,6 +14,7 @@ const indent = require('./plugins/compiler/indent');
 const rawtext = require('./plugins/compiler/rawtext');
 
 const divclass = require('./plugins/parser/divclass');
+const noInvalidBlockHtml = require('./plugins/parser/noInvalidBlockHtml');
 const paragraph = require('./plugins/parser/paragraph');
 const redactedLink = require('./plugins/parser/redactedLink');
 
@@ -110,6 +111,7 @@ module.exports = class RedactableMarkdownParser {
     return [
       restorationRegistration,
       divclass,
+      noInvalidBlockHtml,
       paragraph,
       redactedLink,
     ];
