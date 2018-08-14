@@ -1,3 +1,9 @@
+/**
+ * @fileoverview a complete clone of the default paragraph tokenizer, plus the
+ * modifications from https://github.com/remarkjs/remark/pull/348
+ *
+ * This can be removed as soon as there's an npm release including that PR
+ */
 var trim = require('trim');
 var decimal = require('is-decimal');
 var trimTrailingLines = require('trim-trailing-lines');
