@@ -175,7 +175,7 @@ describe('divclass', () => {
 
       const brokenRedaction = "[][0]\n\n[][1]\n\n\n\n[/][0]\n\n[/][1]"
       expect(parser.sourceAndRedactedToHtml(source, brokenRedaction))
-        .toEqual("<div class=\"zero\"><p><a href=\"\"></a></p></div>\n<p><a href=\"\">/</a></p>\n");
+        .toEqual("<div class=\"zero\"><p>[][1]</p></div>\n<p>[/][1]</p>\n");
     });
 
     it('can restore content that adds extra content', () => {
@@ -185,17 +185,17 @@ describe('divclass', () => {
       expect(parser.sourceAndRedactedToHtml(source, reusedIndex))
         .toEqual("<div class=\"first\"><p>Premier</p></div>\n<div class=\"second\"><p>Deuxième</p></div>\n<div class=\"second\"><p>Troisième</p></div>\n");
 
-      // in every case, extra redactions default to empty links
+      // in every case, extra redactions default to raw markdown
       const extraIndex = "[][0]\n\nPremier\n\n[/][0]\n\n[][1]\n\nDeuxième\n\n[/][1]\n\n[][2]\n\nTroisième\n\n[/][2]"
       expect(parser.sourceAndRedactedToHtml(source, extraIndex))
-        .toEqual("<div class=\"first\"><p>Premier</p></div>\n<div class=\"second\"><p>Deuxième</p></div>\n<p><a href=\"\"></a></p>\n<p>Troisième</p>\n<p><a href=\"\">/</a></p>\n");
+        .toEqual("<div class=\"first\"><p>Premier</p></div>\n<div class=\"second\"><p>Deuxième</p></div>\n<p>[][2]</p>\n<p>Troisième</p>\n<p>[/][2]</p>\n");
     });
 
     it('can NOT restore content if required whitespace is removed', () => {
       const source = "[clazz]\n\nCat\n\n[/clazz]";
       const redacted = "[][0]\nChat\n[/][0]";
       const output = parser.sourceAndRedactedToHtml(source, redacted);
-      expect(output).toEqual("<p><a href=\"\"></a>\nChat\n<a href=\"\">/</a></p>\n");
+      expect(output).toEqual("<p>[][0]\nChat\n[/][0]</p>\n");
     });
   });
 });

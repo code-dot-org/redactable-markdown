@@ -35,15 +35,11 @@
   "author": "Code.org <dev@code.org> (http://code.org)",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.2.2",
-    "babel-jest": "^22.2.2",
-    "babel-loader": "^7.1.2",
+    "babel-loader": "^7.1.5",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "eslint": "^4.17.0",
-    "eslint-plugin-babel": "^4.1.2",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^22.2.2",
     "react": "^16.3.2",
@@ -57,5 +53,8 @@
     "remark-parse": "^5.0.0",
     "remark-stringify": "^5.0.0",
     "unified": "^7.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
