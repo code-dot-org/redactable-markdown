@@ -8,6 +8,7 @@ const renderRedactions = require('./plugins/process/renderRedactions');
 const restoreRedactions = require('./plugins/process/restoreRedactions');
 const restorationRegistration = require('./plugins/process/restorationRegistration');
 
+const betterPedanticEmphasis = require('./plugins/compiler/betterPedanticEmphasis');
 const div = require('./plugins/compiler/div');
 const indent = require('./plugins/compiler/indent');
 const rawtext = require('./plugins/compiler/rawtext');
@@ -116,6 +117,7 @@ module.exports = class RedactableMarkdownParser {
 
   static getCompilerPlugins() {
     return [
+      betterPedanticEmphasis,
       div,
       indent,
       rawtext,
