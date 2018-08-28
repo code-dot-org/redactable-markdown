@@ -1,8 +1,12 @@
-const html = require('remark-html');
-const parse = require('remark-parse');
 const path = require('path');
-const stringify = require('remark-stringify');
 const unified = require('unified');
+
+const parse = require('remark-parse');
+const stringify = require('remark-stringify');
+
+const rehypeRaw = require('rehype-raw')
+const rehypeStringify = require('rehype-stringify')
+const remark2rehype = require('remark-rehype')
 
 const renderRedactions = require('./plugins/process/renderRedactions');
 const restoreRedactions = require('./plugins/process/restoreRedactions');
@@ -51,7 +55,9 @@ module.exports = class RedactableMarkdownParser {
 
   sourceToHtml(source) {
     return this.getParser()
-      .use(html, remarkOptions)
+      .use(remark2rehype, { allowDangerousHTML: true })
+      .use(rehypeRaw)
+      .use(rehypeStringify)
       .processSync(source)
       .contents;
   }
