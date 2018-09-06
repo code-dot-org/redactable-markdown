@@ -1,3 +1,5 @@
+const path = require('path');
+
 /**
  * Given an input or set of inputs, which can each be a string, array, or
  * object, iterate through every input in parallel and call the handler on each
@@ -48,3 +50,9 @@ function recursivelyProcessAll (handler, inputs, isValue) {
 }
 
 module.exports.recursivelyProcessAll = recursivelyProcessAll;
+
+module.exports.requireByPath = function (modulePaths) {
+  return modulePaths.split(/,/).map((modulePath) => {
+    return require(path.resolve(process.cwd(), modulePath));
+  });
+}

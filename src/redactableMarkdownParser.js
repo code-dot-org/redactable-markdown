@@ -1,6 +1,5 @@
 const html = require('remark-html');
 const parse = require('remark-parse');
-const path = require('path');
 const stringify = require('remark-stringify');
 const unified = require('unified');
 
@@ -29,20 +28,6 @@ module.exports = class RedactableMarkdownParser {
     this.parser = unified()
       .use(parse, remarkOptions)
       .use(this.constructor.getParserPlugins());
-  }
-
-  loadParserPlugins(pluginPaths) {
-    pluginPaths.split(/,/).forEach((pluginPath) => {
-      const plugin = require(path.resolve(process.cwd(), pluginPath));
-      this.parser.use(plugin);
-    });
-  }
-
-  loadCompilerPlugins(pluginPaths) {
-    pluginPaths.split(/,/).forEach((pluginPath) => {
-      const plugin = require(path.resolve(process.cwd(), pluginPath));
-      this.compilerPlugins.push(plugin);
-    });
   }
 
   getParser() {
