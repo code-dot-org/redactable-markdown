@@ -10,24 +10,26 @@ module.exports = function tip() {
   const methods = Parser.prototype.blockMethods;
   const restorationMethods = Parser.prototype.restorationMethods;
 
-  restorationMethods.tip = function (add, nodes, content, children) {
-    let value = `!!!${nodes.open.tipType}`;
-    if (content) {
-      value += ` "${content}"`;
+  if (restorationMethods) {
+    restorationMethods.tip = function (add, nodes, content, children) {
+      let value = `!!!${nodes.open.tipType}`;
+      if (content) {
+        value += ` "${content}"`;
+      }
+      if (nodes.open.id) {
+        value += ` <${nodes.open.id}>`;
+      }
+      return add({
+        type: 'paragraph',
+        children: [{
+          type: 'rawtext',
+          value: value + "\n"
+        }, {
+          type: 'indent',
+          children
+        }]
+      });
     }
-    if (nodes.open.id) {
-      value += ` <${nodes.open.id}>`;
-    }
-    return add({
-      type: 'paragraph',
-      children: [{
-        type: 'rawtext',
-        value: value + "\n"
-      }, {
-        type: 'indent',
-        children
-      }]
-    });
   }
 
   redact = Parser.prototype.options.redact;

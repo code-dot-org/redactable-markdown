@@ -19,11 +19,13 @@ module.exports = function resourcelink() {
     redact = Parser.prototype.options.redact;
     Parser.prototype.inlineTokenizers[RESOURCELINK] = tokenizeResourcelink;
 
-    Parser.prototype.restorationMethods[RESOURCELINK] = function (add, node) {
-      return add({
-        type: 'rawtext',
-        value: `[r ${node.slug}]`
-      });
+    if (Parser.prototype.restorationMethods) {
+      Parser.prototype.restorationMethods[RESOURCELINK] = function (add, node) {
+        return add({
+          type: 'rawtext',
+          value: `[r ${node.slug}]`
+        });
+      }
     }
 
     // Run it just before `html`

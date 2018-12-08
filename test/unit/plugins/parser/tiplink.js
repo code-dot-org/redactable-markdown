@@ -13,11 +13,13 @@ module.exports = function mention() {
     const methods = Parser.prototype.inlineMethods;
     const restorationMethods = Parser.prototype.restorationMethods;
 
-    restorationMethods.tiplink = function (add, node) {
-      return add({
-        type: 'text',
-        value: `${node.tipType}!!! ${node.tipLink}`
-      });
+    if (restorationMethods) {
+      restorationMethods.tiplink = function (add, node) {
+        return add({
+          type: 'text',
+          value: `${node.tipType}!!! ${node.tipLink}`
+        });
+      }
     }
 
     redact = Parser.prototype.options.redact;

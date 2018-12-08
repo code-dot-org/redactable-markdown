@@ -19,15 +19,17 @@ module.exports = function vocablink() {
     redact = Parser.prototype.options.redact;
     Parser.prototype.inlineTokenizers[VOCABLINK] = tokenizeVocablink;
 
-    Parser.prototype.restorationMethods[VOCABLINK] = function (add, node, content) {
-      let value = `[v ${node.vocabword}]`;
-      if (content) {
-        value += `[${content}]`
+    if (Parser.prototype.restorationMethods) {
+      Parser.prototype.restorationMethods[VOCABLINK] = function (add, node, content) {
+        let value = `[v ${node.vocabword}]`;
+        if (content) {
+          value += `[${content}]`
+        }
+        return add({
+          type: 'rawtext',
+          value 
+        });
       }
-      return add({
-        type: 'rawtext',
-        value 
-      });
     }
 
     // Run it just before `html`
