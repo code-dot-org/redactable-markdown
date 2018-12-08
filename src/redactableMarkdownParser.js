@@ -2,10 +2,7 @@ const html = require('remark-html');
 const parse = require('remark-parse');
 const stringify = require('remark-stringify');
 const unified = require('unified');
-
-const renderRedactions = require('./plugins/process/renderRedactions');
-const restoreRedactions = require('./plugins/process/restoreRedactions');
-const restorationRegistration = require('./plugins/process/restorationRegistration');
+const { redact, restore, plugins } = require('remark-redactable');
 
 const betterPedanticEmphasis = require('./plugins/compiler/betterPedanticEmphasis');
 const div = require('./plugins/compiler/div');
@@ -14,7 +11,6 @@ const rawtext = require('./plugins/compiler/rawtext');
 
 const divclass = require('./plugins/parser/divclass');
 const paragraph = require('./plugins/parser/paragraph');
-const redactedLink = require('./plugins/parser/redactedLink');
 
 const remarkOptions = {
   commonmark: true,
@@ -56,7 +52,7 @@ module.exports = class RedactableMarkdownParser {
 
   sourceToRedactedMdast(source) {
     return this.getParser()
-      .use({ settings: { redact: true } })
+      .use(redact)
       .parse(source);
   }
 
@@ -64,7 +60,7 @@ module.exports = class RedactableMarkdownParser {
     const sourceTree = this.sourceToRedactedMdast(source);
     return this.getParser()
       .use(stringify, remarkOptions)
-      .use(renderRedactions)
+      .use(redact)
       .use(this.compilerPlugins)
       .stringify(sourceTree);
   }
@@ -72,7 +68,7 @@ module.exports = class RedactableMarkdownParser {
   sourceAndRedactedToMergedMdast(source, redacted) {
     const sourceTree = this.sourceToRedactedMdast(source);
     const redactedTree = this.getParser()
-      .use(restoreRedactions(sourceTree))
+      .use(restore(sourceTree))
       .parse(redacted);
 
     return redactedTree;
@@ -93,10 +89,9 @@ module.exports = class RedactableMarkdownParser {
 
   static getParserPlugins() {
     return [
-      restorationRegistration,
       divclass,
       paragraph,
-      redactedLink,
+      plugins.redactedLink,
     ];
   }
 
