@@ -4,6 +4,8 @@ const stringify = require('remark-stringify');
 const unified = require('unified');
 const { redact, restore, plugins } = require('remark-redactable');
 
+const restorationRegistration = require('./plugins/process/restorationRegistration');
+
 const betterPedanticEmphasis = require('./plugins/compiler/betterPedanticEmphasis');
 const div = require('./plugins/compiler/div');
 const indent = require('./plugins/compiler/indent');
@@ -52,7 +54,7 @@ module.exports = class RedactableMarkdownParser {
 
   sourceToRedactedMdast(source) {
     return this.getParser()
-      .use(redact)
+      .use({ settings: { redact: true } })
       .parse(source);
   }
 
@@ -89,6 +91,7 @@ module.exports = class RedactableMarkdownParser {
 
   static getParserPlugins() {
     return [
+      restorationRegistration,
       divclass,
       paragraph,
       plugins.redactedLink,
