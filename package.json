@@ -56,6 +56,7 @@
     "minimist": "^1.2.0",
     "remark-html": "^7.0.0",
     "remark-parse": "^5.0.0",
+    "remark-redactable": "^0.1.0",
     "remark-stringify": "^5.0.0",
     "unified": "^7.0.0"
   },
