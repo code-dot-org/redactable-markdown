@@ -12,7 +12,6 @@ const indent = require('./plugins/compiler/indent');
 const rawtext = require('./plugins/compiler/rawtext');
 
 const divclass = require('./plugins/parser/divclass');
-const paragraph = require('./plugins/parser/paragraph');
 const redactedLink = require('./plugins/parser/redactedLink');
 
 const remarkOptions = {
@@ -94,7 +93,6 @@ module.exports = class RedactableMarkdownParser {
     return [
       restorationRegistration,
       divclass,
-      paragraph,
       redactedLink,
     ];
   }
