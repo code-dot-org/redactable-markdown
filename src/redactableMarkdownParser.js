@@ -15,8 +15,8 @@ const divclass = require('./plugins/parser/divclass');
 const redactedLink = require('./plugins/parser/redactedLink');
 
 const remarkOptions = {
+  //gfm: false,
   commonmark: true,
-  pedantic: true
 };
 
 module.exports = class RedactableMarkdownParser {
@@ -34,7 +34,12 @@ module.exports = class RedactableMarkdownParser {
 
   sourceToHtml(source) {
     return this.getParser()
-      .use(html, remarkOptions)
+      .use(html, {
+        closeSelfClosing: true,
+        entities: {
+          useNamedReferences: true,
+        },
+      })
       .processSync(source)
       .contents;
   }
