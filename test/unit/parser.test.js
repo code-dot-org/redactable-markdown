@@ -112,4 +112,18 @@ describe('Standard Markdown', () => {
       expect(output).toEqual("<p>C'est du texte avec <a href=\"http://example.com/\">un lien</a> et [une image][1]</p>\n");
     });
   });
+
+  describe('sanitize', () => {
+    it('will not change completely redacted input', () => {
+      const redacted = "C'est du texte avec [un lien][0] et [une image][1]";
+      const output = parser.sanitizeUnredacted(redacted);
+      expect(output).toEqual("C'est du texte avec [un lien][0] et [une image][1]\n");
+    });
+
+    it('will clear unredacted input', () => {
+      const unredacted = "This is some text with [a link](http://example.com/)";
+      const output = parser.sanitizeUnredacted(unredacted);
+      expect(output).toEqual('');
+    });
+  });
 });

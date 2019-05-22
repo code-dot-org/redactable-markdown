@@ -1,0 +1,12 @@
+{
+  "basic example": {
+    "link": "",
+    "list and links": "",
+    "newline": "This is some text with a trailing newline",
+    "array": [
+      "And this",
+      "is an array",
+      ""
+    ]
+  }
+}
