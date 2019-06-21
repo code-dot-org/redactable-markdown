@@ -14,17 +14,11 @@ const rawtext = require('./plugins/compiler/rawtext');
 const divclass = require('./plugins/parser/divclass');
 const redactedLink = require('./plugins/parser/redactedLink');
 
-const remarkOptions = {
-  commonmark: true,
-  pedantic: true
-};
-
 module.exports = class RedactableMarkdownProcessor {
-
   constructor() {
     this.compilerPlugins = this.constructor.getCompilerPlugins();
     this.processor = unified()
-      .use(parse, remarkOptions)
+      .use(this.constructor.getParser())
       .use(this.constructor.getParserPlugins());
   }
 
@@ -34,41 +28,41 @@ module.exports = class RedactableMarkdownProcessor {
 
   sourceToHtml(source) {
     return this.getProcessor()
-      .use(html, remarkOptions)
+      .use(html)
       .processSync(source)
       .contents;
   }
 
-  sourceToMarkdown(source) {
+  sourceToProcessed(source) {
     return this.getProcessor()
-      .use(stringify, remarkOptions)
+      .use(this.constructor.getCompiler())
       .use(this.compilerPlugins)
       .processSync(source)
       .contents;
   }
 
-  sourceToMdast(source) {
+  sourceToSyntaxTree(source) {
     return this.getProcessor()
       .parse(source);
   }
 
-  sourceToRedactedMdast(source) {
+  sourceToRedactedSyntaxTree(source) {
     return this.getProcessor()
       .use({ settings: { redact: true } })
       .parse(source);
   }
 
   sourceToRedacted(source) {
-    const sourceTree = this.sourceToRedactedMdast(source);
+    const sourceTree = this.sourceToRedactedSyntaxTree(source);
     return this.getProcessor()
-      .use(stringify, remarkOptions)
+      .use(this.constructor.getCompiler())
       .use(renderRedactions)
       .use(this.compilerPlugins)
       .stringify(sourceTree);
   }
 
-  sourceAndRedactedToMergedMdast(source, redacted) {
-    const sourceTree = this.sourceToRedactedMdast(source);
+  sourceAndRedactedToMergedSyntaxTree(source, redacted) {
+    const sourceTree = this.sourceToRedactedSyntaxTree(source);
     const redactedTree = this.getProcessor()
       .use(restoreRedactions(sourceTree))
       .parse(redacted);
@@ -76,17 +70,27 @@ module.exports = class RedactableMarkdownProcessor {
     return redactedTree;
   }
 
-  sourceAndRedactedToMarkdown(source, redacted) {
-    const mergedMdast = this.sourceAndRedactedToMergedMdast(source, redacted);
+  sourceAndRedactedToRestored(source, redacted) {
+    const mergedSyntaxTree = this.sourceAndRedactedToMergedSyntaxTree(source, redacted);
     return this.getProcessor()
-      .use(stringify, remarkOptions)
+      .use(this.constructor.getCompiler())
       .use(this.compilerPlugins)
-      .stringify(mergedMdast);
+      .stringify(mergedSyntaxTree);
   }
 
   sourceAndRedactedToHtml(source, redacted) {
-    const restoredMarkdown = this.sourceAndRedactedToMarkdown(source, redacted);
+    const restoredMarkdown = this.sourceAndRedactedToRestored(source, redacted);
     return this.sourceToHtml(restoredMarkdown);
+  }
+
+  static getParser() {
+    return {
+      plugins: [parse],
+      settings: {
+        commonmark: true,
+        pedantic: true
+      }
+    }
   }
 
   static getParserPlugins() {
@@ -95,6 +99,10 @@ module.exports = class RedactableMarkdownProcessor {
       divclass,
       redactedLink,
     ];
+  }
+
+  static getCompiler() {
+    return stringify;
   }
 
   static getCompilerPlugins() {

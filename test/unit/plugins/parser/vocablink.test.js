@@ -58,14 +58,14 @@ describe('vocablink', () => {
     it('can restore vocablinks back to markdown', () => {
       const source = "[v some-word]";
       const redacted = "[un-mot][0]"
-      const output = processor.sourceAndRedactedToMarkdown(source, redacted);
+      const output = processor.sourceAndRedactedToRestored(source, redacted);
       expect(output).toEqual("[v some-word][un-mot]\n");
     });
 
     it('can restore vocablinks with word overrides back to markdown', () => {
       const source = "[v some-word][source-override]";
       const redacted = "[redaction-override][0]"
-      const output = processor.sourceAndRedactedToMarkdown(source, redacted);
+      const output = processor.sourceAndRedactedToRestored(source, redacted);
       expect(output).toEqual("[v some-word][redaction-override]\n");
     });
   });

@@ -36,7 +36,7 @@ if (compilerPlugins) {
 }
 
 function parse(data) {
-  return recursivelyProcessAll(processor.sourceToMdast.bind(processor), data);
+  return recursivelyProcessAll(processor.sourceToSyntaxTree.bind(processor), data);
 }
 
 ioUtils.readFromFileOrStdin(argv._[0])

@@ -8,7 +8,7 @@ const processor = require('../../../../src/redactableMarkdownProcessor').create(
 describe('pedantic emphasis', () => {
   it('should handle underscores in emphasis in pedantic mode', () => {
     const example = '*alpha_bravo*\n';
-    expect(processor.sourceToMarkdown(example)).toEqual('*alpha\\_bravo*\n');
+    expect(processor.sourceToProcessed(example)).toEqual('*alpha\\_bravo*\n');
   });
 
   describe('emphasis in pedantic mode should support a constiety of contained inline content', () => {
@@ -25,7 +25,7 @@ describe('pedantic emphasis', () => {
     ];
     tests.forEach(function (test) {
       it(test[0], () => {
-        expect(processor.sourceToMarkdown(test[1])).toEqual(test[2]);
+        expect(processor.sourceToProcessed(test[1])).toEqual(test[2]);
       });
     });
   });
