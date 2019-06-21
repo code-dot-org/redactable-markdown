@@ -6,6 +6,12 @@ const { spawnSync } = require('child_process');
 const rootDir = path.resolve(__dirname, '..', '..');
 const dataDir = path.resolve(rootDir, 'test', 'integration', 'data');
 
+const extensions = {
+  text: '.txt',
+  markdown: '.md',
+  json: '.json'
+}
+
 describe("Command-Line Scripts", () => {
   fs.readdirSync(dataDir).forEach(example => {
     const sources = fs.readdirSync(path.resolve(dataDir, example)).filter(file => /^source.*$/.test(file));
@@ -24,13 +30,19 @@ describe("Command-Line Scripts", () => {
         }
 
         describe("redact", () => {
-          const expected = fs.readFileSync(redactedPath, 'utf8')
+          let expected = fs.readFileSync(redactedPath, 'utf8')
+          if (extension === extensions.text) {
+            expected = expected.trim();
+          }
 
           it("redacts when given input as stdin", () => {
             const input = fs.readFileSync(sourcePath, 'utf8')
             const args = [path.resolve(rootDir, 'src/bin/redact.js')];
             if (fs.existsSync(pluginPath)) {
               args.push('-p', pluginPath);
+            }
+            if (extension === extensions.text) {
+              args.push('-f', 'txt');
             }
             const redact = spawnSync('node', args, {
               input
@@ -42,6 +54,9 @@ describe("Command-Line Scripts", () => {
             const args = [path.resolve(rootDir, 'src/bin/redact.js'), sourcePath];
             if (fs.existsSync(pluginPath)) {
               args.push('-p', pluginPath);
+            }
+            if (extension === extensions.text) {
+              args.push('-f', 'txt');
             }
             const redact = spawnSync('node', args);
             expect(redact.stdout.toString()).toEqual(expected);
@@ -60,12 +75,23 @@ describe("Command-Line Scripts", () => {
             if (fs.existsSync(pluginPath)) {
               args.push('-p', pluginPath);
             }
+            if (extension === extensions.text) {
+              args.push('-f', 'txt');
+            }
             const restore = spawnSync('node', args);
-            expect(restore.stdout.toString()).toEqual(fs.readFileSync(expected, 'utf8'));
+            let expectedContent = fs.readFileSync(expected, 'utf8')
+            if (extension === extensions.text) {
+              expectedContent = expectedContent.trim();
+            }
+            expect(restore.stdout.toString()).toEqual(expectedContent);
           });
         });
 
         describe("normalize", () => {
+          if (extension === extensions.text) {
+            // only normalize markdown
+            return;
+          }
           const source = fs.readFileSync(sourcePath, 'utf8')
           let testname, expected;
           if (fs.existsSync(normalizedPath)) {

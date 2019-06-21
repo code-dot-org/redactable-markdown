@@ -1,0 +1,1 @@
+Some text with an_underscore that would normally get escaped
