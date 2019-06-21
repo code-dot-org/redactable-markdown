@@ -1,15 +1,15 @@
 const expect = require('expect');
-const parser = require('../../../../src/redactableMarkdownParser').create();
+const processor = require('../../../../src/redactableMarkdownProcessor').create();
 const vocablinkPlugin = require('./vocablink');
-parser.parser.use(vocablinkPlugin);
+processor.processor.use(vocablinkPlugin);
 const mapMdast = require('../../../utils').mapMdast;
 
 describe('vocablink', () => {
   describe('parse', () => {
     it('can distinguish between vocablinks with word overrides and linkReferences', () => {
       // the only difference between these two bits of the syntax is the "v "
-      const vocablink = parser.getParser().parse("[v some-word][override]");
-      const linkReference = parser.getParser().parse("[some-word][override]");
+      const vocablink = processor.getProcessor().parse("[v some-word][override]");
+      const linkReference = processor.getProcessor().parse("[some-word][override]");
       expect(mapMdast(vocablink)).toEqual({
         children: [{ children: [{ type: 'rawtext' }], type: 'paragraph' }],
         type: 'root',
@@ -29,13 +29,13 @@ describe('vocablink', () => {
   describe('render', () => {
     it('can only render vocablinks back out to plain text', () => {
       const input = "[v some-word]";
-      const output = parser.sourceToHtml(input);
+      const output = processor.sourceToHtml(input);
       expect(output).toEqual("<p>[v some-word]</p>\n");
     });
 
     it('can only render vocablinks with word overrides back out to plain text', () => {
       const input = "[v some-word][override]";
-      const output = parser.sourceToHtml(input);
+      const output = processor.sourceToHtml(input);
       expect(output).toEqual("<p>[v some-word][override]</p>\n");
     });
   });
@@ -43,13 +43,13 @@ describe('vocablink', () => {
   describe('redact', () => {
     it('redacts vocablinks', () => {
       const input = "[v some-word]";
-      const output = parser.sourceToRedacted(input);
+      const output = processor.sourceToRedacted(input);
       expect(output).toEqual("[some-word][0]\n");
     });
 
     it('redacts vocablinks with word overrides', () => {
       const input = "[v some-word][un-mot]";
-      const output = parser.sourceToRedacted(input);
+      const output = processor.sourceToRedacted(input);
       expect(output).toEqual("[un-mot][0]\n");
     });
   });
@@ -58,14 +58,14 @@ describe('vocablink', () => {
     it('can restore vocablinks back to markdown', () => {
       const source = "[v some-word]";
       const redacted = "[un-mot][0]"
-      const output = parser.sourceAndRedactedToMarkdown(source, redacted);
+      const output = processor.sourceAndRedactedToMarkdown(source, redacted);
       expect(output).toEqual("[v some-word][un-mot]\n");
     });
 
     it('can restore vocablinks with word overrides back to markdown', () => {
       const source = "[v some-word][source-override]";
       const redacted = "[redaction-override][0]"
-      const output = parser.sourceAndRedactedToMarkdown(source, redacted);
+      const output = processor.sourceAndRedactedToMarkdown(source, redacted);
       expect(output).toEqual("[v some-word][redaction-override]\n");
     });
   });

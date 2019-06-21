@@ -3,7 +3,7 @@
 const parseArgs = require('minimist');
 
 const ioUtils = require('../utils/io');
-const parser = require('../redactableMarkdownParser').create();
+const processor = require('../redactableMarkdownProcessor').create();
 const recursivelyProcessAll = require('../utils/misc').recursivelyProcessAll;
 const requireByPath = require('../utils/misc').requireByPath;
 
@@ -23,16 +23,16 @@ if (helpFlag || missingRequiredFlags) {
 
 const parserPlugins = (argv.p || argv.parserPlugins)
 if (parserPlugins) {
-  parser.parser.use(requireByPath(parserPlugins));
+  processor.processor.use(requireByPath(parserPlugins));
 }
 
 const compilerPlugins = (argv.c || argv.compilerPlugins)
 if (compilerPlugins) {
-  parser.compilerPlugins.push(...requireByPath(compilerPlugins));
+  processor.compilerPlugins.push(...requireByPath(compilerPlugins));
 }
 
 function restore(data) {
-  return recursivelyProcessAll(parser.sourceAndRedactedToMarkdown.bind(parser), data);
+  return recursivelyProcessAll(processor.sourceAndRedactedToMarkdown.bind(processor), data);
 }
 
 Promise.all([

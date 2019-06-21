@@ -1,7 +1,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-const parser = require('../src/redactableMarkdownParser').create();
+const processor = require('../src/redactableMarkdownProcessor').create();
 
 //const initialMarkdown = require('./cdo-markdown.md');
 const initialMarkdown = "This is some text with [a link](http://first.com) and ![an image](http://second.com/img.jpg).\n\nAnd also a second paragraph with [another link](http://third.com)";
@@ -11,7 +11,7 @@ class Demo extends React.Component {
     super();
     this.state = {
       sourceMarkdown: initialMarkdown,
-      redactedMarkdown: parser.sourceToRedacted(initialMarkdown),
+      redactedMarkdown: processor.sourceToRedacted(initialMarkdown),
     };
   }
 
@@ -29,7 +29,7 @@ class Demo extends React.Component {
 
   redact = () => {
     this.setState({
-      redactedMarkdown: parser.sourceToRedacted(
+      redactedMarkdown: processor.sourceToRedacted(
         this.state.sourceMarkdown,
       ),
     });
@@ -74,13 +74,13 @@ class Demo extends React.Component {
         <div
           style={this.styles.renderContainer}
           dangerouslySetInnerHTML={{
-            __html: parser.sourceToHtml(this.state.sourceMarkdown)
+            __html: processor.sourceToHtml(this.state.sourceMarkdown)
           }}
         />
         <div
           style={this.styles.renderContainer}
           dangerouslySetInnerHTML={{
-            __html: parser.sourceAndRedactedToHtml(
+            __html: processor.sourceAndRedactedToHtml(
                 this.state.sourceMarkdown,
                 this.state.redactedMarkdown,
               )

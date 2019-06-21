@@ -1,13 +1,13 @@
 const expect = require('expect');
-const parser = require('../../../../src/redactableMarkdownParser').create();
+const processor = require('../../../../src/redactableMarkdownProcessor').create();
 const resourcelinkPlugin = require('./resourcelink');
-parser.parser.use(resourcelinkPlugin);
+processor.processor.use(resourcelinkPlugin);
 
 describe('resourcelink', () => {
   describe('render', () => {
     it('cannot render resourcelinks to html', () => {
       const input = "[r some-slug]";
-      const output = parser.sourceToHtml(input);
+      const output = processor.sourceToHtml(input);
       expect(output).toEqual("<p>[r some-slug]</p>\n");
     });
   });
@@ -15,7 +15,7 @@ describe('resourcelink', () => {
   describe('redact', () => {
     it('redacts resourcelinks', () => {
       const input = "[r some-slug]";
-      const output = parser.sourceToRedacted(input);
+      const output = processor.sourceToRedacted(input);
       expect(output).toEqual("[some-slug][0]\n");
     });
   });
@@ -24,7 +24,7 @@ describe('resourcelink', () => {
     it('can restore resourcelinks back to markdown', () => {
       const source = "[r some-slug]";
       const redacted = "[any-text][0]"
-      const output = parser.sourceAndRedactedToMarkdown(source, redacted);
+      const output = processor.sourceAndRedactedToMarkdown(source, redacted);
       expect(output).toEqual("[r some-slug]\n");
     });
 
@@ -33,7 +33,7 @@ describe('resourcelink', () => {
       // this is true
       const source = "[r some-slug]";
       const redacted = "[any-text][0]"
-      const output = parser.sourceAndRedactedToHtml(source, redacted);
+      const output = processor.sourceAndRedactedToHtml(source, redacted);
       expect(output).toEqual("<p>[r some-slug]</p>\n");
     });
   });
