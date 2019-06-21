@@ -66,12 +66,15 @@ module.exports = class RedactableProcessor {
   static getParser() {
     return TextParser;
   }
+
   static getParserPlugins() {
     return [restorationRegistration];
   }
+
   static getCompiler() {
     return TextCompiler;
   }
+
   static getCompilerPlugins() {
     return [rawtext];
   }
