@@ -19,28 +19,28 @@ const remarkOptions = {
   pedantic: true
 };
 
-module.exports = class RedactableMarkdownParser {
+module.exports = class RedactableMarkdownProcessor {
 
   constructor() {
     this.compilerPlugins = this.constructor.getCompilerPlugins();
-    this.parser = unified()
+    this.processor = unified()
       .use(parse, remarkOptions)
       .use(this.constructor.getParserPlugins());
   }
 
-  getParser() {
-    return this.parser();
+  getProcessor() {
+    return this.processor();
   }
 
   sourceToHtml(source) {
-    return this.getParser()
+    return this.getProcessor()
       .use(html, remarkOptions)
       .processSync(source)
       .contents;
   }
 
   sourceToMarkdown(source) {
-    return this.getParser()
+    return this.getProcessor()
       .use(stringify, remarkOptions)
       .use(this.compilerPlugins)
       .processSync(source)
@@ -48,19 +48,19 @@ module.exports = class RedactableMarkdownParser {
   }
 
   sourceToMdast(source) {
-    return this.getParser()
+    return this.getProcessor()
       .parse(source);
   }
 
   sourceToRedactedMdast(source) {
-    return this.getParser()
+    return this.getProcessor()
       .use({ settings: { redact: true } })
       .parse(source);
   }
 
   sourceToRedacted(source) {
     const sourceTree = this.sourceToRedactedMdast(source);
-    return this.getParser()
+    return this.getProcessor()
       .use(stringify, remarkOptions)
       .use(renderRedactions)
       .use(this.compilerPlugins)
@@ -69,7 +69,7 @@ module.exports = class RedactableMarkdownParser {
 
   sourceAndRedactedToMergedMdast(source, redacted) {
     const sourceTree = this.sourceToRedactedMdast(source);
-    const redactedTree = this.getParser()
+    const redactedTree = this.getProcessor()
       .use(restoreRedactions(sourceTree))
       .parse(redacted);
 
@@ -78,7 +78,7 @@ module.exports = class RedactableMarkdownParser {
 
   sourceAndRedactedToMarkdown(source, redacted) {
     const mergedMdast = this.sourceAndRedactedToMergedMdast(source, redacted);
-    return this.getParser()
+    return this.getProcessor()
       .use(stringify, remarkOptions)
       .use(this.compilerPlugins)
       .stringify(mergedMdast);
@@ -106,6 +106,6 @@ module.exports = class RedactableMarkdownParser {
   }
 
   static create() {
-    return new RedactableMarkdownParser();
+    return new RedactableMarkdownProcessor();
   }
 };

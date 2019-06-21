@@ -1,5 +1,5 @@
 module.exports = {
-  entry: './src/redactableMarkdownParser',
+  entry: './src/redactableMarkdownProcessor',
   output: {
     libraryTarget: 'umd',
   },
