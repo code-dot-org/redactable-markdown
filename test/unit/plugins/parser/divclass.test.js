@@ -130,7 +130,7 @@ describe('divclass', () => {
     it('can restore basic divclasses back to markdown', () => {
       const source = "[col-33]\n\nsimple content\n\n[/col-33]";
       const redacted = "[][0]\n\ncontenu simple\n\n[/][0]\n";
-      const output = processor.sourceAndRedactedToMarkdown(source, redacted);
+      const output = processor.sourceAndRedactedToRestored(source, redacted);
       expect(output).toEqual("[col-33]\n\ncontenu simple\n\n[/col-33]\n");
     });
 

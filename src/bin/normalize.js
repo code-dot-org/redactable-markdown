@@ -36,7 +36,7 @@ if (compilerPlugins) {
 }
 
 function normalize(data) {
-  return recursivelyProcessAll(processor.sourceToMarkdown.bind(processor), data);
+  return recursivelyProcessAll(processor.sourceToProcessed.bind(processor), data);
 }
 
 ioUtils.readFromFileOrStdin(argv._[0])

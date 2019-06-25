@@ -69,7 +69,7 @@ describe('tiplink', () => {
     it('can restore tiplinks back to markdown', () => {
       const source = "This is some text with an inline labeled tip: " + labeledTipMarkdown;
       const redacted = "Ceci est un texte avec un [][0] inline labeled tip";
-      const output = processor.sourceAndRedactedToMarkdown(source, redacted);
+      const output = processor.sourceAndRedactedToRestored(source, redacted);
       expect(output).toEqual("Ceci est un texte avec un tip!!! tip-0 inline labeled tip\n");
     });
 

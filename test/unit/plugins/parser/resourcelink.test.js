@@ -24,7 +24,7 @@ describe('resourcelink', () => {
     it('can restore resourcelinks back to markdown', () => {
       const source = "[r some-slug]";
       const redacted = "[any-text][0]"
-      const output = processor.sourceAndRedactedToMarkdown(source, redacted);
+      const output = processor.sourceAndRedactedToRestored(source, redacted);
       expect(output).toEqual("[r some-slug]\n");
     });
 

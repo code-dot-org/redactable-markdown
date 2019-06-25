@@ -52,21 +52,21 @@ describe('Standard Markdown', () => {
     it('can restore redacted links to markdown', () => {
       const source = "This is some text with [a link](http://example.com/)";
       const redacted = "Ceci est un texte avec [un lien][0]";
-      const output = processor.sourceAndRedactedToMarkdown(source, redacted);
+      const output = processor.sourceAndRedactedToRestored(source, redacted);
       expect(output).toEqual("Ceci est un texte avec [un lien](http://example.com/)\n");
     });
 
     it('can restore redacted autolinks', () => {
       const source = "This is some text that automatically links to <http://example.com>";
       const redacted = "C'est du texte that automatically links to [http://example.com][0]\n";
-      const output = processor.sourceAndRedactedToMarkdown(source, redacted);
+      const output = processor.sourceAndRedactedToRestored(source, redacted);
       expect(output).toEqual("C'est du texte that automatically links to <http://example.com>\n");
     });
 
     it('can restore redacted and altered autolinks', () => {
       const source = "This is some text that automatically links to <http://example.com>";
       const redacted = "C'est du texte that links to [this example][0]\n";
-      const output = processor.sourceAndRedactedToMarkdown(source, redacted);
+      const output = processor.sourceAndRedactedToRestored(source, redacted);
       expect(output).toEqual("C'est du texte that links to [this example](http://example.com)\n");
     });
 

@@ -32,7 +32,7 @@ if (compilerPlugins) {
 }
 
 function restore(data) {
-  return recursivelyProcessAll(processor.sourceAndRedactedToMarkdown.bind(processor), data);
+  return recursivelyProcessAll(processor.sourceAndRedactedToRestored.bind(processor), data);
 }
 
 Promise.all([
