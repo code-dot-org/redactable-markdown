@@ -62,6 +62,13 @@ module.exports = function restoreRedactions(sourceTree) {
   }
   getRedactedValues(sourceTree);
 
+  function unrestored(add, node) {
+    return add(Object.assign({}, node, {
+      type: 'unrestored',
+      content: node.content
+    }));
+  }
+
   // then return an extension to the parser that can consume the data from these
   // redacted nodes when it encounters a redaction
   return function () {
@@ -70,6 +77,7 @@ module.exports = function restoreRedactions(sourceTree) {
     }
 
     const Parser = this.Parser;
+    var check = Parser.prototype.options.check;
 
     // Add an inline tokenizer
     //
@@ -93,9 +101,18 @@ module.exports = function restoreRedactions(sourceTree) {
       // error handler should probably go
       const redactedData = redactions[index];
       if (!redactedData) {
+        if (check) {
+          return eat(match[0])({
+            type: 'unrestored',
+            content: content
+          });
+        }
         return;
       }
-
+      if (check && redactedData.used) {
+        return unrestored(eat(match[0]), redactedData);
+      }
+      redactedData.used = true;
       const restorationMethod = Parser.prototype.restorationMethods[redactedData.redactionType];
       if (!restorationMethod) {
         return
@@ -106,7 +123,9 @@ module.exports = function restoreRedactions(sourceTree) {
       }
 
       const add = eat(match[0]);
-      return restorationMethod(add, redactedData, content);
+      var node = restorationMethod(add, redactedData, content);
+      node.restored = true;
+      return node;
     }
 
     tokenizeInlineRedaction.locator = function (value) {
@@ -157,8 +176,15 @@ module.exports = function restoreRedactions(sourceTree) {
       // error handler should probably go
       const redactedData = redactions[index];
       if (!(redactedData && redactedData.block)) {
+        if (check) {
+          return unrestored(eat(startMatch[0]), redactedData);
+        }
         return;
       }
+      if (check && redactedData.used) {
+        return unrestored(eat(startMatch[0]), redactedData);
+      }
+      redactedData.used = true;
 
       // the entire string representing the "close" block of the redaction
       const blockClose = `\n\n[/][${index}]`;
@@ -188,7 +214,14 @@ module.exports = function restoreRedactions(sourceTree) {
       const subvalue = value.slice(startIndex, endIndex);
       const children = this.tokenizeBlock(subvalue, eat.now());
       const add = eat(blockOpen + subvalue + blockClose);
-      return restorationMethod(add, redactedData, content, children);
+      var nodes = restorationMethod(add, redactedData, content, children);
+      if (nodes.length > 1) {
+        nodes[0].restored = true;
+        nodes[nodes.length-1].restored = true;
+      } else {
+        nodes.restored = true;
+      }
+      return nodes;
     }
 
     /* Run before default reference. */

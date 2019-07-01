@@ -21,6 +21,7 @@ if (helpFlag || missingRequiredFlags) {
   process.stdout.write("\t-f, --format [md|txt]: specify format of content (default to markdown)\n");
   process.stdout.write("\t-p, --parserPlugins PLUGINS: comma-separated list of parser plugins to include in addition to the defaults\n");
   process.stdout.write("\t-c, --compilerPlugins PLUGINS: comma-separated list of compiler plugins to include in addition to the defaults\n");
+  process.stdout.write("\t-v, --checkRestorations Discard restoration if redactions are added or missing");
   process.exit()
 }
 
@@ -40,6 +41,10 @@ if (parserPlugins) {
 const compilerPlugins = (argv.c || argv.compilerPlugins)
 if (compilerPlugins) {
   processor.compilerPlugins.push(...requireByPath(compilerPlugins));
+}
+
+if (argv.v || argv.checkRestorations) {
+  processor.setCheckRestorations(true);
 }
 
 function restore(data) {

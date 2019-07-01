@@ -71,7 +71,7 @@ describe("Command-Line Scripts", () => {
             // restoration gets us back to the original
             const expected = fs.existsSync(restoredPath) ? restoredPath : sourcePath;
             const target = fs.existsSync(translatedPath) ? translatedPath : redactedPath;
-            const args = [path.resolve(rootDir, 'src/bin/restore.js'), '-s', sourcePath, '-r', target];
+            const args = [path.resolve(rootDir, 'src/bin/restore.js'), '-s', sourcePath, '-r', target, '-v'];
             if (fs.existsSync(pluginPath)) {
               args.push('-p', pluginPath);
             }
@@ -80,7 +80,7 @@ describe("Command-Line Scripts", () => {
             }
             const restore = spawnSync('node', args);
             let expectedContent = fs.readFileSync(expected, 'utf8')
-            if (extension === extensions.text) {
+            if (extension !== extensions.markdown) {
               expectedContent = expectedContent.trim();
             }
             expect(restore.stdout.toString()).toEqual(expectedContent);
