@@ -115,8 +115,7 @@ describe('Standard Markdown', () => {
     it('will handle extra/unwanted redactions by treating them as references without definitions with flag set', () => {
       const source = "This is some text with [a link](http://example.com/)";
       const redacted = "C'est du texte avec [un lien][0] et [une image][1]";
-      processor.setCheckRestorations(true);
-      const output = processor.sourceAndRedactedToHtml(source, redacted);
+      const output = processor.sourceAndRedactedToHtml(source, redacted, true);
       // It would be nice if this didn't add a newline but it will be removed later
       // in the pipeline.
       expect(output).toEqual("\n");

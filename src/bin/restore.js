@@ -43,12 +43,19 @@ if (compilerPlugins) {
   processor.compilerPlugins.push(...requireByPath(compilerPlugins));
 }
 
+var check = false
 if (argv.v || argv.checkRestorations) {
-  processor.setCheckRestorations(true);
+  check = true;
+}
+
+function restore_with_check() {
+  return function(...args) {
+    return processor.sourceAndRedactedToRestored(...args, check);
+  }
 }
 
 function restore(data) {
-  return recursivelyProcessAll(processor.sourceAndRedactedToRestored.bind(processor), data);
+  return recursivelyProcessAll(restore_with_check().bind(processor), data);
 }
 
 Promise.all([

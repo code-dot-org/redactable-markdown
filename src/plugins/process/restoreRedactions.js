@@ -177,7 +177,11 @@ module.exports = function restoreRedactions(sourceTree) {
       const redactedData = redactions[index];
       if (!(redactedData && redactedData.block)) {
         if (check) {
-          return unrestored(eat(startMatch[0]), redactedData);
+          return eat(blockOpen)({
+            type: 'unrestored',
+            content: content
+          });
+
         }
         return;
       }

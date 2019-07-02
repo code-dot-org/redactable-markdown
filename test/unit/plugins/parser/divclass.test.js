@@ -191,6 +191,20 @@ describe('divclass', () => {
         .toEqual("<div class=\"first\"><p>Premier</p></div>\n<div class=\"second\"><p>Deuxième</p></div>\n<p>[][2]</p>\n<p>Troisième</p>\n<p>[/][2]</p>\n");
     });
 
+    it('can rejects content that adds extra content with flag', () => {
+      const source = "[first]\n\nFirst\n\n[/first]\n\n[second]\n\nSecond\n\n[/second]";
+
+      const reusedIndex = "[][0]\n\nPremier\n\n[/][0]\n\n[][1]\n\nDeuxième\n\n[/][1]\n\n[][1]\n\nTroisième\n\n[/][1]"
+      expect(processor.sourceAndRedactedToHtml(source, reusedIndex, true))
+        .toEqual("\n");
+
+      // in every case, extra redactions default to raw markdown
+      const extraIndex = "[][0]\n\nPremier\n\n[/][0]\n\n[][1]\n\nDeuxième\n\n[/][1]\n\n[][2]\n\nTroisième\n\n[/][2]";
+      expect(processor.sourceAndRedactedToHtml(source, extraIndex, true))
+        .toEqual("\n");
+    });
+
+
     it('can NOT restore content if required whitespace is removed', () => {
       const source = "[clazz]\n\nCat\n\n[/clazz]";
       const redacted = "[][0]\nChat\n[/][0]";

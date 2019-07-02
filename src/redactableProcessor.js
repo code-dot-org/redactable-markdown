@@ -17,15 +17,10 @@ module.exports = class RedactableProcessor {
     this.processor = unified()
       .use(this.constructor.getParser())
       .use(this.constructor.getParserPlugins());
-    this.checkRestorations = false;
   }
 
   getProcessor() {
     return this.processor();
-  }
-
-  setCheckRestorations(checkRestorations) {
-    this.checkRestorations = checkRestorations;
   }
 
   sourceToRedactedSyntaxTree(source) {
@@ -50,7 +45,12 @@ module.exports = class RedactableProcessor {
       .stringify(sourceTree);
   }
 
-  checkRestorationNodes(sourceTree, redactedTree) {
+  /* This function checks that
+   * 1. Redactions in the sourceTree == restorations performed
+   * 2. There are no redactions that weren't performed
+   * 3. There was no additions redactable content in the mergedTree
+   * */
+  checkRestorationNodes(sourceTree, mergedTree) {
     var source_redactions = 0;
     var redacted_restorations = 0;
     var redacted_redactions = 0;
@@ -60,7 +60,7 @@ module.exports = class RedactableProcessor {
         source_redactions++;
       }
     });
-    visit(redactedTree, function(node) {
+    visit(mergedTree, function(node) {
       if (node.type === 'redaction') {
         redacted_redactions++;
       }
@@ -77,22 +77,23 @@ module.exports = class RedactableProcessor {
            redacted_unrestored === 0;
   }
 
-  sourceAndRedactedToMergedSyntaxTree(sourceTree, redacted) {
-    var settings = { redact: this.checkRestorations, check: this.checkRestorations};
-    const redactedTree = this.getProcessor()
+  sourceAndRedactedToMergedSyntaxTree(sourceTree, redacted, check) {
+    var settings = { redact: check, check: check};
+    const mergedTree = this.getProcessor()
       .use(restoreRedactions(sourceTree))
       .use({settings: settings})
       .parse(redacted);
-    return redactedTree;
+    return mergedTree;
   }
 
-  sourceAndRedactedToRestored(source, redacted) {
+  sourceAndRedactedToRestored(source, redacted, check) {
     const sourceTree = this.sourceToRedactedSyntaxTree(source);
     const mergedSyntaxTree = this.sourceAndRedactedToMergedSyntaxTree(
       sourceTree,
-      redacted
+      redacted,
+      check
     );
-    if (this.checkRestorations && !this.checkRestorationNodes(sourceTree, mergedSyntaxTree)) {
+    if (check && !this.checkRestorationNodes(sourceTree, mergedSyntaxTree)) {
       return "";
     }
     return this.getProcessor()
