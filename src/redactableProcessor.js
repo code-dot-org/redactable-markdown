@@ -51,10 +51,10 @@ module.exports = class RedactableProcessor {
    * 3. There was no additions redactable content in the mergedTree
    * */
   checkRestorationNodes(sourceTree, mergedTree) {
-    var source_redactions = 0;
-    var redacted_restorations = 0;
-    var redacted_redactions = 0;
-    var redacted_unrestored = 0;
+    let source_redactions = 0;
+    let redacted_restorations = 0;
+    let redacted_redactions = 0;
+    let redacted_unrestored = 0;
     visit(sourceTree, function(node) {
       if (node.type === 'redaction') {
         source_redactions++;
@@ -78,7 +78,7 @@ module.exports = class RedactableProcessor {
   }
 
   sourceAndRedactedToMergedSyntaxTree(sourceTree, redacted, strict) {
-    var settings = { redact: strict, strict: strict};
+    let settings = { redact: strict, strict: strict};
     const mergedTree = this.getProcessor()
       .use(restoreRedactions(sourceTree))
       .use({settings: settings})
@@ -94,12 +94,11 @@ module.exports = class RedactableProcessor {
       strict
     );
     if (strict && !this.checkRestorationNodes(sourceTree, mergedSyntaxTree)) {
-      return "";
+      return "\n";
     }
     return this.getProcessor()
       .use(this.constructor.getCompiler())
       .use(this.compilerPlugins)
-      .use(renderRedactions)
       .stringify(mergedSyntaxTree);
   }
 

@@ -62,13 +62,6 @@ module.exports = function restoreRedactions(sourceTree) {
   }
   getRedactedValues(sourceTree);
 
-  function unrestored(add, node) {
-    return add(Object.assign({}, node, {
-      type: 'unrestored',
-      content: node.content
-    }));
-  }
-
   // then return an extension to the parser that can consume the data from these
   // redacted nodes when it encounters a redaction
   return function () {
@@ -77,7 +70,7 @@ module.exports = function restoreRedactions(sourceTree) {
     }
 
     const Parser = this.Parser;
-    var strict = Parser.prototype.options.strict;
+    let strict = Parser.prototype.options.strict;
 
     // Add an inline tokenizer
     //
@@ -109,10 +102,9 @@ module.exports = function restoreRedactions(sourceTree) {
         }
         return;
       }
-      if (strict && redactedData.used) {
-        return unrestored(eat(match[0]), redactedData);
+      if (strict) {
+        redactions[index] = undefined;
       }
-      redactedData.used = true;
       const restorationMethod = Parser.prototype.restorationMethods[redactedData.redactionType];
       if (!restorationMethod) {
         return
@@ -123,7 +115,7 @@ module.exports = function restoreRedactions(sourceTree) {
       }
 
       const add = eat(match[0]);
-      var node = restorationMethod(add, redactedData, content);
+      let node = restorationMethod(add, redactedData, content);
       node.restored = true;
       return node;
     }
@@ -185,10 +177,9 @@ module.exports = function restoreRedactions(sourceTree) {
         }
         return;
       }
-      if (strict && redactedData.used) {
-        return unrestored(eat(startMatch[0]), redactedData);
+      if (strict) {
+        redactions[index] = undefined;
       }
-      redactedData.used = true;
 
       // the entire string representing the "close" block of the redaction
       const blockClose = `\n\n[/][${index}]`;
@@ -218,7 +209,7 @@ module.exports = function restoreRedactions(sourceTree) {
       const subvalue = value.slice(startIndex, endIndex);
       const children = this.tokenizeBlock(subvalue, eat.now());
       const add = eat(blockOpen + subvalue + blockClose);
-      var nodes = restorationMethod(add, redactedData, content, children);
+      let nodes = restorationMethod(add, redactedData, content, children);
       if (nodes.length > 1) {
         nodes[0].restored = true;
         nodes[nodes.length-1].restored = true;
