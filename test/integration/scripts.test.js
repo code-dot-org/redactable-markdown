@@ -71,7 +71,7 @@ describe("Command-Line Scripts", () => {
             // restoration gets us back to the original
             const expected = fs.existsSync(restoredPath) ? restoredPath : sourcePath;
             const target = fs.existsSync(translatedPath) ? translatedPath : redactedPath;
-            const args = [path.resolve(rootDir, 'src/bin/restore.js'), '-s', sourcePath, '-r', target, '-v'];
+            const args = [path.resolve(rootDir, 'src/bin/restore.js'), '-s', sourcePath, '-r', target, '--strict'];
             if (fs.existsSync(pluginPath)) {
               args.push('-p', pluginPath);
             }

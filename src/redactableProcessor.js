@@ -77,8 +77,8 @@ module.exports = class RedactableProcessor {
            redacted_unrestored === 0;
   }
 
-  sourceAndRedactedToMergedSyntaxTree(sourceTree, redacted, check) {
-    var settings = { redact: check, check: check};
+  sourceAndRedactedToMergedSyntaxTree(sourceTree, redacted, strict) {
+    var settings = { redact: strict, strict: strict};
     const mergedTree = this.getProcessor()
       .use(restoreRedactions(sourceTree))
       .use({settings: settings})
@@ -86,14 +86,14 @@ module.exports = class RedactableProcessor {
     return mergedTree;
   }
 
-  sourceAndRedactedToRestored(source, redacted, check) {
+  sourceAndRedactedToRestored(source, redacted, strict) {
     const sourceTree = this.sourceToRedactedSyntaxTree(source);
     const mergedSyntaxTree = this.sourceAndRedactedToMergedSyntaxTree(
       sourceTree,
       redacted,
-      check
+      strict
     );
-    if (check && !this.checkRestorationNodes(sourceTree, mergedSyntaxTree)) {
+    if (strict && !this.checkRestorationNodes(sourceTree, mergedSyntaxTree)) {
       return "";
     }
     return this.getProcessor()

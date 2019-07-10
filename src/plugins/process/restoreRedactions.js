@@ -77,7 +77,7 @@ module.exports = function restoreRedactions(sourceTree) {
     }
 
     const Parser = this.Parser;
-    var check = Parser.prototype.options.check;
+    var strict = Parser.prototype.options.strict;
 
     // Add an inline tokenizer
     //
@@ -101,7 +101,7 @@ module.exports = function restoreRedactions(sourceTree) {
       // error handler should probably go
       const redactedData = redactions[index];
       if (!redactedData) {
-        if (check) {
+        if (strict) {
           return eat(match[0])({
             type: 'unrestored',
             content: content
@@ -109,7 +109,7 @@ module.exports = function restoreRedactions(sourceTree) {
         }
         return;
       }
-      if (check && redactedData.used) {
+      if (strict && redactedData.used) {
         return unrestored(eat(match[0]), redactedData);
       }
       redactedData.used = true;
@@ -176,7 +176,7 @@ module.exports = function restoreRedactions(sourceTree) {
       // error handler should probably go
       const redactedData = redactions[index];
       if (!(redactedData && redactedData.block)) {
-        if (check) {
+        if (strict) {
           return eat(blockOpen)({
             type: 'unrestored',
             content: content
@@ -185,7 +185,7 @@ module.exports = function restoreRedactions(sourceTree) {
         }
         return;
       }
-      if (check && redactedData.used) {
+      if (strict && redactedData.used) {
         return unrestored(eat(startMatch[0]), redactedData);
       }
       redactedData.used = true;

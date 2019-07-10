@@ -21,7 +21,7 @@ if (helpFlag || missingRequiredFlags) {
   process.stdout.write("\t-f, --format [md|txt]: specify format of content (default to markdown)\n");
   process.stdout.write("\t-p, --parserPlugins PLUGINS: comma-separated list of parser plugins to include in addition to the defaults\n");
   process.stdout.write("\t-c, --compilerPlugins PLUGINS: comma-separated list of compiler plugins to include in addition to the defaults\n");
-  process.stdout.write("\t-v, --checkRestorations Discard restoration if redactions are added or missing");
+  process.stdout.write("\t--strict Discard restoration if redactions are added or missing");
   process.exit()
 }
 
@@ -43,19 +43,19 @@ if (compilerPlugins) {
   processor.compilerPlugins.push(...requireByPath(compilerPlugins));
 }
 
-var check = false
-if (argv.v || argv.checkRestorations) {
-  check = true;
+var strict = false
+if (argv.strict) {
+  strict = true;
 }
 
-function restore_with_check() {
+function restore_with_strict() {
   return function(...args) {
-    return processor.sourceAndRedactedToRestored(...args, check);
+    return processor.sourceAndRedactedToRestored(...args, strict);
   }
 }
 
 function restore(data) {
-  return recursivelyProcessAll(restore_with_check().bind(processor), data);
+  return recursivelyProcessAll(restore_with_strict().bind(processor), data);
 }
 
 Promise.all([
