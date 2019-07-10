@@ -112,9 +112,18 @@ describe('Standard Markdown', () => {
       expect(output).toEqual("<p>C'est du texte avec <a href=\"http://example.com/\">un lien</a> et [une image][1]</p>\n");
     });
 
-    it('will handle extra/unwanted redactions by treating them as references without definitions with flag set', () => {
+    it('will handle extra/unwanted redactions by rejecting them with flag set', () => {
       const source = "This is some text with [a link](http://example.com/)";
       const redacted = "C'est du texte avec [un lien][0] et [une image][1]";
+      const output = processor.sourceAndRedactedToHtml(source, redacted, true);
+      // It would be nice if this didn't add a newline but it will be removed later
+      // in the pipeline.
+      expect(output).toEqual("\n");
+    });
+
+    it('will handle removed redactions by rejecting them with flag set', () => {
+      const source = "This is some text with [a link](http://example.com/)";
+      const redacted = "C'est du texte avec ";
       const output = processor.sourceAndRedactedToHtml(source, redacted, true);
       // It would be nice if this didn't add a newline but it will be removed later
       // in the pipeline.

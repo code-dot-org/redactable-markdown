@@ -80,7 +80,7 @@ describe("Command-Line Scripts", () => {
             }
             const restore = spawnSync('node', args);
             let expectedContent = fs.readFileSync(expected, 'utf8')
-            if (extension !== extensions.markdown) {
+            if (extension === extensions.text) {
               expectedContent = expectedContent.trim();
             }
             expect(restore.stdout.toString()).toEqual(expectedContent);
