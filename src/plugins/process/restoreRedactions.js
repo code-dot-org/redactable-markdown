@@ -110,7 +110,7 @@ module.exports = function restoreRedactions(sourceTree) {
     }
 
     tokenizeInlineRedaction.locator = function (value) {
-      return value.search(INLINE_REDACTION_RE);
+      return value.indexOf('[');
     }
 
     Parser.prototype.inlineTokenizers.redaction = tokenizeInlineRedaction;
