@@ -109,8 +109,8 @@ module.exports = function restoreRedactions(sourceTree) {
       return restorationMethod(add, redactedData, content);
     }
 
-    tokenizeInlineRedaction.locator = function (value) {
-      return value.indexOf('[');
+    tokenizeInlineRedaction.locator = function (value, fromIndex) {
+      return value.indexOf('[', fromIndex);
     }
 
     Parser.prototype.inlineTokenizers.redaction = tokenizeInlineRedaction;
