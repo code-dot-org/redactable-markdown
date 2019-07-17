@@ -43,7 +43,7 @@ if (compilerPlugins) {
   processor.compilerPlugins.push(...requireByPath(compilerPlugins));
 }
 
-var strict = false
+let strict = false
 if (argv.strict) {
   strict = true;
 }

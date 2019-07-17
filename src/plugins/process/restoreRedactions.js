@@ -70,7 +70,7 @@ module.exports = function restoreRedactions(sourceTree) {
     }
 
     const Parser = this.Parser;
-    let strict = Parser.prototype.options.strict;
+    const strict = Parser.prototype.options.strict;
 
     // Add an inline tokenizer
     //
@@ -115,7 +115,7 @@ module.exports = function restoreRedactions(sourceTree) {
       }
 
       const add = eat(match[0]);
-      let node = restorationMethod(add, redactedData, content);
+      const node = restorationMethod(add, redactedData, content);
       node.restored = true;
       return node;
     }
@@ -209,7 +209,7 @@ module.exports = function restoreRedactions(sourceTree) {
       const subvalue = value.slice(startIndex, endIndex);
       const children = this.tokenizeBlock(subvalue, eat.now());
       const add = eat(blockOpen + subvalue + blockClose);
-      let nodes = restorationMethod(add, redactedData, content, children);
+      const nodes = restorationMethod(add, redactedData, content, children);
       if (nodes.length > 1) {
         nodes[0].restored = true;
         nodes[nodes.length-1].restored = true;

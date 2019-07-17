@@ -72,6 +72,7 @@ module.exports = class RedactableProcessor {
       }
     });
 
+
     return source_redactions === redacted_restorations &&
            redacted_redactions === 0 &&
            redacted_unrestored === 0;
