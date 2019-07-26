@@ -1,8 +1,10 @@
 const expect = require("expect");
-const processor = require("../../../../src/redactableMarkdownProcessor").create();
-const vocablinkPlugin = require("./vocablink");
-processor.processor.use(vocablinkPlugin);
+const { vocablink } = require("@code-dot-org/remark-plugins");
+
 const mapMdast = require("../../../utils").mapMdast;
+const processor = require("../../../../src/redactableMarkdownProcessor").create();
+
+processor.processor.use(vocablink);
 
 describe("vocablink", () => {
   describe("parse", () => {

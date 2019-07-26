@@ -1,7 +1,9 @@
 const expect = require("expect");
+const { tip } = require("@code-dot-org/remark-plugins");
+
 const processor = require("../../../../src/redactableMarkdownProcessor").create();
-const tipPlugin = require("./tip");
-processor.processor.use(tipPlugin);
+
+processor.processor.use(tip);
 
 describe("tip", () => {
   describe("render", () => {

@@ -1,1 +1,1 @@
-../../../unit/plugins/parser/vocablink.js
+module.exports = require("@code-dot-org/remark-plugins").vocablink;
