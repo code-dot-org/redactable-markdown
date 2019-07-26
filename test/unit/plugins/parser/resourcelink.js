@@ -1,7 +1,7 @@
 let redact;
 
 const RESOURCELINK_RE = /^\[r ([^\]]+)\]/;
-const RESOURCELINK = 'resourcelink';
+const RESOURCELINK = "resourcelink";
 
 /**
  * Plugin that adds support for Curriculum Builder's resourcelinks.
@@ -19,18 +19,18 @@ module.exports = function resourcelink() {
     redact = Parser.prototype.options.redact;
     Parser.prototype.inlineTokenizers[RESOURCELINK] = tokenizeResourcelink;
 
-    Parser.prototype.restorationMethods[RESOURCELINK] = function (add, node) {
+    Parser.prototype.restorationMethods[RESOURCELINK] = function(add, node) {
       return add({
-        type: 'rawtext',
+        type: "rawtext",
         value: `[r ${node.slug}]`
       });
-    }
+    };
 
     // Run it just before `html`
     const methods = Parser.prototype.inlineMethods;
-    methods.splice(methods.indexOf('html'), 0, RESOURCELINK);
+    methods.splice(methods.indexOf("html"), 0, RESOURCELINK);
   }
-}
+};
 
 tokenizeResourcelink.notInLink = true;
 tokenizeResourcelink.locator = locateResourcelink;
@@ -46,13 +46,15 @@ function tokenizeResourcelink(eat, value, silent) {
 
     const slug = match[1];
     return eat(match[0])({
-      type: 'redaction',
+      type: "redaction",
       redactionType: RESOURCELINK,
       slug,
-      children: [{
-        type: 'text',
-        value: slug
-      }]
+      children: [
+        {
+          type: "text",
+          value: slug
+        }
+      ]
     });
   }
 }

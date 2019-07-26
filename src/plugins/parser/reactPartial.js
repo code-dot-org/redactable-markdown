@@ -6,8 +6,8 @@ module.exports = function reactPartial() {
   tokenizers.reactPartial = tokenizeReactPartial;
 
   /* Run it just before `paragraph`. */
-  methods.splice(methods.indexOf('paragraph'), 0, 'reactPartial');
-}
+  methods.splice(methods.indexOf("paragraph"), 0, "reactPartial");
+};
 
 function tokenizeReactPartial(eat, value, silent) {
   const match = /^<(\w+)\n$/.exec(value);
@@ -18,7 +18,7 @@ function tokenizeReactPartial(eat, value, silent) {
     }
 
     return eat(match[0])({
-      type: match[1],
+      type: match[1]
     });
   }
 }

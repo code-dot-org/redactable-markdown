@@ -6,7 +6,6 @@
  * structure.
  */
 module.exports.mapMdast = function mapMdast(node) {
-
   const result = {
     type: node.type
   };
@@ -16,5 +15,4 @@ module.exports.mapMdast = function mapMdast(node) {
   }
 
   return result;
-}
-
+};

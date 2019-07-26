@@ -64,7 +64,7 @@ module.exports = function restoreRedactions(sourceTree) {
 
   // then return an extension to the parser that can consume the data from these
   // redacted nodes when it encounters a redaction
-  return function () {
+  return function() {
     if (!this.Parser) {
       return;
     }
@@ -77,7 +77,7 @@ module.exports = function restoreRedactions(sourceTree) {
     // something that can be translated and "0" is the index of the redacted
     // value.
     const INLINE_REDACTION_RE = /^\[([^\]]*)\]\[(\d+)\]/;
-    const tokenizeInlineRedaction = function (eat, value, silent) {
+    const tokenizeInlineRedaction = function(eat, value, silent) {
       const match = INLINE_REDACTION_RE.exec(value);
       if (!match) {
         return;
@@ -96,9 +96,10 @@ module.exports = function restoreRedactions(sourceTree) {
         return;
       }
 
-      const restorationMethod = Parser.prototype.restorationMethods[redactedData.redactionType];
+      const restorationMethod =
+        Parser.prototype.restorationMethods[redactedData.redactionType];
       if (!restorationMethod) {
-        return
+        return;
       }
 
       if (silent) {
@@ -107,15 +108,15 @@ module.exports = function restoreRedactions(sourceTree) {
 
       const add = eat(match[0]);
       return restorationMethod(add, redactedData, content);
-    }
+    };
 
-    tokenizeInlineRedaction.locator = function (value, fromIndex) {
-      return value.indexOf('[', fromIndex);
-    }
+    tokenizeInlineRedaction.locator = function(value, fromIndex) {
+      return value.indexOf("[", fromIndex);
+    };
 
     Parser.prototype.inlineTokenizers.redaction = tokenizeInlineRedaction;
     const inlineMethods = Parser.prototype.inlineMethods;
-    inlineMethods.splice(inlineMethods.indexOf('reference'), 0, 'redaction');
+    inlineMethods.splice(inlineMethods.indexOf("reference"), 0, "redaction");
 
     // Add a block tokenizer
     //
@@ -130,9 +131,9 @@ module.exports = function restoreRedactions(sourceTree) {
     //
     // Where "some text" is something that can be translated  and "0" is the
     // index of the redacted value.
-    const tokenizeBlockRedaction = function (eat, value, silent) {
+    const tokenizeBlockRedaction = function(eat, value, silent) {
       const BLOCK_REDACTION_RE = /^\[([^\]]*)\]\[(\d+)\]\n\n/;
-      const startMatch = BLOCK_REDACTION_RE.exec(value)
+      const startMatch = BLOCK_REDACTION_RE.exec(value);
 
       // if we don't find an open block, return immediately
       if (!startMatch) {
@@ -172,9 +173,10 @@ module.exports = function restoreRedactions(sourceTree) {
         return;
       }
 
-      const restorationMethod = Parser.prototype.restorationMethods[redactedData.open.redactionType];
+      const restorationMethod =
+        Parser.prototype.restorationMethods[redactedData.open.redactionType];
       if (!restorationMethod) {
-        return
+        return;
       }
 
       // if we get to here, then we have found a valid block! Return true if in
@@ -189,11 +191,11 @@ module.exports = function restoreRedactions(sourceTree) {
       const children = this.tokenizeBlock(subvalue, eat.now());
       const add = eat(blockOpen + subvalue + blockClose);
       return restorationMethod(add, redactedData, content, children);
-    }
+    };
 
     /* Run before default reference. */
     Parser.prototype.blockTokenizers.redaction = tokenizeBlockRedaction;
     const blockMethods = Parser.prototype.blockMethods;
-    blockMethods.splice(blockMethods.indexOf('paragraph'), 0, 'redaction');
-  }
-}
+    blockMethods.splice(blockMethods.indexOf("paragraph"), 0, "redaction");
+  };
+};

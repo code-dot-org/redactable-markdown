@@ -43,7 +43,7 @@ module.exports = function renderRedactions() {
       var self = this;
       var exit = self.enterLink();
       if (node.children) {
-        value = self.all(node).join('');
+        value = self.all(node).join("");
       }
       exit();
 
@@ -60,7 +60,6 @@ module.exports = function renderRedactions() {
       } else {
         return `[${value}][${index++}]`;
       }
-    }
+    };
   }
-}
-
+};

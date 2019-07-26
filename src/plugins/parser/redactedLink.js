@@ -40,52 +40,60 @@ module.exports = function redactedLink() {
   const methods = Parser.prototype.inlineMethods;
   const restorationMethods = Parser.prototype.restorationMethods;
 
-  restorationMethods.redactedlink = function (add, node, content) {
-    return add(Object.assign({}, node, {
-      type: 'link',
-      children: [{
-        type: "text",
-        value: content
-      }]
-    }));
-  }
+  restorationMethods.redactedlink = function(add, node, content) {
+    return add(
+      Object.assign({}, node, {
+        type: "link",
+        children: [
+          {
+            type: "text",
+            value: content
+          }
+        ]
+      })
+    );
+  };
 
-  restorationMethods.redactedimage = function (add, node, content) {
-    return add(Object.assign({}, node, {
-      type: 'image',
-      alt: content
-    }));
-  }
+  restorationMethods.redactedimage = function(add, node, content) {
+    return add(
+      Object.assign({}, node, {
+        type: "image",
+        alt: content
+      })
+    );
+  };
 
   redact = Parser.prototype.options.redact;
   tokenizeLink = tokenizers.link;
   tokenizeAutoLink = tokenizers.autoLink;
 
   tokenizeRedactedLink.locator = tokenizers.link.locator;
-  tokenizers.redactedLink = tokenizeRedactedLink
+  tokenizers.redactedLink = tokenizeRedactedLink;
 
   tokenizeRedactedAutoLink.locator = tokenizers.autoLink.locator;
-  tokenizers.redactedAutoLink = tokenizeRedactedAutoLink
+  tokenizers.redactedAutoLink = tokenizeRedactedAutoLink;
 
   // If in redacted mode, run this instead of original link tokenizer. If
   // running regularly, do nothing special.
   if (redact) {
-    methods.splice(methods.indexOf('link'), 1, 'redactedLink');
-    methods.splice(methods.indexOf('autoLink'), 1, 'redactedAutoLink');
+    methods.splice(methods.indexOf("link"), 1, "redactedLink");
+    methods.splice(methods.indexOf("autoLink"), 1, "redactedAutoLink");
   }
-}
+};
 
 function tokenizeRedactedLink(eat, value, silent) {
   const link = tokenizeLink.call(this, eat, value, silent);
   if (link) {
-    if (link.type === 'image') {
-      link.children = [{
-        type: 'text',
-        value: link.alt || ""
-      }]
+    if (link.type === "image") {
+      link.children = [
+        {
+          type: "text",
+          value: link.alt || ""
+        }
+      ];
     }
-    link.redactionType = 'redacted' + link.type;
-    link.type = 'redaction';
+    link.redactionType = "redacted" + link.type;
+    link.type = "redaction";
   }
 
   return link;
@@ -94,8 +102,8 @@ function tokenizeRedactedLink(eat, value, silent) {
 function tokenizeRedactedAutoLink(eat, value, silent) {
   const link = tokenizeAutoLink.call(this, eat, value, silent);
   if (link) {
-    link.redactionType = 'redactedlink';
-    link.type = 'redaction';
+    link.redactionType = "redactedlink";
+    link.type = "redaction";
   }
 
   return link;
