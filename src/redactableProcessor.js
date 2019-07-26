@@ -1,13 +1,13 @@
-const unified = require('unified');
+const unified = require("unified");
 
-const TextParser = require('./plugins/parser/TextParser');
-const TextCompiler = require('./plugins/compiler/TextCompiler');
+const TextParser = require("./plugins/parser/TextParser");
+const TextCompiler = require("./plugins/compiler/TextCompiler");
 
-const renderRedactions = require('./plugins/process/renderRedactions');
-const restoreRedactions = require('./plugins/process/restoreRedactions');
-const restorationRegistration = require('./plugins/process/restorationRegistration');
+const renderRedactions = require("./plugins/process/renderRedactions");
+const restoreRedactions = require("./plugins/process/restoreRedactions");
+const restorationRegistration = require("./plugins/process/restorationRegistration");
 
-const rawtext = require('./plugins/compiler/rawtext');
+const rawtext = require("./plugins/compiler/rawtext");
 
 module.exports = class RedactableProcessor {
   constructor() {
@@ -23,7 +23,7 @@ module.exports = class RedactableProcessor {
 
   sourceToRedactedSyntaxTree(source) {
     return this.getProcessor()
-      .use({settings: {redact: true}})
+      .use({ settings: { redact: true } })
       .parse(source);
   }
 

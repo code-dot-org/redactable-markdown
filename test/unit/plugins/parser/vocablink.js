@@ -1,7 +1,7 @@
 let redact;
 
 const VOCABLINK_RE = /^\[v ([^\]]+)\](?:\[([^\]]+)\])?/;
-const VOCABLINK = 'vocablink';
+const VOCABLINK = "vocablink";
 
 /**
  * Plugin that adds support for Curriculum Builder's vocablinks.
@@ -19,22 +19,26 @@ module.exports = function vocablink() {
     redact = Parser.prototype.options.redact;
     Parser.prototype.inlineTokenizers[VOCABLINK] = tokenizeVocablink;
 
-    Parser.prototype.restorationMethods[VOCABLINK] = function (add, node, content) {
+    Parser.prototype.restorationMethods[VOCABLINK] = function(
+      add,
+      node,
+      content
+    ) {
       let value = `[v ${node.vocabword}]`;
       if (content) {
-        value += `[${content}]`
+        value += `[${content}]`;
       }
       return add({
-        type: 'rawtext',
-        value 
+        type: "rawtext",
+        value
       });
-    }
+    };
 
     // Run it just before `html`
     const methods = Parser.prototype.inlineMethods;
-    methods.splice(methods.indexOf('html'), 0, VOCABLINK);
+    methods.splice(methods.indexOf("html"), 0, VOCABLINK);
   }
-}
+};
 
 tokenizeVocablink.notInLink = true;
 tokenizeVocablink.locator = locateVocablink;
@@ -52,13 +56,15 @@ function tokenizeVocablink(eat, value, silent) {
     const override = match[2];
     if (redact) {
       return add({
-        type: 'redaction',
+        type: "redaction",
         redactionType: VOCABLINK,
         vocabword,
-        children: [{
-          type: 'text',
-          value: override || vocabword
-        }]
+        content: [
+          {
+            type: "text",
+            value: override || vocabword
+          }
+        ]
       });
     }
 
@@ -66,7 +72,7 @@ function tokenizeVocablink(eat, value, silent) {
     // different bit of syntax (such as linkReference) but simply output it back
     // to the raw string
     return add({
-      type: 'rawtext',
+      type: "rawtext",
       value: match[0]
     });
   }

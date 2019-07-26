@@ -14,12 +14,15 @@ module.exports = function rawtext() {
     const Compiler = this.Compiler;
     const visitors = Compiler.prototype.visitors;
 
-    visitors.indent = function (node) {
+    visitors.indent = function(node) {
       const indentation = "    ";
       const newline = "\n";
-      return this.all(node).map(
-        child => indentation + child.split(newline).join(newline + indentation)
-      ).join(newline + newline);
-    }
+      return this.all(node)
+        .map(
+          child =>
+            indentation + child.split(newline).join(newline + indentation)
+        )
+        .join(newline + newline);
+    };
   }
-}
+};

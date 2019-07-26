@@ -35,32 +35,32 @@ module.exports = function renderRedactions() {
     const visitors = Compiler.prototype.visitors;
 
     let index = 0;
-    let openBlockIndexes = [];
 
     visitors.redaction = function redaction(node) {
-      let value = "";
-
-      var self = this;
-      var exit = self.enterLink();
-      if (node.children) {
-        value = self.all(node).join('');
+      let exit;
+      if (
+        node.redactionType === "redactedlink" ||
+        node.redactionType === "redactedimage"
+      ) {
+        exit = this.enterLink();
       }
-      exit();
+
+      const value = (node.content || [])
+        .map(content => this.visit(content, node))
+        .join("");
+
+      if (exit) {
+        exit();
+      }
 
       if (node.block) {
-        // redacted blocks should come in open, close pairs that share an index;
-        // when we encounter an open, push the current index onto a stack and
-        // pop it back off when we encounter a close to keep them balanced.
-        if (node.closing) {
-          return `[/${value}][${openBlockIndexes.shift()}]`;
-        } else {
-          openBlockIndexes.unshift(index++);
-          return `[${value}][${openBlockIndexes[0]}]`;
-        }
+        const open = `[${value}][${index}]`;
+        const close = `[/][${index++}]`;
+        const subvalue = this.block(node);
+        return [open, subvalue, close].join("\n\n");
       } else {
         return `[${value}][${index++}]`;
       }
-    }
+    };
   }
-}
-
+};

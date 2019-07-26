@@ -10,20 +10,20 @@
  * scratch.
  */
 
-const RemarkParser = require('remark-parse').Parser;
-const unherit = require('unherit');
-const xtend = require('xtend');
+const RemarkParser = require("remark-parse").Parser;
+const unherit = require("unherit");
+const xtend = require("xtend");
 
 module.exports = function textParse(options) {
-  const settings = this.data('settings');
+  const settings = this.data("settings");
   const Local = unherit(RemarkParser);
 
   Local.prototype.options = xtend(Local.prototype.options, settings, options);
 
   // Limit tokenizers to only those that parse plain text, not any markdown
   // syntax
-  Local.prototype.blockMethods = ['newline', 'paragraph'];
-  Local.prototype.inlineMethods = ['text'];
+  Local.prototype.blockMethods = ["newline", "paragraph"];
+  Local.prototype.inlineMethods = ["text"];
   Local.prototype.interruptParagraph = [];
 
   this.Parser = Local;
