@@ -1,14 +1,14 @@
-const html = require('remark-html');
-const parse = require('remark-parse');
-const stringify = require('remark-stringify');
+const html = require("remark-html");
+const parse = require("remark-parse");
+const stringify = require("remark-stringify");
 
-const div = require('./plugins/compiler/div');
-const indent = require('./plugins/compiler/indent');
+const div = require("./plugins/compiler/div");
+const indent = require("./plugins/compiler/indent");
 
-const divclass = require('./plugins/parser/divclass');
-const redactedLink = require('./plugins/parser/redactedLink');
+const divclass = require("./plugins/parser/divclass");
+const redactedLink = require("./plugins/parser/redactedLink");
 
-const RedactableProcessor = require('./redactableProcessor');
+const RedactableProcessor = require("./redactableProcessor");
 
 module.exports = class RedactableMarkdownProcessor extends RedactableProcessor {
   sourceToHtml(source) {

@@ -10,15 +10,15 @@
  * scratch.
  */
 
-const RemarkCompiler = require('remark-stringify').Compiler;
-const unherit = require('unherit');
-const xtend = require('xtend');
+const RemarkCompiler = require("remark-stringify").Compiler;
+const unherit = require("unherit");
+const xtend = require("xtend");
 
 module.exports = function textCompile(options) {
   const Local = unherit(RemarkCompiler);
   Local.prototype.options = xtend(
     Local.prototype.options,
-    this.data('settings'),
+    this.data("settings"),
     options
   );
 

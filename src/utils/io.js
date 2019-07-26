@@ -1,48 +1,48 @@
-const fs = require('fs');
+const fs = require("fs");
 
-module.exports.readFromFileOrStdin = function (path) {
+module.exports.readFromFileOrStdin = function(path) {
   const readStream = path ? fs.createReadStream(path) : process.stdin;
   let inputData = "";
 
   return new Promise((resolve, reject) => {
     readStream
-      .setEncoding('utf8')
-      .on('readable', () => {
+      .setEncoding("utf8")
+      .on("readable", () => {
         const chunk = readStream.read();
         if (chunk !== null) {
           inputData += chunk;
         }
       })
-      .on('error', reject)
-      .on('end', () => {
+      .on("error", reject)
+      .on("end", () => {
         resolve(inputData);
       });
   });
-}
+};
 
-module.exports.writeToFileOrStdout = function (path, data) {
+module.exports.writeToFileOrStdout = function(path, data) {
   if (path) {
     fs.writeFileSync(path, data);
   } else {
-    process.stdout.write(data)
+    process.stdout.write(data);
   }
-}
+};
 
-module.exports.formatAsSerialized = function (output, format) {
+module.exports.formatAsSerialized = function(output, format) {
   if (!format) {
-    format = (typeof output === "object") ? 'json' : 'txt';
+    format = typeof output === "object" ? "json" : "txt";
   }
 
-  if (format === 'json') {
+  if (format === "json") {
     return JSON.stringify(output, null, 2);
-  } else if (format === 'txt') {
+  } else if (format === "txt") {
     return output.toString();
   } else {
     throw Error("do not know how to output to format " + format);
   }
-}
+};
 
-module.exports.parseAsSerialized = function (input) {
+module.exports.parseAsSerialized = function(input) {
   try {
     return JSON.parse(input);
   } catch (e) {
@@ -50,4 +50,4 @@ module.exports.parseAsSerialized = function (input) {
   }
 
   return input.toString();
-}
+};
