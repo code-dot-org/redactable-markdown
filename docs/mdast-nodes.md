@@ -3,6 +3,17 @@
 This project adds several new [**mdast**](https://github.com/syntax-tree/mdast)
 nodes, documented here.
 
+## Table of Contents
+
+* [Nodes](#nodes)
+  * [InlineRedaction](#inlineredaction)
+  * [BlockRedaction](#blockredaction)
+  * [InlineRestoration](#inlinerestoration)
+  * [BlockRestoration](#blockrestoration)
+* [Mixins](#mixins)
+  * [Redaction](#redaction)
+  * [Restoration](#restoration)
+
 ## Nodes
 
 ### `Inline Redaction`
@@ -62,7 +73,7 @@ BlockRestoration includes Restoration
 
 description here (TODO)
 
-## Mixin
+## Mixins
 
 ### `Redaction`
 
