@@ -6,10 +6,10 @@ nodes, documented here.
 ## Table of Contents
 
 * [Nodes](#nodes)
-  * [InlineRedaction](#inlineredaction)
-  * [BlockRedaction](#blockredaction)
-  * [InlineRestoration](#inlinerestoration)
-  * [BlockRestoration](#blockrestoration)
+  * [InlineRedaction](#inline-redaction)
+  * [BlockRedaction](#block-redaction)
+  * [InlineRestoration](#inline-restoration)
+  * [BlockRestoration](#block-restoration)
 * [Mixins](#mixins)
   * [Redaction](#redaction)
   * [Restoration](#restoration)
