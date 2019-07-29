@@ -48,7 +48,7 @@ module.exports = function renderRedactions() {
 
     let index = 0;
 
-    visitors.inlineRedaction = function redaction(node) {
+    visitors.inlineRedaction = function(node) {
       let exit;
       if (node.redactionType === "link" || node.redactionType === "image") {
         exit = this.enterLink();
@@ -63,7 +63,7 @@ module.exports = function renderRedactions() {
       return `[${value}][${index++}]`;
     };
 
-    visitors.blockRedaction = function redaction(node) {
+    visitors.blockRedaction = function(node) {
       const value = stringifyContent(node);
 
       const open = `[${value}][${index}]`;

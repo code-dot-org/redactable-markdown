@@ -1,1 +1,1 @@
-../../../unit/plugins/parser/tiplink.js
+module.exports = require("@code-dot-org/remark-plugins").tiplink;
