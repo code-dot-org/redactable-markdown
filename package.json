@@ -39,7 +39,7 @@
   "author": "Code.org <dev@code.org> (http://code.org)",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
-    "@code-dot-org/remark-plugins": "^0.1.0",
+    "@code-dot-org/remark-plugins": "^0.1.1",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-plugin-transform-class-properties": "^6.24.1",
