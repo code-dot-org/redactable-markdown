@@ -38,10 +38,7 @@ module.exports = function renderRedactions() {
 
     visitors.redaction = function redaction(node) {
       let exit;
-      if (
-        node.redactionType === "redactedlink" ||
-        node.redactionType === "redactedimage"
-      ) {
+      if (node.redactionType === "link" || node.redactionType === "image") {
         exit = this.enterLink();
       }
 

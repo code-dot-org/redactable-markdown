@@ -40,7 +40,7 @@ module.exports = function redactedLink() {
   const methods = Parser.prototype.inlineMethods;
   const restorationMethods = Parser.prototype.restorationMethods;
 
-  restorationMethods.redactedlink = function(add, node, content) {
+  restorationMethods.link = function(add, node, content) {
     return add(
       Object.assign({}, node, {
         type: "link",
@@ -54,7 +54,7 @@ module.exports = function redactedLink() {
     );
   };
 
-  restorationMethods.redactedimage = function(add, node, content) {
+  restorationMethods.image = function(add, node, content) {
     return add(
       Object.assign({}, node, {
         type: "image",
@@ -96,7 +96,7 @@ function tokenizeRedactedLink(eat, value, silent) {
       link.content = link.children;
       delete link.children;
     }
-    link.redactionType = "redacted" + link.type;
+    link.redactionType = link.type;
     link.type = "redaction";
   }
 
@@ -106,7 +106,7 @@ function tokenizeRedactedLink(eat, value, silent) {
 function tokenizeRedactedAutoLink(eat, value, silent) {
   const link = tokenizeAutoLink.call(this, eat, value, silent);
   if (link) {
-    link.redactionType = "redactedlink";
+    link.redactionType = "link";
     link.type = "redaction";
     link.content = link.children;
     delete link.children;
