@@ -2,12 +2,20 @@
  * Add support for rending the redacted nodes generated when parsing source data
  * in redact mode. Redacted content shoulud all be of the form:
  *
- *   [text to translate][i]
+ *   [optional text to translate][i]
  *
- * Where "text to translate" is english text that we should expect the
- * translator to modify, and `i` is the sequential index of this redaction in
- * the content (used to match the redacted content back up with source content
- * for restoration)
+ * For inline redactions, or
+ *
+ *   [optional text to translate][i]
+ *
+ *   ...
+ *
+ *   [/][i]
+ *
+ * Where "optional text to translate" is english text that we should expect the
+ * translator to modify, `i` is the sequential index of this redaction in the
+ * content (used to match the redacted content back up with source content for
+ * restoration), and `...` is any markdown.
  *
  * @example
  *
@@ -31,33 +39,39 @@
  */
 module.exports = function renderRedactions() {
   if (this.Compiler) {
-    const Compiler = this.Compiler;
-    const visitors = Compiler.prototype.visitors;
+    const visitors = this.Compiler.prototype.visitors;
+    const stringifyContent = function(node) {
+      return (node.content || [])
+        .map(content => this.visit(content, node))
+        .join("");
+    };
 
     let index = 0;
 
-    visitors.redaction = function redaction(node) {
+    visitors.inlineRedaction = function redaction(node) {
       let exit;
       if (node.redactionType === "link" || node.redactionType === "image") {
         exit = this.enterLink();
       }
 
-      const value = (node.content || [])
-        .map(content => this.visit(content, node))
-        .join("");
+      const value = stringifyContent(node);
 
       if (exit) {
         exit();
       }
 
-      if (node.block) {
-        const open = `[${value}][${index}]`;
-        const close = `[/][${index++}]`;
-        const subvalue = this.block(node);
-        return [open, subvalue, close].join("\n\n");
-      } else {
-        return `[${value}][${index++}]`;
-      }
+      return `[${value}][${index++}]`;
+    };
+
+    visitors.blockRedaction = function redaction(node) {
+      const value = stringifyContent(node);
+
+      const open = `[${value}][${index}]`;
+      const close = `[/][${index++}]`;
+
+      const subvalue = this.block(node);
+
+      return [open, subvalue, close].join("\n\n");
     };
   }
 };

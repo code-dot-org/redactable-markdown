@@ -183,10 +183,9 @@ function tokenizeDivclass(eat, value, silent) {
 
   if (redact) {
     return add({
-      type: "redaction",
-      block: true,
+      type: "blockRedaction",
       children: contents,
-      className: className,
+      redactionData: className,
       redactionType: "divclass"
     });
   }

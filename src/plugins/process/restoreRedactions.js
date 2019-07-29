@@ -34,7 +34,7 @@ const visit = require("unist-util-visit");
 module.exports = function restoreRedactions(sourceTree) {
   // First, walk the source tree and find all redacted nodes.
   const redactions = [];
-  visit(sourceTree, "redaction", function(node) {
+  visit(sourceTree, ["inlineRedaction", "blockRedaction"], function(node) {
     redactions.push(node);
   });
 
@@ -90,9 +90,13 @@ module.exports = function restoreRedactions(sourceTree) {
       return value.indexOf("[", fromIndex);
     };
 
-    Parser.prototype.inlineTokenizers.redaction = tokenizeInlineRedaction;
+    Parser.prototype.inlineTokenizers.inlineRedaction = tokenizeInlineRedaction;
     const inlineMethods = Parser.prototype.inlineMethods;
-    inlineMethods.splice(inlineMethods.indexOf("reference"), 0, "redaction");
+    inlineMethods.splice(
+      inlineMethods.indexOf("reference"),
+      0,
+      "inlineRedaction"
+    );
 
     // Add a block tokenizer
     //
@@ -170,8 +174,8 @@ module.exports = function restoreRedactions(sourceTree) {
     };
 
     /* Run before default reference. */
-    Parser.prototype.blockTokenizers.redaction = tokenizeBlockRedaction;
+    Parser.prototype.blockTokenizers.blockRedaction = tokenizeBlockRedaction;
     const blockMethods = Parser.prototype.blockMethods;
-    blockMethods.splice(blockMethods.indexOf("paragraph"), 0, "redaction");
+    blockMethods.splice(blockMethods.indexOf("paragraph"), 0, "blockRedaction");
   };
 };

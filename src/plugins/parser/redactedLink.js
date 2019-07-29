@@ -85,7 +85,7 @@ function tokenizeRedactedLink(eat, value, silent) {
   const link = tokenizeLink.call(this, eat, value, silent);
   if (link) {
     if (link.type === "image") {
-      link.content = [
+      link.redactionContent = [
         {
           type: "text",
           value: link.alt || ""
@@ -93,11 +93,11 @@ function tokenizeRedactedLink(eat, value, silent) {
       ];
       delete link.alt;
     } else {
-      link.content = link.children;
+      link.redactionContent = link.children;
       delete link.children;
     }
     link.redactionType = link.type;
-    link.type = "redaction";
+    link.type = "inlineRedaction";
   }
 
   return link;
@@ -107,8 +107,8 @@ function tokenizeRedactedAutoLink(eat, value, silent) {
   const link = tokenizeAutoLink.call(this, eat, value, silent);
   if (link) {
     link.redactionType = "link";
-    link.type = "redaction";
-    link.content = link.children;
+    link.type = "inlineRedaction";
+    link.redactionContent = link.children;
     delete link.children;
   }
 
