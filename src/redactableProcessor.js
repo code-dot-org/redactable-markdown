@@ -1,14 +1,13 @@
 const unified = require("unified");
+const { redact, restore, plugins } = require("remark-redactable");
 
 const TextParser = require("./plugins/parser/TextParser");
 const TextCompiler = require("./plugins/compiler/TextCompiler");
 
-const { redact, restore, plugins } = require("remark-redactable");
-
 module.exports = class RedactableProcessor {
   constructor() {
-    this.compilerPlugins = this.constructor.getCompilerPlugins();
-    this.parserPlugins = this.constructor.getParserPlugins();
+    this.compilerPlugins = [plugins.rawtext];
+    this.parserPlugins = [];
   }
 
   sourceToSyntaxTree(source) {
@@ -72,16 +71,8 @@ module.exports = class RedactableProcessor {
     return TextParser;
   }
 
-  static getParserPlugins() {
-    return [];
-  }
-
   static getCompiler() {
     return TextCompiler;
-  }
-
-  static getCompilerPlugins() {
-    return [plugins.rawtext];
   }
 
   static create() {
