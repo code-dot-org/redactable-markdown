@@ -78,7 +78,7 @@ module.exports = function divclass() {
       children: [
         {
           type: "rawtext", // use rawtext rather than text to avoid escaping the `[`
-          value: `[${node.className}]`
+          value: `[${node.redactionData}]`
         }
       ]
     });
@@ -104,7 +104,7 @@ module.exports = function divclass() {
       children: [
         {
           type: "rawtext",
-          value: `[/${node.className}]`
+          value: `[/${node.redactionData}]`
         }
       ]
     });

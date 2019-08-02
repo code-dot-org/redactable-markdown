@@ -41,7 +41,7 @@ module.exports = function renderRedactions() {
   if (this.Compiler) {
     const visitors = this.Compiler.prototype.visitors;
     const stringifyContent = function(node) {
-      return (node.content || [])
+      return (node.redactionContent || [])
         .map(content => this.visit(content, node))
         .join("");
     };
@@ -54,7 +54,7 @@ module.exports = function renderRedactions() {
         exit = this.enterLink();
       }
 
-      const value = stringifyContent(node);
+      const value = stringifyContent.call(this, node);
 
       if (exit) {
         exit();
@@ -64,7 +64,7 @@ module.exports = function renderRedactions() {
     };
 
     visitors.blockRedaction = function(node) {
-      const value = stringifyContent(node);
+      const value = stringifyContent.call(this, node);
 
       const open = `[${value}][${index}]`;
       const close = `[/][${index++}]`;

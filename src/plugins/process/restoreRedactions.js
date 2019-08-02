@@ -33,9 +33,9 @@ const visit = require("unist-util-visit");
  */
 module.exports = function restoreRedactions(sourceTree) {
   // First, walk the source tree and find all redacted nodes.
-  const redactions = [];
+  const redactionNodes = [];
   visit(sourceTree, ["inlineRedaction", "blockRedaction"], function(node) {
-    redactions.push(node);
+    redactionNodes.push(node);
   });
 
   // then return an extension to the parser that can consume the data from these
@@ -67,13 +67,13 @@ module.exports = function restoreRedactions(sourceTree) {
 
       // TODO once we decide on how we want to handle errors, this is where the
       // error handler should probably go
-      const redactedData = redactions[index];
-      if (!redactedData || redactedData.block) {
+      const redactionNode = redactionNodes[index];
+      if (!(redactionNode && redactionNode.type === "inlineRedaction")) {
         return;
       }
 
       const restorationMethod =
-        Parser.prototype.restorationMethods[redactedData.redactionType];
+        Parser.prototype.restorationMethods[redactionNode.redactionType];
       if (!restorationMethod) {
         return;
       }
@@ -83,7 +83,7 @@ module.exports = function restoreRedactions(sourceTree) {
       }
 
       const add = eat(match[0]);
-      return restorationMethod(add, redactedData, content);
+      return restorationMethod(add, redactionNode, content);
     };
 
     tokenizeInlineRedaction.locator = function(value, fromIndex) {
@@ -136,8 +136,8 @@ module.exports = function restoreRedactions(sourceTree) {
       // if we don't have a redaction matching this index, return immediately
       // TODO once we decide on how we want to handle errors, this is where the
       // error handler should probably go
-      const redactedData = redactions[index];
-      if (!(redactedData && redactedData.block)) {
+      const redactionNode = redactionNodes[index];
+      if (!(redactionNode && redactionNode.type === "blockRedaction")) {
         return;
       }
 
@@ -154,7 +154,7 @@ module.exports = function restoreRedactions(sourceTree) {
       }
 
       const restorationMethod =
-        Parser.prototype.restorationMethods[redactedData.redactionType];
+        Parser.prototype.restorationMethods[redactionNode.redactionType];
       if (!restorationMethod) {
         return;
       }
@@ -170,7 +170,7 @@ module.exports = function restoreRedactions(sourceTree) {
       const subvalue = value.slice(startIndex, endIndex);
       const children = this.tokenizeBlock(subvalue, eat.now());
       const add = eat(blockOpen + subvalue + blockClose);
-      return restorationMethod(add, redactedData, content, children);
+      return restorationMethod(add, redactionNode, content, children);
     };
 
     /* Run before default reference. */
