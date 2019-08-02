@@ -1,0 +1,1 @@
+change [COLOR_METHOD][0] by [AMOUNT][1]
