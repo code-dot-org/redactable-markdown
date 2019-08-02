@@ -22,12 +22,14 @@ module.exports = function div() {
     const Compiler = this.Compiler;
     const visitors = Compiler.prototype.visitors;
 
-    visitors.div = function(node) {
-      const className = node.data.hProperties.className;
+    if (visitors) {
+      visitors.div = function(node) {
+        const className = node.data.hProperties.className;
 
-      return [`[${className}]`, this.block(node), `[/${className}]`].join(
-        "\n\n"
-      );
-    };
+        return [`[${className}]`, this.block(node), `[/${className}]`].join(
+          "\n\n"
+        );
+      };
+    }
   }
 };

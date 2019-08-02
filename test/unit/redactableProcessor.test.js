@@ -43,7 +43,7 @@ describe("Redaction and Restoration without other syntax", () => {
       const standard = processor.sourceToRedacted(input);
       expect(standard).toEqual(input);
 
-      processor.processor.use(divclass);
+      processor.parserPlugins.push(divclass);
       const special = processor.sourceToRedacted(input);
       const redacted = "Some content with\n\n[][0]\n\na divclass\n\n[/][0]";
       expect(special).toEqual(redacted);
@@ -65,7 +65,7 @@ describe("Redaction and Restoration without other syntax", () => {
         "du contenu avec\n\n[][0]\n\nune classe de classe\n\n[/][0]";
       const expected =
         "du contenu avec\n\n[classname]\n\nune classe de classe\n\n[/classname]";
-      processor.processor.use(divclass);
+      processor.parserPlugins.push(divclass);
       const restored = processor.sourceAndRedactedToRestored(source, redacted);
       expect(restored).toEqual(expected);
     });

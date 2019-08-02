@@ -72,45 +72,47 @@ module.exports = function divclass() {
   const methods = Parser.prototype.blockMethods;
   const restorationMethods = Parser.prototype.restorationMethods;
 
-  restorationMethods.divclass = function(add, node, content, children) {
-    const open = add({
-      type: "paragraph",
-      children: [
-        {
-          type: "rawtext", // use rawtext rather than text to avoid escaping the `[`
-          value: `[${node.redactionData}]`
-        }
-      ]
-    });
+  if (restorationMethods) {
+    restorationMethods.divclass = function(add, node, content, children) {
+      const open = add({
+        type: "paragraph",
+        children: [
+          {
+            type: "rawtext", // use rawtext rather than text to avoid escaping the `[`
+            value: `[${node.redactionData}]`
+          }
+        ]
+      });
 
-    // Restored divclasses must always have a child; otherwise, an empty
-    // restored divclass would look like `[classname]\n\n[/classname]` which is
-    // not recognized by the parser.
-    // See the test "divclass render works without content - but only if separated by FOUR newlines".
-    // If the parser can be taught to reliably recognize a divclass without that
-    // requirement, this step can be removed
-    if (!(children && children.length)) {
-      children = [
-        {
-          type: "text",
-          value: ""
-        }
-      ];
-    }
-    const childNodes = children.map(child => add(child));
+      // Restored divclasses must always have a child; otherwise, an empty
+      // restored divclass would look like `[classname]\n\n[/classname]` which is
+      // not recognized by the parser.
+      // See the test "divclass render works without content - but only if separated by FOUR newlines".
+      // If the parser can be taught to reliably recognize a divclass without that
+      // requirement, this step can be removed
+      if (!(children && children.length)) {
+        children = [
+          {
+            type: "text",
+            value: ""
+          }
+        ];
+      }
+      const childNodes = children.map(child => add(child));
 
-    const close = add({
-      type: "paragraph",
-      children: [
-        {
-          type: "rawtext",
-          value: `[/${node.redactionData}]`
-        }
-      ]
-    });
+      const close = add({
+        type: "paragraph",
+        children: [
+          {
+            type: "rawtext",
+            value: `[/${node.redactionData}]`
+          }
+        ]
+      });
 
-    return [open, ...childNodes, close];
-  };
+      return [open, ...childNodes, close];
+    };
+  }
 
   redact = Parser.prototype.options.redact;
 

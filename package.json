@@ -60,6 +60,7 @@
     "minimist": "^1.2.0",
     "remark-html": "^9.0.0",
     "remark-parse": "^6.0.0",
+    "remark-redactable": "github:code-dot-org/remark-redactable#update-types",
     "remark-stringify": "^6.0.0",
     "unified": "^7.0.0",
     "xtend": "^4.0.1"

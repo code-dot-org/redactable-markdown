@@ -9,20 +9,22 @@
  *
  * @see plugins/parser/tip
  */
-module.exports = function rawtext() {
+module.exports = function indext() {
   if (this.Compiler) {
     const Compiler = this.Compiler;
     const visitors = Compiler.prototype.visitors;
 
-    visitors.indent = function(node) {
-      const indentation = "    ";
-      const newline = "\n";
-      return this.all(node)
-        .map(
-          child =>
-            indentation + child.split(newline).join(newline + indentation)
-        )
-        .join(newline + newline);
-    };
+    if (visitors) {
+      visitors.indent = function(node) {
+        const indentation = "    ";
+        const newline = "\n";
+        return this.all(node)
+          .map(
+            child =>
+              indentation + child.split(newline).join(newline + indentation)
+          )
+          .join(newline + newline);
+      };
+    }
   }
 };

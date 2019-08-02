@@ -1,24 +1,24 @@
+const unified = require("unified");
 const html = require("remark-html");
 const parse = require("remark-parse");
 const stringify = require("remark-stringify");
+const { plugins } = require("remark-redactable");
 
 const div = require("./plugins/compiler/div");
 const indent = require("./plugins/compiler/indent");
 
 const divclass = require("./plugins/parser/divclass");
-const redactedLink = require("./plugins/parser/redactedLink");
 
 const RedactableProcessor = require("./redactableProcessor");
 
 module.exports = class RedactableMarkdownProcessor extends RedactableProcessor {
   sourceToHtml(source) {
-    return this.getProcessor()
+    return unified()
+      .use(this.constructor.getParser())
       .use(html)
+      .use(this.parserPlugins)
+      .use(this.compilerPlugins)
       .processSync(source).contents;
-  }
-
-  sourceToSyntaxTree(source) {
-    return this.getProcessor().parse(source);
   }
 
   sourceAndRedactedToHtml(source, redacted) {
@@ -43,7 +43,7 @@ module.exports = class RedactableMarkdownProcessor extends RedactableProcessor {
    * @override
    */
   static getParserPlugins() {
-    return super.getParserPlugins().concat([divclass, redactedLink]);
+    return super.getParserPlugins().concat([divclass, plugins.redactedLink]);
   }
 
   /**

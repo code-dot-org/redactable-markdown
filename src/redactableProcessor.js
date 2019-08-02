@@ -3,53 +3,56 @@ const unified = require("unified");
 const TextParser = require("./plugins/parser/TextParser");
 const TextCompiler = require("./plugins/compiler/TextCompiler");
 
-const renderRedactions = require("./plugins/process/renderRedactions");
-const restoreRedactions = require("./plugins/process/restoreRedactions");
-const restorationRegistration = require("./plugins/process/restorationRegistration");
-
-const rawtext = require("./plugins/compiler/rawtext");
+const { redact, restore, plugins } = require("remark-redactable");
 
 module.exports = class RedactableProcessor {
   constructor() {
     this.compilerPlugins = this.constructor.getCompilerPlugins();
-    this.processor = unified()
-      .use(this.constructor.getParser())
-      .use(this.constructor.getParserPlugins());
+    this.parserPlugins = this.constructor.getParserPlugins();
   }
 
-  getProcessor() {
-    return this.processor();
+  sourceToSyntaxTree(source) {
+    return unified()
+      .use(this.constructor.getParser())
+      .use(this.parserPlugins)
+      .parse(source);
   }
 
   sourceToRedactedSyntaxTree(source) {
-    return this.getProcessor()
-      .use({ settings: { redact: true } })
+    return unified()
+      .use(this.constructor.getParser())
+      .use(redact)
+      .use(this.parserPlugins)
       .parse(source);
   }
 
   sourceToProcessed(source) {
-    return this.getProcessor()
+    return unified()
+      .use(this.constructor.getParser())
       .use(this.constructor.getCompiler())
+      .use(this.parserPlugins)
       .use(this.compilerPlugins)
       .processSync(source).contents;
   }
 
   sourceToRedacted(source) {
     const sourceTree = this.sourceToRedactedSyntaxTree(source);
-    return this.getProcessor()
+    return unified()
+      .use(this.constructor.getParser())
       .use(this.constructor.getCompiler())
-      .use(renderRedactions)
+      .use(redact)
+      .use(this.parserPlugins)
       .use(this.compilerPlugins)
       .stringify(sourceTree);
   }
 
   sourceAndRedactedToMergedSyntaxTree(source, redacted) {
     const sourceTree = this.sourceToRedactedSyntaxTree(source);
-    const redactedTree = this.getProcessor()
-      .use(restoreRedactions(sourceTree))
+    return unified()
+      .use(this.constructor.getParser())
+      .use(restore(sourceTree))
+      .use(this.parserPlugins)
       .parse(redacted);
-
-    return redactedTree;
   }
 
   sourceAndRedactedToRestored(source, redacted) {
@@ -57,8 +60,10 @@ module.exports = class RedactableProcessor {
       source,
       redacted
     );
-    return this.getProcessor()
+    return unified()
+      .use(this.constructor.getParser())
       .use(this.constructor.getCompiler())
+      .use(this.parserPlugins)
       .use(this.compilerPlugins)
       .stringify(mergedSyntaxTree);
   }
@@ -68,7 +73,7 @@ module.exports = class RedactableProcessor {
   }
 
   static getParserPlugins() {
-    return [restorationRegistration];
+    return [];
   }
 
   static getCompiler() {
@@ -76,7 +81,7 @@ module.exports = class RedactableProcessor {
   }
 
   static getCompilerPlugins() {
-    return [rawtext];
+    return [plugins.rawtext];
   }
 
   static create() {
