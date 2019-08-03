@@ -9,7 +9,7 @@
  *
  * @see plugins/parser/tip
  */
-module.exports = function indext() {
+module.exports = function indent() {
   if (this.Compiler) {
     const Compiler = this.Compiler;
     const visitors = Compiler.prototype.visitors;
