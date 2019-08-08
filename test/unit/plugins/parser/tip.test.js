@@ -3,7 +3,7 @@ const { tip } = require("@code-dot-org/remark-plugins");
 
 const processor = require("../../../../src/redactableMarkdownProcessor").create();
 
-processor.processor.use(tip);
+processor.parserPlugins.push(tip);
 
 describe("tip", () => {
   describe("render", () => {

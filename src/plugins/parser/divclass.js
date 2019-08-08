@@ -72,45 +72,47 @@ module.exports = function divclass() {
   const methods = Parser.prototype.blockMethods;
   const restorationMethods = Parser.prototype.restorationMethods;
 
-  restorationMethods.divclass = function(add, nodes, content, children) {
-    const open = add({
-      type: "paragraph",
-      children: [
-        {
-          type: "rawtext", // use rawtext rather than text to avoid escaping the `[`
-          value: `[${nodes.open.className}]`
-        }
-      ]
-    });
+  if (restorationMethods) {
+    restorationMethods.divclass = function(add, node, content, children) {
+      const open = add({
+        type: "paragraph",
+        children: [
+          {
+            type: "rawtext", // use rawtext rather than text to avoid escaping the `[`
+            value: `[${node.redactionData}]`
+          }
+        ]
+      });
 
-    // Restored divclasses must always have a child; otherwise, an empty
-    // restored divclass would look like `[classname]\n\n[/classname]` which is
-    // not recognized by the parser.
-    // See the test "divclass render works without content - but only if separated by FOUR newlines".
-    // If the parser can be taught to reliably recognize a divclass without that
-    // requirement, this step can be removed
-    if (!children.length) {
-      children = [
-        {
-          type: "text",
-          value: ""
-        }
-      ];
-    }
-    const childNodes = children.map(child => add(child));
+      // Restored divclasses must always have a child; otherwise, an empty
+      // restored divclass would look like `[classname]\n\n[/classname]` which is
+      // not recognized by the parser.
+      // See the test "divclass render works without content - but only if separated by FOUR newlines".
+      // If the parser can be taught to reliably recognize a divclass without that
+      // requirement, this step can be removed
+      if (!(children && children.length)) {
+        children = [
+          {
+            type: "text",
+            value: ""
+          }
+        ];
+      }
+      const childNodes = children.map(child => add(child));
 
-    const close = add({
-      type: "paragraph",
-      children: [
-        {
-          type: "rawtext",
-          value: `[/${nodes.open.className}]`
-        }
-      ]
-    });
+      const close = add({
+        type: "paragraph",
+        children: [
+          {
+            type: "rawtext",
+            value: `[/${node.redactionData}]`
+          }
+        ]
+      });
 
-    return [open, ...childNodes, close];
-  };
+      return [open, ...childNodes, close];
+    };
+  }
 
   redact = Parser.prototype.options.redact;
 
@@ -179,27 +181,18 @@ function tokenizeDivclass(eat, value, silent) {
   const divclassClose = nextMatchingClose[0];
   const contents = this.tokenizeBlock(subvalue, eat.now());
 
+  const add = eat(divclassOpen + subvalue + divclassClose);
+
   if (redact) {
-    const open = eat(divclassOpen)({
-      type: "redaction",
-      redactionType: "divclass",
-      className: className,
-      block: true
+    return add({
+      type: "blockRedaction",
+      children: contents,
+      redactionData: className,
+      redactionType: "divclass"
     });
-
-    const add = eat(subvalue);
-    const content = contents.map(content => add(content));
-
-    const close = eat(divclassClose)({
-      type: "redaction",
-      block: true,
-      closing: true
-    });
-
-    return [open, ...content, close];
   }
 
-  return eat(divclassOpen + subvalue + divclassClose)({
+  return add({
     type: "div",
     children: contents,
     data: {

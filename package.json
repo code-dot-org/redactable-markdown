@@ -39,7 +39,7 @@
   "author": "Code.org <dev@code.org> (http://code.org)",
   "license": "SEE LICENSE IN LICENSE",
   "devDependencies": {
-    "@code-dot-org/remark-plugins": "^0.1.1",
+    "@code-dot-org/remark-plugins": "0.2.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-plugin-transform-class-properties": "^6.24.1",
@@ -60,6 +60,7 @@
     "minimist": "^1.2.0",
     "remark-html": "^9.0.0",
     "remark-parse": "^6.0.0",
+    "remark-redactable": "0.3.0",
     "remark-stringify": "^6.0.0",
     "unified": "^7.0.0",
     "xtend": "^4.0.1"

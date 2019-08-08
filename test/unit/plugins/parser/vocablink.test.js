@@ -4,18 +4,16 @@ const { vocablink } = require("@code-dot-org/remark-plugins");
 const mapMdast = require("../../../utils").mapMdast;
 const processor = require("../../../../src/redactableMarkdownProcessor").create();
 
-processor.processor.use(vocablink);
+processor.parserPlugins.push(vocablink);
 
 describe("vocablink", () => {
   describe("parse", () => {
     it("can distinguish between vocablinks with word overrides and linkReferences", () => {
       // the only difference between these two bits of the syntax is the "v "
-      const vocablink = processor
-        .getProcessor()
-        .parse("[v some-word][override]");
-      const linkReference = processor
-        .getProcessor()
-        .parse("[some-word][override]");
+      const vocablink = processor.sourceToSyntaxTree("[v some-word][override]");
+      const linkReference = processor.sourceToSyntaxTree(
+        "[some-word][override]"
+      );
       expect(mapMdast(vocablink)).toEqual({
         children: [{ children: [{ type: "rawtext" }], type: "paragraph" }],
         type: "root"

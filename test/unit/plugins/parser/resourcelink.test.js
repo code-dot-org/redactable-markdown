@@ -3,7 +3,7 @@ const { resourcelink } = require("@code-dot-org/remark-plugins");
 
 const processor = require("../../../../src/redactableMarkdownProcessor").create();
 
-processor.processor.use(resourcelink);
+processor.parserPlugins.push(resourcelink);
 
 describe("resourcelink", () => {
   describe("render", () => {

@@ -48,7 +48,7 @@ if (format && format === "txt") {
 
 const parserPlugins = argv.p || argv.parserPlugins;
 if (parserPlugins) {
-  processor.processor.use(requireByPath(parserPlugins));
+  processor.parserPlugins.push(...requireByPath(parserPlugins));
 }
 
 const compilerPlugins = argv.c || argv.compilerPlugins;

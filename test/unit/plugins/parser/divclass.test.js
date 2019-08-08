@@ -124,7 +124,7 @@ describe("divclass", () => {
     it("works without content - but only if separated by FOUR newlines", () => {
       const input = "[empty]\n\n\n\n[/empty]";
       const output = processor.sourceToRedacted(input);
-      expect(output).toEqual("[][0]\n\n[/][0]\n");
+      expect(output).toEqual("[][0]\n\n\n\n[/][0]\n");
     });
 
     it("renders a divclass within other content", () => {

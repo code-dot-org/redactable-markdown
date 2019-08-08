@@ -3,7 +3,7 @@ const { tiplink } = require("@code-dot-org/remark-plugins");
 
 const processor = require("../../../../src/redactableMarkdownProcessor").create();
 
-processor.processor.use(tiplink);
+processor.parserPlugins.push(tiplink);
 
 describe("tiplink", () => {
   const basicTipMarkdown = "tip!!!";
