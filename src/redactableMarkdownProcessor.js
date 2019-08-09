@@ -2,7 +2,7 @@ const unified = require("unified");
 const html = require("remark-html");
 const parse = require("remark-parse");
 const stringify = require("remark-stringify");
-const { plugins } = require("remark-redactable");
+const plugins = require("@code-dot-org/remark-plugins");
 
 const div = require("./plugins/compiler/div");
 const indent = require("./plugins/compiler/indent");
@@ -14,7 +14,7 @@ module.exports = class RedactableMarkdownProcessor extends RedactableProcessor {
   constructor() {
     super();
     this.compilerPlugins.push(div, indent);
-    this.parserPlugins.push(divclass, plugins.redactedLink);
+    this.parserPlugins.push(divclass, plugins.link);
   }
 
   sourceToHtml(source) {

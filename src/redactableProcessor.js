@@ -1,5 +1,6 @@
 const unified = require("unified");
-const { redact, restore, plugins } = require("remark-redactable");
+const { redact, restore } = require("remark-redactable");
+const plugins = require("@code-dot-org/remark-plugins");
 
 const TextParser = require("./plugins/parser/TextParser");
 const TextCompiler = require("./plugins/compiler/TextCompiler");
