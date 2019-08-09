@@ -15,7 +15,7 @@
  *
  *   [/some-string]
  *
- * @see plugins/parser/divclass
+ * @see @code-dot-org/remark-plugins/divclass
  */
 module.exports = function div() {
   if (this.Compiler) {

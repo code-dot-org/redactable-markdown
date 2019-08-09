@@ -1,7 +1,7 @@
 const expect = require("expect");
 const Processor = require("../../src/redactableProcessor");
 
-const divclass = require("../../src/plugins/parser/divclass");
+const { divclass } = require("@code-dot-org/remark-plugins");
 
 describe("Redaction and Restoration without other syntax", () => {
   let processor;

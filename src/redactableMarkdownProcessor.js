@@ -6,7 +6,6 @@ const plugins = require("@code-dot-org/remark-plugins");
 
 const div = require("./plugins/compiler/div");
 const indent = require("./plugins/compiler/indent");
-const divclass = require("./plugins/parser/divclass");
 
 const RedactableProcessor = require("./redactableProcessor");
 
@@ -14,7 +13,7 @@ module.exports = class RedactableMarkdownProcessor extends RedactableProcessor {
   constructor() {
     super();
     this.compilerPlugins.push(div, indent);
-    this.parserPlugins.push(divclass, plugins.link);
+    this.parserPlugins.push(plugins.divclass, plugins.link);
   }
 
   sourceToHtml(source) {
