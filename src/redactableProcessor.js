@@ -1,5 +1,10 @@
 const unified = require("unified");
-const { redact, restore, findRestorations } = require("remark-redactable");
+const {
+  redact,
+  restore,
+  findRestorations,
+  renderRestorations
+} = require("remark-redactable");
 const plugins = require("@code-dot-org/remark-plugins");
 
 const TextParser = require("./plugins/parser/TextParser");
@@ -7,7 +12,7 @@ const TextCompiler = require("./plugins/compiler/TextCompiler");
 
 module.exports = class RedactableProcessor {
   constructor() {
-    this.compilerPlugins = [plugins.rawtext];
+    this.compilerPlugins = [plugins.rawtext, renderRestorations];
     this.parserPlugins = [];
   }
 
