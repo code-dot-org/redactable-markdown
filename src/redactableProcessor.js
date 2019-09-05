@@ -1,5 +1,10 @@
 const unified = require("unified");
-const { redact, restore } = require("remark-redactable");
+const {
+  redact,
+  restore,
+  parseRestorations,
+  renderRestorations
+} = require("remark-redactable");
 const plugins = require("@code-dot-org/remark-plugins");
 
 const TextParser = require("./plugins/parser/TextParser");
@@ -7,7 +12,7 @@ const TextCompiler = require("./plugins/compiler/TextCompiler");
 
 module.exports = class RedactableProcessor {
   constructor() {
-    this.compilerPlugins = [plugins.rawtext];
+    this.compilerPlugins = [plugins.rawtext, renderRestorations];
     this.parserPlugins = [];
   }
 
@@ -24,6 +29,14 @@ module.exports = class RedactableProcessor {
       .use(redact)
       .use(this.parserPlugins)
       .parse(source);
+  }
+
+  redactedToSyntaxTree(redacted) {
+    return unified()
+      .use(this.constructor.getParser())
+      .use(parseRestorations)
+      .use(this.parserPlugins)
+      .parse(redacted);
   }
 
   sourceToProcessed(source) {
@@ -46,19 +59,23 @@ module.exports = class RedactableProcessor {
       .stringify(sourceTree);
   }
 
-  sourceAndRedactedToMergedSyntaxTree(source, redacted) {
-    const sourceTree = this.sourceToRedactedSyntaxTree(source);
-    return unified()
-      .use(this.constructor.getParser())
-      .use(restore(sourceTree))
-      .use(this.parserPlugins)
-      .parse(redacted);
+  sourceAndRedactedToMergedSyntaxTree(sourceTree, restorationTree) {
+    const restorationMethods = this.parserPlugins
+      .map(plugin => plugin.restorationMethods)
+      .reduce((acc, val) => Object.assign({}, acc, val), {});
+    const mergedTree = unified()
+      .use(restore, sourceTree, restorationMethods)
+      .runSync(restorationTree);
+
+    return mergedTree;
   }
 
   sourceAndRedactedToRestored(source, redacted) {
+    const sourceTree = this.sourceToRedactedSyntaxTree(source);
+    const restorationTree = this.redactedToSyntaxTree(redacted);
     const mergedSyntaxTree = this.sourceAndRedactedToMergedSyntaxTree(
-      source,
-      redacted
+      sourceTree,
+      restorationTree
     );
     return unified()
       .use(this.constructor.getParser())

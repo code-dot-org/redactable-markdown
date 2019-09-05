@@ -56,11 +56,11 @@
     "webpack-cli": "2.1.3"
   },
   "dependencies": {
-    "@code-dot-org/remark-plugins": "0.2.4",
+    "@code-dot-org/remark-plugins": "0.2.7",
     "minimist": "^1.2.0",
     "remark-html": "^9.0.0",
     "remark-parse": "^6.0.0",
-    "remark-redactable": "0.3.0",
+    "remark-redactable": "1.0.0",
     "remark-stringify": "^6.0.0",
     "unified": "^7.0.0",
     "xtend": "^4.0.1"
