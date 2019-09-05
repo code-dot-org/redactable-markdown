@@ -56,14 +56,12 @@ if (argv.strict) {
   strict = true;
 }
 
-function restore_with_strict() {
-  return function(...args) {
-    return processor.sourceAndRedactedToRestored(...args, strict);
-  };
-}
-
 function restore(data) {
-  return recursivelyProcessAll(restore_with_strict().bind(processor), data);
+  return recursivelyProcessAll(
+    (source, redacted) =>
+      processor.sourceAndRedactedToRestored(source, redacted, strict),
+    data
+  );
 }
 
 Promise.all([
