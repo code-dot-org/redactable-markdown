@@ -2,7 +2,7 @@ const unified = require("unified");
 const {
   redact,
   restore,
-  findRestorations,
+  parseRestorations,
   renderRestorations
 } = require("remark-redactable");
 const plugins = require("@code-dot-org/remark-plugins");
@@ -34,7 +34,7 @@ module.exports = class RedactableProcessor {
   redactedToSyntaxTree(redacted) {
     return unified()
       .use(this.constructor.getParser())
-      .use(findRestorations)
+      .use(parseRestorations)
       .use(this.parserPlugins)
       .parse(redacted);
   }
