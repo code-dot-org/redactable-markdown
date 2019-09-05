@@ -1,16 +1,17 @@
-const unified = require('unified');
+const unified = require("unified");
 const {
   redact,
   restore,
   parseRestorations,
-  renderRestorations,
-} = require('remark-redactable');
-const plugins = require('@code-dot-org/remark-plugins');
+  renderRestorations
+} = require("remark-redactable");
+const plugins = require("@code-dot-org/remark-plugins");
 
-const TextParser = require('./plugins/parser/TextParser');
-const TextCompiler = require('./plugins/compiler/TextCompiler');
+const TextParser = require("./plugins/parser/TextParser");
+const TextCompiler = require("./plugins/compiler/TextCompiler");
 
-const visit = require('unist-util-visit');
+const selectAll = require("unist-util-select").selectAll;
+const select = require("unist-util-select").select;
 
 module.exports = class RedactableProcessor {
   constructor() {
@@ -33,12 +34,15 @@ module.exports = class RedactableProcessor {
       .parse(source);
   }
 
-  redactedToSyntaxTree(redacted) {
-    return unified()
+  redactedToSyntaxTree(redacted, strict) {
+    var parser = unified()
       .use(this.constructor.getParser())
-      .use(parseRestorations)
-      .use(this.parserPlugins)
-      .parse(redacted);
+      .use(parseRestorations);
+    if (strict) {
+      parser.use(redact);
+    }
+    parser.use(this.parserPlugins);
+    return parser.parse(redacted);
   }
 
   sourceToProcessed(source) {
@@ -66,33 +70,31 @@ module.exports = class RedactableProcessor {
    * 2. There are no redactions that weren't performed
    * 3. There was no additions redactable content in the mergedTree
    * */
-  checkRestorationNodes(sourceTree, mergedTree) {
-    let source_redactions = 0;
-    let redacted_restorations = 0;
-    let redacted_redactions = 0;
-    let redacted_unrestored = 0;
-    visit(sourceTree, function(node) {
-      if (node.type === 'redaction') {
-        source_redactions++;
-      }
-    });
-    visit(mergedTree, function(node) {
-      if (node.type === 'redaction') {
-        redacted_redactions++;
-      }
-      if (node.type === 'unrestored') {
-        redacted_unrestored++;
-      }
-      if (node.restored) {
-        redacted_restorations++;
-      }
-    });
+  checkRestorationNodes(sourceTree, restorationTree, mergedTree) {
+    // If the restoration tree has any redacted content then redactable content was added so return false.
+    if (select("blockRedaction,inlineRedaction", restorationTree)) {
+      return false;
+    }
 
-    return (
-      source_redactions === redacted_restorations &&
-      redacted_redactions === 0 &&
-      redacted_unrestored === 0
+    // Check that we found as many restorations as redactions
+    const expectedRedactions = selectAll(
+      "blockRedaction,inlineRedaction",
+      sourceTree
     );
+    const expectedRestorations = selectAll(
+      "blockRestoration,inlineRestoration",
+      restorationTree
+    );
+    if (expectedRedactions.length !== expectedRestorations.length) {
+      return false;
+    }
+
+    // Finally, check that no content was unrestored.
+    if (select("blockRestoration,inlineRestoration", mergedTree)) {
+      return false;
+    }
+
+    return true;
   }
 
   sourceAndRedactedToMergedSyntaxTree(sourceTree, restorationTree) {
@@ -106,13 +108,23 @@ module.exports = class RedactableProcessor {
     return mergedTree;
   }
 
-  sourceAndRedactedToRestored(source, redacted) {
+  sourceAndRedactedToRestored(source, redacted, strict) {
     const sourceTree = this.sourceToRedactedSyntaxTree(source);
-    const restorationTree = this.redactedToSyntaxTree(redacted);
+    const restorationTree = this.redactedToSyntaxTree(redacted, strict);
     const mergedSyntaxTree = this.sourceAndRedactedToMergedSyntaxTree(
       sourceTree,
-      restorationTree,
+      JSON.parse(JSON.stringify(restorationTree))
     );
+    if (strict) {
+      const valid = this.checkRestorationNodes(
+        sourceTree,
+        restorationTree,
+        mergedSyntaxTree
+      );
+      if (!valid) {
+        return "";
+      }
+    }
     return unified()
       .use(this.constructor.getParser())
       .use(this.constructor.getCompiler())

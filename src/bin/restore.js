@@ -27,7 +27,9 @@ if (helpFlag || missingRequiredFlags) {
   process.stdout.write(
     "\t-c, --compilerPlugins PLUGINS: comma-separated list of compiler plugins to include in addition to the defaults\n"
   );
-  process.stdout.write("\t--strict Discard restoration if redactions are added or missing");
+  process.stdout.write(
+    "\t--strict Discard restoration if redactions are added or missing"
+  );
   process.exit();
 }
 
@@ -49,7 +51,7 @@ if (compilerPlugins) {
   processor.compilerPlugins.push(...requireByPath(compilerPlugins));
 }
 
-let strict = false
+let strict = false;
 if (argv.strict) {
   strict = true;
 }
@@ -57,18 +59,11 @@ if (argv.strict) {
 function restore_with_strict() {
   return function(...args) {
     return processor.sourceAndRedactedToRestored(...args, strict);
-  }
+  };
 }
 
 function restore(data) {
-<<<<<<< HEAD
   return recursivelyProcessAll(restore_with_strict().bind(processor), data);
-=======
-  return recursivelyProcessAll(
-    processor.sourceAndRedactedToRestored.bind(processor),
-    data
-  );
->>>>>>> master
 }
 
 Promise.all([
