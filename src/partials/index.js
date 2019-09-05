@@ -1,6 +1,5 @@
-const CustomPartial = require('./CustomPartial');
+const CustomPartial = require("./CustomPartial");
 
 module.exports = {
   CustomPartial
-}
-
+};

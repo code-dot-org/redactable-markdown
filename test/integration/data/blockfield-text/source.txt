@@ -1,0 +1,1 @@
+change {COLOR_METHOD} by {AMOUNT}

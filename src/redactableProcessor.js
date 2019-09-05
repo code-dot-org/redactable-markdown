@@ -1,46 +1,62 @@
 const unified = require('unified');
+const {
+  redact,
+  restore,
+  parseRestorations,
+  renderRestorations,
+} = require('remark-redactable');
+const plugins = require('@code-dot-org/remark-plugins');
 
 const TextParser = require('./plugins/parser/TextParser');
 const TextCompiler = require('./plugins/compiler/TextCompiler');
-
-const renderRedactions = require('./plugins/process/renderRedactions');
-const restoreRedactions = require('./plugins/process/restoreRedactions');
-const restorationRegistration = require('./plugins/process/restorationRegistration');
-
-const rawtext = require('./plugins/compiler/rawtext');
 
 const visit = require('unist-util-visit');
 
 module.exports = class RedactableProcessor {
   constructor() {
-    this.compilerPlugins = this.constructor.getCompilerPlugins();
-    this.processor = unified()
+    this.compilerPlugins = [plugins.rawtext, renderRestorations];
+    this.parserPlugins = [];
+  }
+
+  sourceToSyntaxTree(source) {
+    return unified()
       .use(this.constructor.getParser())
-      .use(this.constructor.getParserPlugins());
-  }
-
-  getProcessor() {
-    return this.processor();
-  }
-
-  sourceToRedactedSyntaxTree(source) {
-    return this.getProcessor()
-      .use({settings: {redact: true}})
+      .use(this.parserPlugins)
       .parse(source);
   }
 
+  sourceToRedactedSyntaxTree(source) {
+    return unified()
+      .use(this.constructor.getParser())
+      .use(redact)
+      .use(this.parserPlugins)
+      .parse(source);
+  }
+
+  redactedToSyntaxTree(redacted) {
+    return unified()
+      .use(this.constructor.getParser())
+      .use(parseRestorations)
+      .use(this.parserPlugins)
+      .parse(redacted);
+  }
+
   sourceToProcessed(source) {
-    return this.getProcessor()
+    return unified()
+      .use(this.constructor.getParser())
       .use(this.constructor.getCompiler())
+      .use(this.parserPlugins)
       .use(this.compilerPlugins)
       .processSync(source).contents;
   }
 
   sourceToRedacted(source) {
     const sourceTree = this.sourceToRedactedSyntaxTree(source);
-    return this.getProcessor()
+    return unified()
+      .use(this.constructor.getParser())
       .use(this.constructor.getCompiler())
-      .use(renderRedactions)
+      .use(redact)
+      .use(this.parserPlugins)
       .use(this.compilerPlugins)
       .stringify(sourceTree);
   }
@@ -72,33 +88,35 @@ module.exports = class RedactableProcessor {
       }
     });
 
-
-    return source_redactions === redacted_restorations &&
-           redacted_redactions === 0 &&
-           redacted_unrestored === 0;
+    return (
+      source_redactions === redacted_restorations &&
+      redacted_redactions === 0 &&
+      redacted_unrestored === 0
+    );
   }
 
-  sourceAndRedactedToMergedSyntaxTree(sourceTree, redacted, strict) {
-    let settings = { redact: strict, strict: strict};
-    const mergedTree = this.getProcessor()
-      .use(restoreRedactions(sourceTree))
-      .use({settings: settings})
-      .parse(redacted);
+  sourceAndRedactedToMergedSyntaxTree(sourceTree, restorationTree) {
+    const restorationMethods = this.parserPlugins
+      .map(plugin => plugin.restorationMethods)
+      .reduce((acc, val) => Object.assign({}, acc, val), {});
+    const mergedTree = unified()
+      .use(restore, sourceTree, restorationMethods)
+      .runSync(restorationTree);
+
     return mergedTree;
   }
 
-  sourceAndRedactedToRestored(source, redacted, strict) {
+  sourceAndRedactedToRestored(source, redacted) {
     const sourceTree = this.sourceToRedactedSyntaxTree(source);
+    const restorationTree = this.redactedToSyntaxTree(redacted);
     const mergedSyntaxTree = this.sourceAndRedactedToMergedSyntaxTree(
       sourceTree,
-      redacted,
-      strict
+      restorationTree,
     );
-    if (strict && !this.checkRestorationNodes(sourceTree, mergedSyntaxTree)) {
-      return "\n";
-    }
-    return this.getProcessor()
+    return unified()
+      .use(this.constructor.getParser())
       .use(this.constructor.getCompiler())
+      .use(this.parserPlugins)
       .use(this.compilerPlugins)
       .stringify(mergedSyntaxTree);
   }
@@ -107,16 +125,8 @@ module.exports = class RedactableProcessor {
     return TextParser;
   }
 
-  static getParserPlugins() {
-    return [restorationRegistration];
-  }
-
   static getCompiler() {
     return TextCompiler;
-  }
-
-  static getCompilerPlugins() {
-    return [rawtext];
   }
 
   static create() {
