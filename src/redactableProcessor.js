@@ -113,6 +113,7 @@ module.exports = class RedactableProcessor {
     const restorationTree = this.redactedToSyntaxTree(redacted, strict);
     const mergedSyntaxTree = this.sourceAndRedactedToMergedSyntaxTree(
       sourceTree,
+      // pass in a deep copy of the tree to keep the restorationTree
       JSON.parse(JSON.stringify(restorationTree))
     );
     if (strict) {
