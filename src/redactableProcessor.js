@@ -101,9 +101,11 @@ module.exports = class RedactableProcessor {
     const restorationMethods = this.parserPlugins
       .map(plugin => plugin.restorationMethods)
       .reduce((acc, val) => Object.assign({}, acc, val), {});
+    // pass in a deep copy of the tree to keep the restorationTree
+    const treeToTransform = JSON.parse(JSON.stringify(restorationTree));
     const mergedTree = unified()
       .use(restore, sourceTree, restorationMethods)
-      .runSync(restorationTree);
+      .runSync(treeToTransform);
 
     return mergedTree;
   }
@@ -113,8 +115,7 @@ module.exports = class RedactableProcessor {
     const restorationTree = this.redactedToSyntaxTree(redacted, strict);
     const mergedSyntaxTree = this.sourceAndRedactedToMergedSyntaxTree(
       sourceTree,
-      // pass in a deep copy of the tree to keep the restorationTree
-      JSON.parse(JSON.stringify(restorationTree))
+      restorationTree
     );
     if (strict) {
       const valid = this.checkRestorationNodes(
