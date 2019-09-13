@@ -27,6 +27,9 @@ if (helpFlag || missingRequiredFlags) {
   process.stdout.write(
     "\t-c, --compilerPlugins PLUGINS: comma-separated list of compiler plugins to include in addition to the defaults\n"
   );
+  process.stdout.write(
+    "\t--strict Discard restoration if redactions are added or missing"
+  );
   process.exit();
 }
 
@@ -48,9 +51,15 @@ if (compilerPlugins) {
   processor.compilerPlugins.push(...requireByPath(compilerPlugins));
 }
 
+let strict = false;
+if (argv.strict) {
+  strict = true;
+}
+
 function restore(data) {
   return recursivelyProcessAll(
-    processor.sourceAndRedactedToRestored.bind(processor),
+    (source, redacted) =>
+      processor.sourceAndRedactedToRestored(source, redacted, strict),
     data
   );
 }

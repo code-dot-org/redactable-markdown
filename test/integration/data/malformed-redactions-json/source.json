@@ -1,0 +1,12 @@
+{
+  "basic example": {
+    "good string": "This has a [link](example.com) that will stay put",
+    "good string no translation": "This has a [link](example.com) but will not be translated",
+    "good string with repeated link": "This has a [link](example.com) but the link [repeats](example.com)",
+    "added redactable content": "This has a [link](example.com) and will have redactable content added",
+    "removed redactable content": "This has a [link](example.com) and will have have a [second link](example2.com) removed",
+    "reused redaction": "This has a [link](example.com) and will add a redaction with the same index",
+    "manufactured redaction": "This has a [link](example.com) and will add a redaction with a different index",
+    "malformed redaction": "This [link](example.com) redaction will have broken formatting"
+  }
+}

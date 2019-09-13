@@ -1,0 +1,11 @@
+{
+  "basic example": {
+    "good string": "This has a [link](example.com) that will stay put",
+    "good string with repeated link": "This has a [link](example.com) but the link [repeats](example.com)",
+    "added redactable content": "",
+    "removed redactable content": "",
+    "reused redaction": "",
+    "manufactured redaction": "",
+    "malformed redaction": ""
+  }
+}

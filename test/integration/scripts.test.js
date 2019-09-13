@@ -101,7 +101,8 @@ describe("Command-Line Scripts", () => {
               "-s",
               sourcePath,
               "-r",
-              target
+              target,
+              "--strict"
             ];
             if (fs.existsSync(pluginPath)) {
               args.push("-p", pluginPath);
