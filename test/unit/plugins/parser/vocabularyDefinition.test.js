@@ -1,76 +1,33 @@
 const expect = require("expect");
-const { vocablink } = require("@code-dot-org/remark-plugins");
+const { vocabularyDefinition } = require("@code-dot-org/remark-plugins");
 
-const mapMdast = require("../../../utils").mapMdast;
 const processor = require("../../../../src/redactableMarkdownProcessor").create();
 
-processor.parserPlugins.push(vocablink);
+processor.parserPlugins.push(vocabularyDefinition);
 
-describe("vocablink", () => {
-  describe("parse", () => {
-    it("can distinguish between vocablinks with word overrides and linkReferences", () => {
-      // the only difference between these two bits of the syntax is the "v "
-      const vocablink = processor.sourceToSyntaxTree("[v some-word][override]");
-      const linkReference = processor.sourceToSyntaxTree(
-        "[some-word][override]"
-      );
-      expect(mapMdast(vocablink)).toEqual({
-        children: [{ children: [{ type: "rawtext" }], type: "paragraph" }],
-        type: "root"
-      });
-      expect(mapMdast(linkReference)).toEqual({
-        children: [
-          {
-            children: [{ children: [{ type: "text" }], type: "linkReference" }],
-            type: "paragraph"
-          }
-        ],
-        type: "root"
-      });
-    });
-  });
-
+describe("vocabularyDefinition", () => {
   describe("render", () => {
-    it("can only render vocablinks back out to plain text", () => {
-      const input = "[v some-word]";
+    it("can only render vocabularyDefinitions back out to plain text", () => {
+      const input = "[v some_word/course-offering/1999]";
       const output = processor.sourceToHtml(input);
-      expect(output).toEqual("<p>[v some-word]</p>\n");
-    });
-
-    it("can only render vocablinks with word overrides back out to plain text", () => {
-      const input = "[v some-word][override]";
-      const output = processor.sourceToHtml(input);
-      expect(output).toEqual("<p>[v some-word][override]</p>\n");
+      expect(output).toEqual("<p>[v some_word/course-offering/1999]</p>\n");
     });
   });
 
   describe("redact", () => {
-    it("redacts vocablinks", () => {
-      const input = "[v some-word]";
+    it("redacts vocabularyDefinitions", () => {
+      const input = "[v some_word/course-offering/1999]";
       const output = processor.sourceToRedacted(input);
-      expect(output).toEqual("[some-word][0]\n");
-    });
-
-    it("redacts vocablinks with word overrides", () => {
-      const input = "[v some-word][un-mot]";
-      const output = processor.sourceToRedacted(input);
-      expect(output).toEqual("[un-mot][0]\n");
+      expect(output).toEqual("[some\\_word][0]\n");
     });
   });
 
   describe("restore", () => {
-    it("can restore vocablinks back to markdown", () => {
-      const source = "[v some-word]";
-      const redacted = "[un-mot][0]";
+    it("can restore vocabularyDefinitions back to markdown", () => {
+      const source = "[v some_word/course-offering/1999]";
+      const redacted = "[un_mot][0]";
       const output = processor.sourceAndRedactedToRestored(source, redacted);
-      expect(output).toEqual("[v some-word][un-mot]\n");
-    });
-
-    it("can restore vocablinks with word overrides back to markdown", () => {
-      const source = "[v some-word][source-override]";
-      const redacted = "[redaction-override][0]";
-      const output = processor.sourceAndRedactedToRestored(source, redacted);
-      expect(output).toEqual("[v some-word][redaction-override]\n");
+      expect(output).toEqual("[v some_word/course-offering/1999]\n");
     });
   });
 });

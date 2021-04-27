@@ -73,12 +73,13 @@ That content would get redacted to:
 
     [/][0]
 
-#### Vocablink
+#### Vocabulary Definition
 
 A new syntax introduced by CDO Markdown to support Curriculum Builder,
-vocablinks are a great example of a simple inline redaction with a slightly more
-complicated restoration process.  Vocablinks are used by Curriculum Builder to
-embed definitions for complex terms within a paragraph, and they look like:
+Vocabulary Definitions are a great example of a simple inline redaction with a
+slightly more complicated restoration process.  Vocablinks are used by
+Curriculum Builder to embed definitions for complex terms within a paragraph,
+and they look like:
 
     In particular we are interested in developing a more robust [v protocol] for
     sending a list of numbers over the internet.
