@@ -1,6 +1,6 @@
 # redactable-markdown
 
-[![Travis Build Status](https://img.shields.io/travis/code-dot-org/redactable-markdown/master.svg)](https://travis-ci.org/code-dot-org/redactable-markdown/)
+[![Build Status](https://github.com/code-dot-org/redactable-markdown/actions/workflows/continuous-integration-tests.yml/badge.svg?branch=master)](https://github.com/code-dot-org/redactable-markdown/actions/workflows/continuous-integration-tests.yml)
 [![npm version](https://img.shields.io/npm/v/@code-dot-org/redactable-markdown.svg)](https://www.npmjs.com/package/@code-dot-org/redactable-markdown)
 
 tools for parsing and translating the modified version of markdown used by code.org
