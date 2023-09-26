@@ -14,10 +14,6 @@
     "src",
     "dist"
   ],
-  "engines": {
-    "node": ">=6.7",
-    "npm": "^3.10.8"
-  },
   "scripts": {
     "build": "webpack -p",
     "build:dev": "webpack --progress --colors --mode=development",
