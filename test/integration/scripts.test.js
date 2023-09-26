@@ -9,15 +9,15 @@ const dataDir = path.resolve(rootDir, "test", "integration", "data");
 const extensions = {
   text: ".txt",
   markdown: ".md",
-  json: ".json"
+  json: ".json",
 };
 
 describe("Command-Line Scripts", () => {
-  fs.readdirSync(dataDir).forEach(example => {
+  fs.readdirSync(dataDir).forEach((example) => {
     const sources = fs
       .readdirSync(path.resolve(dataDir, example))
-      .filter(file => /^source.*$/.test(file));
-    sources.forEach(source => {
+      .filter((file) => /^source.*$/.test(file));
+    sources.forEach((source) => {
       describe(example, () => {
         const extension = path.extname(source);
         const sourcePath = path.resolve(dataDir, example, source);
@@ -63,7 +63,7 @@ describe("Command-Line Scripts", () => {
               args.push("-f", "txt");
             }
             const redact = spawnSync("node", args, {
-              input
+              input,
             });
             expect(redact.stdout.toString()).toEqual(expected);
           });
@@ -71,7 +71,7 @@ describe("Command-Line Scripts", () => {
           it("redacts when given input as filepath", () => {
             const args = [
               path.resolve(rootDir, "src/bin/redact.js"),
-              sourcePath
+              sourcePath,
             ];
             if (fs.existsSync(pluginPath)) {
               args.push("-p", pluginPath);
@@ -102,7 +102,7 @@ describe("Command-Line Scripts", () => {
               sourcePath,
               "-r",
               target,
-              "--strict"
+              "--strict",
             ];
             if (fs.existsSync(pluginPath)) {
               args.push("-p", pluginPath);
@@ -140,7 +140,7 @@ describe("Command-Line Scripts", () => {
               args.push("-p", pluginPath);
             }
             const normalize = spawnSync("node", args, {
-              input: source
+              input: source,
             });
             expect(normalize.stdout.toString()).toEqual(expected);
           });

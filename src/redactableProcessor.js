@@ -3,7 +3,7 @@ const {
   redact,
   restore,
   parseRestorations,
-  renderRestorations
+  renderRestorations,
 } = require("remark-redactable");
 const plugins = require("@code-dot-org/remark-plugins");
 
@@ -103,7 +103,7 @@ module.exports = class RedactableProcessor {
 
   sourceAndRedactedToMergedSyntaxTree(sourceTree, restorationTree) {
     const restorationMethods = this.parserPlugins
-      .map(plugin => plugin.restorationMethods)
+      .map((plugin) => plugin.restorationMethods)
       .reduce((acc, val) => Object.assign({}, acc, val), {});
     // pass in a deep copy of the tree to keep the restorationTree
     const treeToTransform = JSON.parse(JSON.stringify(restorationTree));

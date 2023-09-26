@@ -23,12 +23,12 @@ module.exports = function textCompile(options) {
   );
 
   // Don't escape text like markdown does
-  Local.prototype.visitors.text = function(node) {
+  Local.prototype.visitors.text = function (node) {
     return this.encode(node.value, node);
   };
 
   // Don't add an extra newline like markdown does
-  Local.prototype.visitors.root = function(node) {
+  Local.prototype.visitors.root = function (node) {
     return this.block(node);
   };
 
