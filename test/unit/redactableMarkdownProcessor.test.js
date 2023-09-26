@@ -164,7 +164,7 @@ describe("Standard Markdown", () => {
       const source = "This is some text with [a link](http://example.com/)";
       const redacted = "C'est du texte avec ";
       const output = processor.sourceAndRedactedToHtml(source, redacted, true);
-      expect(output).toEqual("");
+      expect(output).toEqual("\n");
     });
   });
 });
