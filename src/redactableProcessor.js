@@ -27,11 +27,15 @@ module.exports = class RedactableProcessor {
   }
 
   sourceToRedactedSyntaxTree(source) {
-    return unified()
+    const parsedRedactionTree = unified()
       .use(this.constructor.getParser())
       .use(redact)
       .use(this.parserPlugins)
       .parse(source);
+    return unified()
+      .use(this.constructor.getParser())
+      .use(redact)
+      .runSync(parsedRedactionTree);
   }
 
   redactedToSyntaxTree(redacted, strict) {
