@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-module.exports.readFromFileOrStdin = function(path) {
+module.exports.readFromFileOrStdin = function (path) {
   const readStream = path ? fs.createReadStream(path) : process.stdin;
   let inputData = "";
 
@@ -20,7 +20,7 @@ module.exports.readFromFileOrStdin = function(path) {
   });
 };
 
-module.exports.writeToFileOrStdout = function(path, data) {
+module.exports.writeToFileOrStdout = function (path, data) {
   if (path) {
     fs.writeFileSync(path, data);
   } else {
@@ -28,7 +28,7 @@ module.exports.writeToFileOrStdout = function(path, data) {
   }
 };
 
-module.exports.formatAsSerialized = function(output, format) {
+module.exports.formatAsSerialized = function (output, format) {
   if (!format) {
     format = typeof output === "object" ? "json" : "txt";
   }
@@ -42,7 +42,7 @@ module.exports.formatAsSerialized = function(output, format) {
   }
 };
 
-module.exports.parseAsSerialized = function(input) {
+module.exports.parseAsSerialized = function (input) {
   try {
     return JSON.parse(input);
   } catch (e) {

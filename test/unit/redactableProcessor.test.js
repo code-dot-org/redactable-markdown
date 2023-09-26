@@ -21,9 +21,9 @@ describe("Redaction and Restoration without other syntax", () => {
       const testCases = [
         "single trailing newline\n",
         "lots of trailing newlines\n\n",
-        "lots\n\n\nof\nintermediate\n\nnewlines"
+        "lots\n\n\nof\nintermediate\n\nnewlines",
       ];
-      testCases.forEach(testCase => {
+      testCases.forEach((testCase) => {
         const output = processor.sourceToProcessed(testCase);
         expect(output).not.toEqual(testCase);
       });

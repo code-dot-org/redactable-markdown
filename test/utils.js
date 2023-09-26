@@ -7,11 +7,11 @@
  */
 module.exports.mapMdast = function mapMdast(node) {
   const result = {
-    type: node.type
+    type: node.type,
   };
 
   if (node.children) {
-    result.children = node.children.map(child => mapMdast(child));
+    result.children = node.children.map((child) => mapMdast(child));
   }
 
   return result;

@@ -3,7 +3,8 @@
  */
 
 const expect = require("expect");
-const processor = require("../../../../src/redactableMarkdownProcessor").create();
+const processor =
+  require("../../../../src/redactableMarkdownProcessor").create();
 
 describe("pedantic emphasis", () => {
   it("should handle underscores in emphasis in pedantic mode", () => {
@@ -20,30 +21,30 @@ describe("pedantic emphasis", () => {
       [
         "underscores inside asterisks",
         "*inner content _with_ emphasis*",
-        "*inner content _with_ emphasis*\n"
+        "*inner content _with_ emphasis*\n",
       ],
       [
         "asterisks inside underscores",
         "_inner content *with* emphasis_",
-        "*inner content _with_ emphasis*\n"
+        "*inner content _with_ emphasis*\n",
       ],
       [
         "images",
         "*![](http://some_url.com/img.jpg)*",
-        "*![](http://some_url.com/img.jpg)*\n"
+        "*![](http://some_url.com/img.jpg)*\n",
       ],
       [
         "inline code with asterisks",
         "*content `with` code*",
-        "_content `with` code_\n"
+        "_content `with` code_\n",
       ],
       [
         "inline code with underscores",
         "_content `with` code_",
-        "_content `with` code_\n"
-      ]
+        "_content `with` code_\n",
+      ],
     ];
-    tests.forEach(function(test) {
+    tests.forEach(function (test) {
       it(test[0], () => {
         expect(processor.sourceToProcessed(test[1])).toEqual(test[2]);
       });

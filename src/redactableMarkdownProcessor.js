@@ -39,8 +39,8 @@ module.exports = class RedactableMarkdownProcessor extends RedactableProcessor {
       plugins: [parse],
       settings: {
         commonmark: true,
-        pedantic: true
-      }
+        pedantic: true,
+      },
     };
   }
 
