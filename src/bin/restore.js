@@ -66,7 +66,7 @@ function restore(data) {
 
 Promise.all([
   ioUtils.readFromFileOrStdin(argv.s).then(ioUtils.parseAsSerialized),
-  ioUtils.readFromFileOrStdin(argv.r).then(ioUtils.parseAsSerialized)
+  ioUtils.readFromFileOrStdin(argv.r).then(ioUtils.parseAsSerialized),
 ])
   .then(restore)
   .then(ioUtils.formatAsSerialized)

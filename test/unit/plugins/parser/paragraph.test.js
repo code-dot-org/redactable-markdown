@@ -1,5 +1,6 @@
 const expect = require("expect");
-const processor = require("../../../../src/redactableMarkdownProcessor").create();
+const processor =
+  require("../../../../src/redactableMarkdownProcessor").create();
 
 describe("paragraph", () => {
   describe("render", () => {

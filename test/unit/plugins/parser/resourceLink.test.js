@@ -1,7 +1,8 @@
 const expect = require("expect");
 const { resourceLink } = require("@code-dot-org/remark-plugins");
 
-const processor = require("../../../../src/redactableMarkdownProcessor").create();
+const processor =
+  require("../../../../src/redactableMarkdownProcessor").create();
 
 processor.parserPlugins.push(resourceLink);
 

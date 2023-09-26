@@ -13,12 +13,12 @@ function recursivelyProcessAll(handler, inputs, isValue) {
     inputs = [inputs];
   }
 
-  if (inputs.some(input => !input)) {
+  if (inputs.some((input) => !input)) {
     return;
   }
 
   const inputType = typeof inputs[0];
-  if (inputs.length && inputs.some(input => typeof input !== inputType)) {
+  if (inputs.length && inputs.some((input) => typeof input !== inputType)) {
     throw Error("all data to process must have the same structure");
   }
 
@@ -39,12 +39,12 @@ function recursivelyProcessAll(handler, inputs, isValue) {
     }
   } else if (Array.isArray(inputs[0])) {
     return inputs[0].map((_, i) => {
-      const values = inputs.map(input => input[i]);
+      const values = inputs.map((input) => input[i]);
       return recursivelyProcessAll(handler, values, true);
     });
   } else if (inputType === "object") {
     return Object.keys(inputs[0]).reduce((prev, key) => {
-      const values = inputs.map(input => input[key]);
+      const values = inputs.map((input) => input[key]);
       prev[key] = recursivelyProcessAll(handler, values, true);
       return prev;
     }, {});
@@ -55,8 +55,8 @@ function recursivelyProcessAll(handler, inputs, isValue) {
 
 module.exports.recursivelyProcessAll = recursivelyProcessAll;
 
-module.exports.requireByPath = function(modulePaths) {
-  return modulePaths.split(/,/).map(modulePath => {
+module.exports.requireByPath = function (modulePaths) {
+  return modulePaths.split(/,/).map((modulePath) => {
     return require(path.resolve(process.cwd(), modulePath));
   });
 };
