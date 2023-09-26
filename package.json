@@ -58,7 +58,7 @@
   "dependencies": {
     "@code-dot-org/remark-plugins": "1.2.4",
     "minimist": "^1.2.0",
-    "remark-html": "^13.0.2",
+    "remark-html": "^9.0.0",
     "remark-parse": "^6.0.0",
     "remark-redactable": "2.0.2",
     "remark-stringify": "^6.0.0",
