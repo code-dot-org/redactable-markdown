@@ -59,7 +59,7 @@
     "remark-redactable": "2.0.2",
     "remark-stringify": "^6.0.0",
     "unified": "^7.0.0",
-    "unist-util-select": "^2.0.2",
+    "unist-util-select": "^5.0.0",
     "xtend": "^4.0.1"
   },
   "jest": {
