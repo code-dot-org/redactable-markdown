@@ -1,4 +1,4 @@
-const expect = require("expect");
+import { expect } from "@jest/globals";
 const { resourceLink } = require("@code-dot-org/remark-plugins");
 
 const processor =

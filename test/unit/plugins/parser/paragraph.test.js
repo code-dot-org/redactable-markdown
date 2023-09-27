@@ -1,4 +1,4 @@
-const expect = require("expect");
+import { expect } from "@jest/globals";
 const processor =
   require("../../../../src/redactableMarkdownProcessor").create();
 
