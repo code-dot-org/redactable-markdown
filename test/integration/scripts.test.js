@@ -1,5 +1,4 @@
 import { expect } from "@jest/globals";
-// const expect = require("expect");
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
