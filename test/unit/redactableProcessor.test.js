@@ -1,4 +1,4 @@
-const expect = require("expect");
+import { expect } from "@jest/globals";
 const Processor = require("../../src/redactableProcessor");
 
 const { divclass } = require("@code-dot-org/remark-plugins");

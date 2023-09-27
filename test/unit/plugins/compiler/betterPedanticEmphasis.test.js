@@ -2,7 +2,7 @@
  * @fileoverview duplicate the tests in https://github.com/remarkjs/remark/pull/344
  */
 
-const expect = require("expect");
+import { expect } from "@jest/globals";
 const processor =
   require("../../../../src/redactableMarkdownProcessor").create();
 
