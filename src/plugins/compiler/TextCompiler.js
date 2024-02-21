@@ -19,7 +19,7 @@ module.exports = function textCompile(options) {
   Local.prototype.options = xtend(
     Local.prototype.options,
     this.data("settings"),
-    options
+    options,
   );
 
   // Don't escape text like markdown does

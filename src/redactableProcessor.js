@@ -83,11 +83,11 @@ module.exports = class RedactableProcessor {
     // Check that we found as many restorations as redactions
     const expectedRedactions = selectAll(
       "blockRedaction,inlineRedaction",
-      sourceTree
+      sourceTree,
     );
     const expectedRestorations = selectAll(
       "blockRestoration,inlineRestoration",
-      restorationTree
+      restorationTree,
     );
     if (expectedRedactions.length !== expectedRestorations.length) {
       return false;
@@ -119,13 +119,13 @@ module.exports = class RedactableProcessor {
     const restorationTree = this.redactedToSyntaxTree(redacted, strict);
     const mergedSyntaxTree = this.sourceAndRedactedToMergedSyntaxTree(
       sourceTree,
-      restorationTree
+      restorationTree,
     );
     if (strict) {
       const valid = this.checkRestorationNodes(
         sourceTree,
         restorationTree,
-        mergedSyntaxTree
+        mergedSyntaxTree,
       );
       if (!valid) {
         return "";
