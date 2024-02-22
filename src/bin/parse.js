@@ -14,21 +14,21 @@ if (helpFlag) {
   process.stdout.write("usage: parse [INFILE] [options]\n");
   process.stdout.write("\n");
   process.stdout.write(
-    "Reads content from INFILE if specified, STDIN otherwise.\n"
+    "Reads content from INFILE if specified, STDIN otherwise.\n",
   );
   process.stdout.write("Content can be plain text or JSON.\n");
   process.stdout.write(
-    "Content will be parsed from markdown to a Markdown Abstract Syntax Tree (MDAST). If the content is JSON, all string values (including those several levels deep) will be parseed.\n"
+    "Content will be parsed from markdown to a Markdown Abstract Syntax Tree (MDAST). If the content is JSON, all string values (including those several levels deep) will be parseed.\n",
   );
   process.stdout.write("\n");
   process.stdout.write("options:\n");
   process.stdout.write("\t-h, --help: print this help message\n");
   process.stdout.write("\t-o OUTFILE: output to OUTFILE rather than stdout\n");
   process.stdout.write(
-    "\t-p, --parserPlugins PLUGINS: comma-separated list of parser plugins to include in addition to the defaults\n"
+    "\t-p, --parserPlugins PLUGINS: comma-separated list of parser plugins to include in addition to the defaults\n",
   );
   process.stdout.write(
-    "\t-c, --compilerPlugins PLUGINS: comma-separated list of compiler plugins to include in addition to the defaults\n"
+    "\t-c, --compilerPlugins PLUGINS: comma-separated list of compiler plugins to include in addition to the defaults\n",
   );
   process.exit();
 }
@@ -46,7 +46,7 @@ if (compilerPlugins) {
 function parse(data) {
   return recursivelyProcessAll(
     processor.sourceToSyntaxTree.bind(processor),
-    data
+    data,
   );
 }
 

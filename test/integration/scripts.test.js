@@ -24,22 +24,22 @@ describe("Command-Line Scripts", () => {
         const redactedPath = path.resolve(
           dataDir,
           example,
-          "redacted" + extension
+          "redacted" + extension,
         );
         const translatedPath = path.resolve(
           dataDir,
           example,
-          "translated" + extension
+          "translated" + extension,
         );
         const restoredPath = path.resolve(
           dataDir,
           example,
-          "restored" + extension
+          "restored" + extension,
         );
         const normalizedPath = path.resolve(
           dataDir,
           example,
-          "normalized" + extension
+          "normalized" + extension,
         );
         const pluginPath = path.resolve(dataDir, example, "plugin.js");
 

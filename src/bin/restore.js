@@ -19,16 +19,16 @@ if (helpFlag || missingRequiredFlags) {
   process.stdout.write("\t-h, --help: print this help message\n");
   process.stdout.write("\t-o OUTFILE: output to OUTFILE rather than stdout\n");
   process.stdout.write(
-    "\t-f, --format [md|txt]: specify format of content (default to markdown)\n"
+    "\t-f, --format [md|txt]: specify format of content (default to markdown)\n",
   );
   process.stdout.write(
-    "\t-p, --parserPlugins PLUGINS: comma-separated list of parser plugins to include in addition to the defaults\n"
+    "\t-p, --parserPlugins PLUGINS: comma-separated list of parser plugins to include in addition to the defaults\n",
   );
   process.stdout.write(
-    "\t-c, --compilerPlugins PLUGINS: comma-separated list of compiler plugins to include in addition to the defaults\n"
+    "\t-c, --compilerPlugins PLUGINS: comma-separated list of compiler plugins to include in addition to the defaults\n",
   );
   process.stdout.write(
-    "\t--strict Discard restoration if redactions are added or missing"
+    "\t--strict Discard restoration if redactions are added or missing",
   );
   process.exit();
 }
@@ -60,7 +60,7 @@ function restore(data) {
   return recursivelyProcessAll(
     (source, redacted) =>
       processor.sourceAndRedactedToRestored(source, redacted, strict),
-    data
+    data,
   );
 }
 
