@@ -26,7 +26,7 @@ module.exports = class RedactableMarkdownProcessor extends RedactableProcessor {
     const restoredMarkdown = this.sourceAndRedactedToRestored(
       source,
       redacted,
-      strict
+      strict,
     );
     return this.sourceToHtml(restoredMarkdown);
   }
