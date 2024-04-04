@@ -11,7 +11,7 @@ describe("resourceLink", () => {
     it("cannot render resourceLinks to html", () => {
       const input = "[r some-slug/course-offering/1999]";
       const output = processor.sourceToHtml(input);
-      expect(output).toEqual("<p>[r some-slug/course-offering/1999]</p>\n");
+      expect(output).toEqual("<p>[r some-slug/course-offering/1999]</p>");
     });
   });
 
@@ -37,7 +37,7 @@ describe("resourceLink", () => {
       const source = "[r some-slug/course-offering/1999]";
       const redacted = "[any-text][0]";
       const output = processor.sourceAndRedactedToHtml(source, redacted);
-      expect(output).toEqual("<p>[r some-slug/course-offering/1999]</p>\n");
+      expect(output).toEqual("<p>[r some-slug/course-offering/1999]</p>");
     });
   });
 });
