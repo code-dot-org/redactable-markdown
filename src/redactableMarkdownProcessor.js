@@ -3,8 +3,8 @@ const remarkRehype = require("remark-rehype");
 const rehypeRaw = require("rehype-raw");
 const rehypeSanitize = require("rehype-sanitize");
 const rehypeStringify = require("rehype-stringify");
-const parse = require("remark-parse");
-const stringify = require("remark-stringify");
+const remarkParse = require("remark-parse");
+const remarkStringify = require("remark-stringify");
 const plugins = require("@code-dot-org/remark-plugins");
 const defaultSanitizationSchema = require("hast-util-sanitize/lib/github");
 
@@ -79,7 +79,7 @@ module.exports = class RedactableMarkdownProcessor extends RedactableProcessor {
    */
   static getParser() {
     return {
-      plugins: [parse],
+      plugins: [remarkParse],
       settings: {
         commonmark: true,
         pedantic: true,
@@ -91,7 +91,7 @@ module.exports = class RedactableMarkdownProcessor extends RedactableProcessor {
    * @override
    */
   static getCompiler() {
-    return stringify;
+    return remarkStringify;
   }
 
   /**
