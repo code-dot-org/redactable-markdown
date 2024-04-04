@@ -115,8 +115,6 @@ describe("Command-Line Scripts", () => {
             if (extension === extensions.text) {
               expectedContent = expectedContent.trim();
             }
-            console.log("DEBUGGING Expected", expectedContent);
-            console.log("DEBUGGING Returned", restore.stdout.toString());
             expect(restore.stdout.toString()).toEqual(expectedContent);
           });
         });
