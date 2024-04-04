@@ -55,16 +55,13 @@
     "@code-dot-org/remark-plugins": "1.2.4",
     "hast-util-sanitize": "^3.0.2",
     "minimist": "^1.2.8",
-
     "rehype-raw": "^5.1.0",
     "rehype-sanitize": "^4.0.0",
     "rehype-stringify": "^8.0.0",
-
     "remark-parse": "^6.0.3",
     "remark-redactable": "2.0.2",
     "remark-rehype": "8.1.0",
     "remark-stringify": "^8.1.1",
-
     "unified": "^9.2.2",
     "unist-util-select": "^3.0.4",
     "xtend": "^4.0.2"
