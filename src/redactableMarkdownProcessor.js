@@ -1,5 +1,4 @@
 const unified = require("unified");
-// const html = require("remark-html");
 const remarkRehype = require("remark-rehype");
 const rehypeRaw = require("rehype-raw");
 const rehypeSanitize = require("rehype-sanitize");
