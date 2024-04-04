@@ -1,13 +1,13 @@
-const unified = require("unified");
-const remarkRehype = require("remark-rehype");
+const plugins = require("@code-dot-org/remark-plugins");
 const rehypeRaw = require("rehype-raw");
 const rehypeSanitize = require("rehype-sanitize");
 const rehypeStringify = require("rehype-stringify");
 const remarkParse = require("remark-parse");
+const remarkRehype = require("remark-rehype");
 const remarkStringify = require("remark-stringify");
-const plugins = require("@code-dot-org/remark-plugins");
-const defaultSanitizationSchema = require("hast-util-sanitize/lib/github");
+const unified = require("unified");
 
+const defaultSanitizationSchema = require("hast-util-sanitize/lib/github");
 const RedactableProcessor = require("./redactableProcessor");
 
 // create custom sanitization schema as per
