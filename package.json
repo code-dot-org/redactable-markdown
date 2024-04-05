@@ -52,7 +52,7 @@
     "webpack-cli": "5.1.4"
   },
   "dependencies": {
-    "@code-dot-org/remark-plugins": "1.2.4",
+    "@code-dot-org/remark-plugins": "2.0.0",
     "hast-util-sanitize": "^3.0.2",
     "minimist": "^1.2.8",
     "rehype-raw": "^5.1.0",
