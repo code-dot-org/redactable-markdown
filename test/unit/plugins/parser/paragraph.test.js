@@ -9,7 +9,7 @@ describe("paragraph", () => {
         const input = `First Paragraph\n${" ".repeat(i)}\nSecondParagraph`;
         const output = processor.sourceToHtml(input);
         expect(output).toEqual(
-          "<p>First Paragraph</p>\n<p>SecondParagraph</p>\n",
+          "<p>First Paragraph</p>\n<p>SecondParagraph</p>",
         );
       }
     });
@@ -18,7 +18,7 @@ describe("paragraph", () => {
         const input = `First Paragraph\n${" ".repeat(i)}\nSecondParagraph`;
         const output = processor.sourceToHtml(input);
         expect(output).toEqual(
-          "<p>First Paragraph</p>\n<p>SecondParagraph</p>\n",
+          "<p>First Paragraph</p>\n<p>SecondParagraph</p>",
         );
       }
     });

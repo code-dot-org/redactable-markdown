@@ -11,7 +11,7 @@ describe("vocabularyDefinition", () => {
     it("can only render vocabularyDefinitions back out to plain text", () => {
       const input = "[v some_word/course-offering/1999]";
       const output = processor.sourceToHtml(input);
-      expect(output).toEqual("<p>[v some_word/course-offering/1999]</p>\n");
+      expect(output).toEqual("<p>[v some_word/course-offering/1999]</p>");
     });
   });
 
